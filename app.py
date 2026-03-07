@@ -409,7 +409,7 @@ uploaded_file = st.file_uploader(
     help="Supports PDF, DOCX & TXT · Max 10MB · Your file stays private",
 )
 
-# JS to hide default Streamlit dropzone text (runs via iframe)
+# JS to hide default Streamlit dropzone text & inject supported-formats line
 components.html("""
 <script>
 function cleanUploader() {
@@ -419,9 +419,25 @@ function cleanUploader() {
         if (!inner) return;
         Array.from(inner.children).forEach(el => {
             if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
+            if (el.classList && el.classList.contains('supported-formats-line')) return;
             el.style.display = 'none';
         });
         dz.querySelectorAll('small').forEach(s => s.style.display = 'none');
+
+        // Inject supported-formats text if not already there
+        if (!dz.querySelector('.supported-formats-line')) {
+            const info = document.createElement('div');
+            info.className = 'supported-formats-line';
+            info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> · Max 10 MB';
+            info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;order:-1;';
+            // Insert before the Browse button
+            const btn = dz.querySelector('button');
+            if (btn && btn.parentElement) {
+                btn.parentElement.insertBefore(info, btn);
+            } else {
+                dz.prepend(info);
+            }
+        }
     });
     main.querySelectorAll('[data-testid="stFileUploader"] small').forEach(s => s.style.display = 'none');
 }
