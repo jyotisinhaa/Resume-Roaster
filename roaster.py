@@ -4,7 +4,7 @@ Roasting engine — calls the LLM to produce a brutal-but-constructive resume ro
 
 from openai import OpenAI
 
-SYSTEM_PROMPT = """You are the Resume Roaster 🔥 — a brutally honest, witty, and 
+SYSTEM_PROMPT = """You are the Resume Ripper 🔥 — a brutally honest, witty, and 
 constructive resume reviewer. Your job is to roast the candidate's resume with 
 sharp humor while actually giving useful feedback.
 

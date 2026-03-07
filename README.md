@@ -1,4 +1,4 @@
-# 🔥 Resume Roaster AI
+# 🔥 Resume Ripper AI
 
 > Upload your resume. Get brutally honest (but constructive) feedback in seconds.
 
@@ -8,7 +8,7 @@
 
 ## What is this?
 
-Resume Roaster is a fun AI-powered app that gives your resume a **comedy-roast-style review** — think brutal honesty meets real career advice. Upload your resume, pick a roast level, and see if you can survive the heat. 🔥
+Resume Ripper is a fun AI-powered app that gives your resume a **comedy-roast-style review** — think brutal honesty meets real career advice. Upload your resume, pick a roast level, and see if you can survive the heat. 🔥
 
 ## Features
 
