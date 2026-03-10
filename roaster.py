@@ -53,7 +53,7 @@ def roast_resume(resume_text: str, api_key: str, roast_level: str = "Medium") ->
 Here is the resume to roast:
 
 ---
-{resume_text[:6000]}
+{resume_text[:12000]}
 ---
 
 Now roast this resume!"""
