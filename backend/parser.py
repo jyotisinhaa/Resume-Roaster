@@ -9,7 +9,7 @@ import logging
 
 # ── Logging setup ─────────────────────────────────────────────────────────────
 import os as _os
-_LOG_DIR = _os.path.dirname(_os.path.abspath(__file__))
+_LOG_DIR = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 _LOG_FILE = _os.path.join(_LOG_DIR, "resume_roaster.log")
 
 logger = logging.getLogger("ResumeRoaster")

@@ -2,11 +2,11 @@
 Roaster personalities — each file contains a unique AI persona for resume roasting.
 """
 
-from roasters.brutal_recruiter import roast as brutal_recruiter_roast
-from roasters.ats_scanner import roast as ats_scanner_roast
-from roasters.career_coach import roast as career_coach_roast
-from roasters.internet_troll import roast as internet_troll_roast
-from roasters.faang_manager import roast as faang_manager_roast
+from backend.roasters.brutal_recruiter import roast as brutal_recruiter_roast
+from backend.roasters.ats_scanner import roast as ats_scanner_roast
+from backend.roasters.career_coach import roast as career_coach_roast
+from backend.roasters.internet_troll import roast as internet_troll_roast
+from backend.roasters.faang_manager import roast as faang_manager_roast
 
 _ROASTERS = {
     "brutal_recruiter": brutal_recruiter_roast,
