@@ -154,7 +154,7 @@ if st.session_state.get("file_valid", False):
         with st.spinner(f"{sel['icon']} {sel['name']} is reviewing your resume..."):
             start_time = time.time()
             try:
-                roast_result = roaster_fn(resume_text, api_key)
+                roast_result, score_breakdown = roaster_fn(resume_text, api_key)
                 elapsed = time.time() - start_time
                 logger.info(f"✅ Roast complete in {elapsed:.1f}s")
                 logger.info(f"📋 Roast result length: {len(roast_result):,} characters")
@@ -163,7 +163,7 @@ if st.session_state.get("file_valid", False):
                 st.error(f"❌ Roasting failed: {e}")
                 st.stop()
 
-        render_roast_results(roast_result, sel, elapsed)
+        render_roast_results(roast_result, score_breakdown, sel, elapsed)
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────

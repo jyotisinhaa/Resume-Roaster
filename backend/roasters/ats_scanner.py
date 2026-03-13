@@ -382,13 +382,36 @@ def _pre_analyze(text: str) -> dict:
     return {"metrics": metrics[:20], "technologies": unique_tech, "density": top_density}
 
 
+def _add_visual_bars(output: str) -> str:
+    """Extract score breakdown lines and return structured data for frontend rendering."""
+    breakdown = []
+    lines = output.split('\n')
+    for line in lines:
+        match = re.match(r'^- (.+?):\s*(\d+)\s*/\s*100', line)
+        if match:
+            label = match.group(1)
+            score = int(match.group(2))
+            if score >= 90:
+                strength = "EXCELLENT"
+            elif score >= 70:
+                strength = "STRONG"
+            elif score >= 50:
+                strength = "AVERAGE"
+            elif score >= 30:
+                strength = "WEAK"
+            else:
+                strength = "POOR"
+            breakdown.append({
+                "label": label,
+                "score": score,
+                "strength": strength
+            })
+    return breakdown
+
 def roast(resume_text: str, api_key: str) -> str:
     """Scan a resume like an ATS system with pre-analysis."""
     client = OpenAI(api_key=api_key)
-
-    # Pre-analyze resume before LLM call
     signals = _pre_analyze(resume_text)
-
     pre_analysis = ""
     if signals["metrics"]:
         pre_analysis += f"\nDetected numeric metrics in resume: {signals['metrics']}"
@@ -397,7 +420,6 @@ def roast(resume_text: str, api_key: str) -> str:
     if signals["density"]:
         density_str = ", ".join(f"{k}: {v}" for k, v in signals["density"])
         pre_analysis += f"\nKeyword density (mentions): {density_str}"
-
     user_message = f"""Run a full ATS compatibility scan on this resume.
 Analyze keyword optimization, formatting issues, and parsing compatibility.
 
@@ -411,14 +433,16 @@ RESUME TEXT:
 Begin ATS scan."""
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_message},
+            {"role": "user", "content": user_message + pre_analysis + "\nResume:\n" + resume_text}
         ],
         temperature=0.3,
-        top_p=0.9,
         max_tokens=2000,
+        top_p=0.9,
     )
-
-    return response.choices[0].message.content
+    output = response.choices[0].message.content
+    # Extract structured score breakdown for frontend
+    score_breakdown = _add_visual_bars(output)
+    return output, score_breakdown

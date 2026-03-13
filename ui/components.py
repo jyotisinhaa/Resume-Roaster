@@ -315,17 +315,104 @@ def render_personality_selector() -> tuple[str, dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 #  ROAST RESULTS
 # ═══════════════════════════════════════════════════════════════════════════════
-def render_roast_results(roast_result: str, sel: dict, elapsed: float):
+def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, elapsed: float):
     """Render the roast results card + share/download section."""
+
     st.markdown('<div class="section-label">Your Roast</div>', unsafe_allow_html=True)
-
     badge_text = f"{sel['icon']} {sel['name']}"
-
     st.markdown(
         f'<div class="roast-result"><span class="roast-badge">{badge_text}</span>',
         unsafe_allow_html=True,
     )
-    st.markdown(roast_result)
+
+    # Split roast_result into lines for custom rendering
+    if sel.get("name", "").lower() == "ats scanner" and score_breakdown:
+        lines = roast_result.split('\n')
+        # Find SCAN COMPLETE and ATS COMPATIBILITY SCORE lines
+        scan_idx = next((i for i, l in enumerate(lines) if l.strip().upper().startswith("SCAN COMPLETE")), None)
+        score_idx = next((i for i, l in enumerate(lines) if l.strip().upper().startswith("ATS COMPATIBILITY SCORE")), None)
+        # Print up to SCORE BREAKDOWN (exclusive)
+        breakdown_idx = next((i for i, l in enumerate(lines) if l.strip().upper().startswith("SCORE BREAKDOWN")), None)
+        # Render up to and including SCORE BREAKDOWN header
+        if scan_idx is not None and score_idx is not None and breakdown_idx is not None:
+            for i in range(scan_idx, breakdown_idx+1):
+                st.markdown(lines[i])
+            # Skip all horizontal rules and empty lines after SCORE BREAKDOWN
+            next_content_idx = breakdown_idx + 1
+            import re as _re
+            while next_content_idx < len(lines):
+                line = lines[next_content_idx].strip().lower()
+                # Skip empty lines, markdown HR, <hr> tags, or empty <div> tags
+                if (
+                    line == ''
+                    or all(c in '-_—―' for c in line)
+                    or line == '<hr>'
+                    or line == '<hr/>'
+                    or line == '<hr />'
+                    or _re.match(r'<div[^>]*>[\s\u200b\u200c\u200d\uFEFF]*</div>', line)
+                ):
+                    next_content_idx += 1
+                else:
+                    break
+            # Now render colored bars
+            st.markdown('<div class="ats-score-breakdown">', unsafe_allow_html=True)
+            desired_order = [
+                "Keyword Coverage",
+                "Impact Metrics",
+                "Action Verbs",
+                "ATS Formatting",
+                "Skills Coverage",
+            ]
+            label_to_item = {item.get("label", ""): item for item in score_breakdown}
+            for label in desired_order:
+                item = label_to_item.get(label)
+                if not item:
+                    continue
+                score = item.get("score", 0)
+                if score >= 85:
+                    color = "#22C55E"
+                    strength = "STRONG"
+                elif score >= 70:
+                    color = "#F59E0B"
+                    strength = "GOOD"
+                else:
+                    color = "#EF4444"
+                    strength = "NEEDS WORK"
+                bar_blocks = int(score / 10)
+                bar = "█" * bar_blocks + "▓" * (1 if score % 10 >= 5 else 0) + "░" * (10 - bar_blocks - (1 if score % 10 >= 5 else 0))
+                st.markdown(
+                    f'<div style="display:flex;align-items:center;margin-bottom:0.3rem;gap:0.7em;">'
+                    f'<span style="min-width:140px;">{label}:</span>'
+                    f'<span style="min-width:80px;">{score} / 100</span>'
+                    f'<span style="font-family:monospace;font-size:1.1em;color:{color};">[{bar}]</span>'
+                    f'<span style="font-weight:700;color:{color};margin-left:0.7em;">{strength}</span>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+            st.markdown('</div>', unsafe_allow_html=True)
+            # Skip original score breakdown lines (e.g., "- Keyword Coverage: 90 / 100")
+            metric_labels = [
+                "Keyword Coverage:",
+                "Impact Metrics:",
+                "Action Verbs:",
+                "ATS Formatting:",
+                "Skills Coverage:",
+            ]
+            i = next_content_idx
+            while i < len(lines):
+                line = lines[i].strip()
+                # Skip lines that are just the metric labels (with or without dash/bullet)
+                if any(line.lstrip('-•* ').startswith(label) for label in metric_labels):
+                    i += 1
+                    continue
+                st.markdown(lines[i])
+                i += 1
+        else:
+            # Fallback: just print everything as before
+            st.markdown(roast_result)
+    else:
+        st.markdown(roast_result)
+
     st.markdown(
         f'<br><div style="color:#5a4e44; font-size:0.75rem; margin-top:1rem;">'
         f'{sel["icon"]} <i>Roasted by {sel["name"]} · Resume Ripper AI · {elapsed:.1f}s</i></div>',

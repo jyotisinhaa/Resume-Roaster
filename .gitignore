@@ -1,3 +1,5 @@
+# Ignore JetBrains IDE project files
+.idea/
 .env
 venv/
 __pycache__/

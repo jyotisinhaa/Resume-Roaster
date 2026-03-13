@@ -51,8 +51,8 @@ Now tear this resume apart."""
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
         ],
-        temperature=0.9,
-        max_tokens=1024,
+        temperature=0.3,
+        max_tokens=2000,
     )
 
-    return response.choices[0].message.content
+    return response.choices[0].message.content, None

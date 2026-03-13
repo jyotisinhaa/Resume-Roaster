@@ -43,6 +43,28 @@ def get_css() -> str:
         background: linear-gradient(90deg, #FF8C0066, transparent);
     }
 
+        /* ATS Score Breakdown */
+        .ats-score-breakdown {
+            margin: 1.2rem 0 1.5rem 0;
+            padding: 1rem 1.2rem 0.5rem 1.2rem;
+            background: #18120b;
+            border-radius: 12px;
+            border: 1px solid #2a1f18;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 12px #00000022;
+        }
+        /* Hide empty score breakdown divs (no bars) */
+        .ats-score-breakdown:empty {
+            display: none !important;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
     /* ── Hero ── */
     .hero {
         text-align: center;
