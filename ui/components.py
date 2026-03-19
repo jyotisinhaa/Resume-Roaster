@@ -12,10 +12,17 @@ import streamlit.components.v1 as components
 def render_hero():
     """Render the hero banner."""
     st.markdown("""
-    <div class="hero">
-        <div class="hero-fires">🔥🔥🔥🔥🔥</div>
-        <div class="hero-title">Resume<br>Roaster</div>
-        <div class="hero-subtitle">Drop your resume. Watch it burn. Rise from the ashes, improved.</div>
+    <div class="hero" style="margin-top:2.5rem;">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:2.2rem;width:100%;">
+            <span style="font-size:6.5rem;font-weight:900;letter-spacing:1.5px;text-align:center;line-height:1.02;" class="hero-main-text">Resume<span style="color:#FF8C00;">Ripper</span></span>
+            <span style="display:inline-block;background:#2a1f18;padding:0.5em 1.2em;border-radius:2em;font-weight:700;color:#FF8C00;font-size:1.15rem;letter-spacing:1px;margin-top:0.7em;">🔥 AI-Powered Resume Feedback</span>
+        </div>
+        <div class="hero-main-text" style="font-size:2.8rem;font-weight:900;line-height:1.08;margin-bottom:0.5rem;">
+            Get your resume<br><span style="color:#FF8C00;">brutally roasted</span><br>by 5 AI experts
+        </div>
+        <div class="hero-desc" style="font-size:1.15rem;font-weight:400;max-width:700px;margin-bottom:2.2rem;text-align:center;margin-left:auto;margin-right:auto;">
+            Upload your resume and let our AI panel of an ATS Scanner, Brutal Recruiter, Career Coach, Internet Troll, and Top Hiring Manager tear it apart — so real interviewers don't have to.
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -319,11 +326,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
     """Render the roast results card + share/download section."""
 
     st.markdown('<div class="section-label">Your Roast</div>', unsafe_allow_html=True)
-    badge_text = f"{sel['icon']} {sel['name']}"
-    st.markdown(
-        f'<div class="roast-result"><span class="roast-badge">{badge_text}</span>',
-        unsafe_allow_html=True,
+    badge_html = (
+        f'<div class="roast-result">'
+        f'  <div class="roast-badge">'
+        f'    <div class="roast-badge-icon">{sel["icon"]}</div>'
+        f'    <div class="roast-badge-name">{sel["name"]}</div>'
+        f'  </div>'
+        f'  <div style="height: 1.2rem;"></div>'
     )
+    st.markdown(badge_html, unsafe_allow_html=True)
 
     # Split roast_result into lines for custom rendering
     if sel.get("name", "").lower() == "ats scanner" and score_breakdown:
@@ -443,7 +454,6 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_footer():
     """Render the app footer."""
-    st.markdown("---")
     st.markdown(
         '<div class="footer">'
         '🔥 <b>Roasted with love by Resume Ripper AI</b><br>'

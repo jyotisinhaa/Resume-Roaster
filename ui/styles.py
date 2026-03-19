@@ -4,9 +4,40 @@ All CSS styles for the Resume Roaster app — dark mode base + light mode overri
 
 
 def get_css() -> str:
-    """Return the complete CSS stylesheet as a string."""
     return """
 <style>
+    /* ── Hero Description ── */
+    .stApp:not(.light-mode) .hero-desc {
+        color: #bdbdbd !important;
+    }
+    .stApp.light-mode .hero-desc {
+        color: #2a1f18 !important;
+    }
+<style>
+    /* ── Dark Mode Hero Text ── */
+    .stApp:not(.light-mode) .hero-main-text {
+        color: #fff !important;
+    }
+    /* ── Light Mode Overrides ── */
+    .stApp.light-mode {
+        background: radial-gradient(ellipse at top, #fff7e6 0%, #fbead1 40%, #fff 100%) !important;
+        color: #2a1f18 !important;
+    }
+    .stApp.light-mode .stMarkdown,
+    .stApp.light-mode .stMarkdown p,
+    .stApp.light-mode .stMarkdown li,
+    .stApp.light-mode .stMarkdown h1,
+    .stApp.light-mode .stMarkdown h2,
+    .stApp.light-mode .stMarkdown h3,
+    .stApp.light-mode .stMarkdown h4 {
+        color: #2a1f18 !important;
+    }
+    .stApp.light-mode .hero-main-text {
+        color: #2a1f18 !important;
+    }
+    .stApp.light-mode .section-label {
+        color: #FF8C00 !important;
+    }
     /* ── Reset & Base ── */
     .stApp {
         background: radial-gradient(ellipse at top, #1a0e05 0%, #0d0907 40%, #0a0604 100%) !important;
@@ -329,19 +360,31 @@ def get_css() -> str:
         border: 1px solid #FF8C0033;
         border-radius: 18px;
         padding: 2rem;
-        margin-top: 1rem;
+        margin-top: 2.8rem;
         box-shadow: 0 4px 30px rgba(255, 140, 0, 0.06);
         color: #e0d5cc;
     }
     .roast-badge {
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         background: linear-gradient(90deg, #FF6B35, #FF8C00);
         color: white;
-        font-size: 0.72rem;
+        padding: 0.7rem 1.5rem 0.9rem 1.5rem;
+        border-radius: 22px;
+        margin: 0 auto 1.5rem auto;
+        box-shadow: 0 2px 12px #ff8c0033;
+        width: fit-content;
+    }
+    .roast-badge-icon {
+        font-size: 2.1rem;
+        margin-bottom: 0.2rem;
+    }
+    .roast-badge-name {
+        font-size: 1.08rem;
         font-weight: 700;
-        padding: 4px 12px;
-        border-radius: 20px;
-        margin-bottom: 1rem;
+        letter-spacing: 0.01em;
     }
 
     /* ── Footer ── */
@@ -452,11 +495,11 @@ def get_css() -> str:
     }
     .persona-selected-banner {
         text-align: center;
-        padding: 0.7rem 1.2rem;
+        padding: 1.3rem 1.2rem 1.3rem 1.2rem;
         border-radius: 12px;
         background: #1a130d;
         border: 1px solid #FF8C0033;
-        margin-bottom: 1.2rem;
+        margin-bottom: 2.5rem;
     }
     .persona-selected-banner .sel-icon { font-size: 1.4rem; }
     .persona-selected-banner .sel-name {
