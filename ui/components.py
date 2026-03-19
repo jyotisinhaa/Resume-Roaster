@@ -156,10 +156,10 @@ PERSONALITIES = {
         "accent_from": "#A855F7",
         "accent_to": "#7C3AED",
     },
-    "faang_manager": {
+    "top_hiring_manager": {
         "icon": "👔",
-        "name": "FAANG Manager",
-        "tagline": "Big Tech bar raiser. Show me impact.",
+        "name": "Top Hiring Manager",
+        "tagline": "Seasoned leader. Seeks excellence in any industry.",
         "accent_from": "#F59E0B",
         "accent_to": "#D97706",
     },
