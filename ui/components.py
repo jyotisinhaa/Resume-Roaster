@@ -475,7 +475,7 @@ def render_footer():
     """Render the app footer."""
     st.markdown(
         '<div class="footer">'
-        '🔥 <b>Roasted with love by Resume Ripper AI</b><br>'
+        '🔥 <b>Roasted with love by Resume Ripper</b><br>'
         'Your resume is processed in memory and never stored. We only roast, never save. 🤝'
         '</div>',
         unsafe_allow_html=True,
