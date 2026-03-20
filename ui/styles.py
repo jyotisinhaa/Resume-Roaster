@@ -56,7 +56,7 @@ def get_css() -> str:
 
     /* ── Section Labels ── */
     .section-label {
-        font-size: 0.85rem;
+        font-size: 2.2rem;
         font-weight: 800;
         letter-spacing: 3px;
         text-transform: uppercase;

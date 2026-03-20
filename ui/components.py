@@ -32,28 +32,47 @@ def render_hero():
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_how_it_works():
     """Render the 3-step how-it-works cards."""
-    st.markdown('<div class="section-label">How It Works</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label" style="font-size:2.2rem;font-weight:900;letter-spacing:2.5px;margin-bottom:2.2rem;margin-top:2.7rem;">How It Works</div>', unsafe_allow_html=True)
     st.markdown("""
-    <div class="steps-row">
-        <div class="step-card">
-            <div class="step-num">01</div>
-            <div class="step-icon">📄</div>
-            <div class="step-title">Upload Your Resume</div>
-            <div class="step-desc">Drag and drop or browse for your PDF. We accept the good, the bad, and the catastrophically over-formatted.</div>
+    <div class="steps-row" style="display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem;margin:2.8rem 0;">
+        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+            <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">01</div>
+            <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:pulse 1.5s infinite alternate;">📄</div>
+            <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">Upload Your Resume</div>
+            <div class="step-desc" style="font-size:1.08rem;color:#6d4c1b;text-align:center;margin-bottom:0.2em;font-weight:400;line-height:1.6;">Drag and drop or browse for your PDF, DOCX, or TXT file. We accept the good, the bad, and the catastrophically over-formatted.</div>
         </div>
-        <div class="step-card">
-            <div class="step-num">02</div>
-            <div class="step-icon">🔥</div>
-            <div class="step-title">Choose Roast Level</div>
-            <div class="step-desc">Mild for gentle critique, Medium for real talk, Extra Crispy if you need your ego fully dismantled.</div>
+        <div class="step-card" style="background:linear-gradient(135deg,#fbead1 0%,#fff7e6 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+            <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">02</div>
+            <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:spin 2.5s linear infinite;">🤖</div>
+            <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">AI Panel Review</div>
+            <div class="step-desc" style="font-size:1.08rem;color:#6d4c1b;text-align:center;margin-bottom:0.2em;font-weight:400;line-height:1.6;">Your resume is reviewed from every angle—ATS Scanner, Brutal Recruiter, Career Coach, Internet Troll, and Top Hiring Manager.</div>
         </div>
-        <div class="step-card">
-            <div class="step-num">03</div>
-            <div class="step-icon">💀</div>
-            <div class="step-title">Get Roasted & Improve</div>
-            <div class="step-desc">Our AI delivers a brutal comedy roast of your resume, then gives you real tips to actually fix it.</div>
+        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+            <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">03</div>
+            <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:pop 1.2s infinite alternate;">💡</div>
+            <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">Get Actionable Feedback</div>
+            <div class="step-desc" style="font-size:1.08rem;color:#6d4c1b;text-align:center;margin-bottom:0.2em;font-weight:400;line-height:1.6;">Get expert feedback and practical tips from multiple perspectives—instantly improve your resume with actionable insights.</div>
         </div>
     </div>
+    <style>
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.12); }
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes pop {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.18); }
+    }
+    .step-card:hover {
+        transform: translateY(-10px) scale(1.04);
+        box-shadow: 0 12px 40px #FF8C0033, 0 2px 0 #FF8C00 inset;
+        border-color: #FF8C00;
+    }
+    </style>
     """, unsafe_allow_html=True)
 
 
