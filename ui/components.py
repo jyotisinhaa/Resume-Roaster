@@ -1,12 +1,11 @@
 """
 Reusable UI components — hero, steps, upload JS, personality cards, footer.
 """
-
 import streamlit as st
 import streamlit.components.v1 as components
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  UPLOAD ZONE JS — hides default Streamlit text, injects supported-formats line
+#  UPLOAD ZONE JS
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_upload_zone_js():
     """Inject JS to clean up the Streamlit file uploader and add supported formats text."""
@@ -15,7 +14,7 @@ def render_upload_zone_js():
     <script>
     function cleanUploader() {
         const main = window.parent.document;
-        main.querySelectorAll('[data-testid=\"stFileUploaderDropzone\"]').forEach(dz => {
+        main.querySelectorAll('[data-testid="stFileUploaderDropzone"]').forEach(dz => {
             const inner = dz.querySelector(':scope > div');
             if (!inner) return;
             Array.from(inner.children).forEach(el => {
@@ -32,12 +31,10 @@ def render_upload_zone_js():
                 s.style.height = '0';
                 s.style.overflow = 'hidden';
             });
-
-            // Inject supported-formats text if not already there
             if (!dz.querySelector('.supported-formats-line')) {
                 const info = document.createElement('div');
                 info.className = 'supported-formats-line';
-                info.innerHTML = '📎 Supported formats: <b style=\"color:#FF8C00;\">PDF</b>, <b style=\"color:#FF8C00;\">DOCX</b>, <b style=\"color:#FF8C00;\">TXT</b> · Max 10 MB';
+                info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> · Max 10 MB';
                 info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;order:-1;';
                 const btn = dz.querySelector('button');
                 if (btn && btn.parentElement) {
@@ -47,7 +44,7 @@ def render_upload_zone_js():
                 }
             }
         });
-        main.querySelectorAll('[data-testid=\"stFileUploader\"] small').forEach(s => {
+        main.querySelectorAll('[data-testid="stFileUploader"] small').forEach(s => {
             s.style.visibility = 'hidden';
             s.style.height = '0';
             s.style.overflow = 'hidden';
@@ -64,7 +61,6 @@ def render_upload_zone_js():
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_hero():
     """Render the hero banner."""
-    # Add global animation CSS for animated bars and shimmer effect (only once, at top of app)
     st.markdown("""
     <style>
     @keyframes growBar {
@@ -150,10 +146,6 @@ def render_how_it_works():
         0% { transform: scale(1); }
         100% { transform: scale(1.12); }
     }
-    @keyframes shimmerFlow {
-        0% { background-position-x: -160px; }
-        100% { background-position-x: 100%; }
-    }
     .ats-score-breakdown {
         background: linear-gradient(120deg, #18120b 80%, #2a1f18 100%);
         border-radius: 18px;
@@ -235,7 +227,6 @@ def render_file_info_card(file_name: str, ext: str, size_kb: float):
 #  PERSONALITY CARD GRID
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Personality definitions
 PERSONALITIES = {
     "brutal_recruiter": {
         "icon": "😤",
@@ -299,14 +290,12 @@ def render_personality_selector() -> tuple[str, dict]:
     """
     st.markdown('<div class="section-label">Choose Your Roaster</div>', unsafe_allow_html=True)
 
-    # Initialize personality selection
     if "selected_personality" not in st.session_state:
         st.session_state["selected_personality"] = "brutal_recruiter"
 
     persona_keys = list(PERSONALITIES.keys())
     selected_key = st.session_state["selected_personality"]
 
-    # Build card grid HTML
     row1_html = '<div class="persona-grid">' + ''.join(
         _card_html(k, PERSONALITIES[k], k == selected_key) for k in persona_keys[:3]
     ) + '</div>'
@@ -317,7 +306,6 @@ def render_personality_selector() -> tuple[str, dict]:
 
     st.markdown(row1_html + row2_html, unsafe_allow_html=True)
 
-    # Hidden radio for state management
     persona_labels = [f"{PERSONALITIES[k]['icon']} {PERSONALITIES[k]['name']}" for k in persona_keys]
     default_idx = persona_keys.index(selected_key)
     chosen_label = st.radio(
@@ -328,13 +316,11 @@ def render_personality_selector() -> tuple[str, dict]:
         label_visibility="collapsed",
         key="persona_radio",
     )
-    # Sync radio → session state
     chosen_idx = persona_labels.index(chosen_label)
     st.session_state["selected_personality"] = persona_keys[chosen_idx]
     selected_key = st.session_state["selected_personality"]
     sel = PERSONALITIES[selected_key]
 
-    # JS: clicking a card triggers the corresponding radio option
     components.html(f"""
     <script>
     (function() {{
@@ -345,7 +331,6 @@ def render_personality_selector() -> tuple[str, dict]:
         function setupCardClicks() {{
             const cards = main.querySelectorAll('.persona-card[data-persona]');
             if (!cards.length) return;
-
             cards.forEach(card => {{
                 if (card.dataset.clickBound) return;
                 card.dataset.clickBound = 'true';
@@ -353,21 +338,16 @@ def render_personality_selector() -> tuple[str, dict]:
                     const key = this.dataset.persona;
                     const idx = KEYS.indexOf(key);
                     if (idx === -1) return;
-
-                    // Find the radio widget and click the right option
                     const radios = main.querySelectorAll('[data-testid="stRadio"] input[type="radio"]');
                     if (radios[idx]) {{
                         radios[idx].click();
                     }}
-
-                    // Visual feedback: re-query ALL cards fresh to deselect everything
                     main.querySelectorAll('.persona-card[data-persona]').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                 }});
             }});
         }}
 
-        // Also hide the radio widget visually
         function hideRadio() {{
             const radios = main.querySelectorAll('[data-testid="stRadio"]');
             radios.forEach(r => {{
@@ -381,12 +361,10 @@ def render_personality_selector() -> tuple[str, dict]:
             }});
         }}
 
-        // Enforce single-selection: only one card should be .selected
         function enforceSingleSelect() {{
             const allCards = main.querySelectorAll('.persona-card[data-persona]');
             const selected = main.querySelectorAll('.persona-card.selected');
             if (selected.length > 1) {{
-                // Find which radio is actually checked
                 const radios = main.querySelectorAll('[data-testid="stRadio"] input[type="radio"]');
                 let checkedIdx = -1;
                 radios.forEach((r, i) => {{ if (r.checked) checkedIdx = i; }});
@@ -408,7 +386,6 @@ def render_personality_selector() -> tuple[str, dict]:
     </script>
     """, height=0)
 
-    # Show selected personality banner
     st.markdown(
         f'<div class="persona-selected-banner">'
         f'  <span class="sel-icon">{sel["icon"]}</span> '
@@ -422,12 +399,237 @@ def render_personality_selector() -> tuple[str, dict]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+#  LINKEDIN SHARE CARD
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: str, ov_grade: str, ov_color: str):
+    """Render a screenshot-ready LinkedIn share card."""
+    import streamlit as st
+
+    desired_order = ["Keyword Coverage", "Impact Metrics", "Action Verbs", "ATS Formatting", "Skills Coverage"]
+    label_to_item = {item.get("label", ""): item for item in score_breakdown}
+
+    def score_color(s):
+        if s >= 85: return "#22C55E"
+        if s >= 70: return "#3B82F6"
+        if s >= 50: return "#EAB308"
+        return "#EF4444"
+
+    metrics_html = ""
+    for label in desired_order:
+        item = label_to_item.get(label)
+        if not item:
+            continue
+        s = item.get("score", 0)
+        c = score_color(s)
+        short = label.replace(" Coverage", "").replace(" Metrics", "").replace(" Verbs", " V.").replace("Formatting", "Format")
+        metrics_html += f"""
+        <div style="background:#0d1b2a;border-radius:10px;padding:10px 12px;border-top:2px solid {c};flex:1;min-width:80px;text-align:center;">
+            <div style="font-size:1.4rem;font-weight:900;color:{c};line-height:1;">{s}</div>
+            <div style="font-size:0.65rem;color:#6B7280;margin-top:3px;white-space:nowrap;">{short}</div>
+        </div>"""
+
+    circumference = round(2 * 3.14159 * 40, 1)
+    dash = round(overall_score / 100 * circumference, 1)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#FF8C00;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🔥 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:10px;">Screenshot this card or use the buttons below to share on LinkedIn.</div>', unsafe_allow_html=True)
+    components.html(f"""
+    <style>
+    .li-card {{
+        background:linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 60%,#091422 100%);
+        border:1px solid #1e3a5f;
+        border-radius:18px;
+        padding:22px 20px 18px 20px;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+        max-width:520px;
+        margin:0 auto;
+        position:relative;
+        overflow:hidden;
+        box-shadow:0 8px 40px #00C9FF18;
+    }}
+    .li-card::before {{
+        content:'';
+        position:absolute;
+        top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,transparent,{ov_color},{ov_color}88,transparent);
+    }}
+    .li-header {{
+        display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
+    }}
+    .li-brand {{
+        font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase;
+    }}
+    .li-badge {{
+        font-size:0.7rem;color:#00C9FF;font-weight:800;letter-spacing:1px;
+        background:#00C9FF18;border:1px solid #00C9FF44;border-radius:20px;padding:3px 10px;
+    }}
+    .li-hero {{
+        display:flex;align-items:center;gap:20px;margin-bottom:20px;
+    }}
+    .li-metrics {{
+        display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;
+    }}
+    .li-footer {{
+        border-top:1px solid #1e3a5f;
+        padding-top:12px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }}
+    .li-cta {{
+        font-size:0.78rem;color:#FF8C00;font-weight:700;
+    }}
+    .li-sub {{
+        font-size:0.72rem;color:#374151;
+    }}
+    </style>
+    <div class="li-card">
+        <div class="li-header">
+            <div class="li-brand">🔥 Resume Ripper AI</div>
+            <div class="li-badge">🤖 ATS Scanner</div>
+        </div>
+        <div class="li-hero">
+            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="#1e2d3d" stroke-width="9"/>
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="{ov_color}" stroke-width="9"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 45 45)"
+                        style="filter:drop-shadow(0 0 6px {ov_color});"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:1.7rem;font-weight:900;color:{ov_color};line-height:1;">{overall_score}</div>
+                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 100</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:1.8rem;font-weight:900;color:{ov_color};letter-spacing:2px;line-height:1;">{ov_label}</div>
+                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">ATS Compatibility</div>
+                <div style="margin-top:6px;">
+                    <span style="background:{ov_color}22;color:{ov_color};border:1px solid {ov_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {ov_grade}</span>
+                </div>
+            </div>
+        </div>
+        <div class="li-metrics">{metrics_html}</div>
+        <div class="li-footer">
+            <div class="li-cta">🔥 Try Resume Ripper AI — it's free!</div>
+            <div class="li-sub">Would your resume survive?</div>
+        </div>
+    </div>
+    """, height=340)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SHARE BOX
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_share_box(share_text: str, roast_result: str, sel_name: str):
+    """Render share buttons: LinkedIn, Copy text, Download report."""
+    import json
+
+    share_text_json = json.dumps(share_text)
+    roast_json = json.dumps(roast_result)
+    file_name_json = json.dumps(f"resume_roast_{sel_name.lower().replace(' ', '_')}.txt")
+
+    components.html(f"""
+    <style>
+    .sb-actions {{
+        display:flex;
+        gap:0.7rem;
+        margin-top:12px;
+    }}
+    .sb-btn {{
+        flex:1;
+        padding:0.7rem 0.8rem;
+        border-radius:10px;
+        font-size:0.88rem;
+        font-weight:700;
+        cursor:pointer;
+        border:none;
+        text-align:center;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        transition:opacity 0.15s,transform 0.1s;
+        text-decoration:none;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    }}
+    .sb-btn:hover {{ opacity:0.88; transform:translateY(-1px); }}
+    .sb-li   {{ background:#0A66C2; color:#fff; }}
+    .sb-copy {{ background:#FF8C00; color:#fff; }}
+    .sb-dl   {{ background:#1e1e1e; color:#FF8C00; border:1.5px solid #FF8C00; }}
+    .sb-feedback {{
+        display:none;
+        font-size:0.76rem;
+        color:#22C55E;
+        margin-top:0.55rem;
+        text-align:center;
+        font-weight:700;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    }}
+    </style>
+    <div class="sb-actions">
+        <button class="sb-btn sb-li"   onclick="sbLinkedIn()">💼 Post on LinkedIn</button>
+        <button class="sb-btn sb-copy" onclick="sbCopyText()">📋 Copy Text</button>
+        <button class="sb-btn sb-dl"   onclick="sbDownload()">📥 Download</button>
+    </div>
+    <div class="sb-feedback" id="sb-fb">✅ Copied to clipboard!</div>
+    <script>
+    const SB_SHARE = {share_text_json};
+    const SB_ROAST = {roast_json};
+    const SB_FILE  = {file_name_json};
+
+    function sbLinkedIn() {{
+        const url = 'https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(SB_SHARE);
+        window.open(url, '_blank');
+    }}
+
+    function sbShowFeedback() {{
+        const el = document.getElementById('sb-fb');
+        el.style.display = 'block';
+        setTimeout(() => {{ el.style.display = 'none'; }}, 2200);
+    }}
+
+    function sbCopyText() {{
+        try {{
+            window.parent.navigator.clipboard.writeText(SB_SHARE).then(sbShowFeedback, sbFallback);
+        }} catch(e) {{ sbFallback(); }}
+    }}
+
+    function sbFallback() {{
+        try {{
+            const ta = window.parent.document.createElement('textarea');
+            ta.value = SB_SHARE;
+            ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+            window.parent.document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            window.parent.document.execCommand('copy');
+            window.parent.document.body.removeChild(ta);
+            sbShowFeedback();
+        }} catch(e) {{
+            alert('Copy failed — please copy manually.');
+        }}
+    }}
+
+    function sbDownload() {{
+        const blob = new Blob([SB_ROAST], {{type:'text/plain;charset=utf-8'}});
+        const url  = URL.createObjectURL(blob);
+        const a    = window.parent.document.createElement('a');
+        a.href = url; a.download = SB_FILE;
+        window.parent.document.body.appendChild(a);
+        a.click();
+        window.parent.document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }}
+    </script>
+    """, height=90)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 #  ROAST RESULTS
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, elapsed: float):
     """Render the roast results card + share/download section."""
-    # ...existing code...
-    # Bonus: show 'Analyzing resume signals...' above bars
     st.markdown("""
     <div style="font-size:0.75rem;color:#9CA3AF;margin-bottom:6px;">
     Analyzing resume signals...
@@ -435,9 +637,9 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
     """, unsafe_allow_html=True)
 
     if sel.get("name", "").lower() == "ats scanner" and score_breakdown:
-        # Parse the roast_result into sections
         import re
         lines = roast_result.split('\n')
+
         def find_section(header):
             for i, l in enumerate(lines):
                 if l.strip().upper().startswith(header.upper()):
@@ -462,34 +664,61 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         roast_idx = find_section("🔥 ROAST LEVEL")
         final_idx = find_section("FINAL RECOMMENDATION")
 
-        # Score Breakdown (dashboard style, animated, only once)
-        # NOTE: Move the animation CSS to your main app file for global effect!
+        # Overall ATS Score Hero
+        total_scores = [item.get("score", 0) for item in score_breakdown if item.get("score")]
+        overall_score = round(sum(total_scores) / len(total_scores)) if total_scores else 0
+        if overall_score >= 85:
+            ov_color = "#22C55E"; ov_grade = "A"; ov_label = "EXCELLENT"
+        elif overall_score >= 70:
+            ov_color = "#3B82F6"; ov_grade = "B"; ov_label = "STRONG"
+        elif overall_score >= 50:
+            ov_color = "#EAB308"; ov_grade = "C"; ov_label = "AVERAGE"
+        else:
+            ov_color = "#EF4444"; ov_grade = "D"; ov_label = "WEAK"
+
+        circumference = round(2 * 3.14159 * 54, 1)
+        dash = round(overall_score / 100 * circumference, 1)
+
         st.markdown(f"""
         <div style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            margin:18px 0 10px 0;
+            background:linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 60%,#091422 100%);
+            border:1px solid {ov_color}33;
+            border-radius:20px;
+            padding:28px 24px 22px 24px;
+            margin:16px 0 20px 0;
+            text-align:center;
+            position:relative;
+            overflow:hidden;
         ">
-            <div style="
-                font-size:1.15rem;
-                font-weight:800;
-                letter-spacing:0.5px;
-                color:#ffffff;
-            ">
-                📊 Score Breakdown
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{ov_color},{ov_color}88,transparent);"></div>
+            <div style="font-size:0.75rem;color:#00C9FF;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🤖 ATS SCAN COMPLETE</div>
+            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1e2d3d" stroke-width="12"/>
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="{ov_color}" stroke-width="12"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                        style="filter:drop-shadow(0 0 8px {ov_color});"
+                    />
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:2.8rem;font-weight:900;color:{ov_color};line-height:1;">{overall_score}</div>
+                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 100</div>
+                </div>
             </div>
-            <div style="
-                height:1px;
-                flex:1;
-                margin-left:12px;
-                background:linear-gradient(90deg,#FF8C00,transparent);
-                opacity:0.6;
-            "></div>
+            <div style="font-size:1.5rem;font-weight:900;color:{ov_color};letter-spacing:3px;margin-bottom:4px;">{ov_label}</div>
+            <div style="font-size:0.8rem;color:#6B7280;">ATS Compatibility Score &nbsp;·&nbsp; Grade <b style="color:{ov_color};">{ov_grade}</b></div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Animated bars (staggered, correct color logic, only once)
+        # Score Breakdown
+        st.markdown(f"""
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px 0;">
+            <div style="font-size:1.1rem;font-weight:800;letter-spacing:0.5px;color:#ffffff;font-family:inherit;">📊 Score Breakdown</div>
+            <div style="height:1px;flex:1;margin-left:12px;background:linear-gradient(90deg,#00C9FF,transparent);opacity:0.4;"></div>
+        </div>
+        """, unsafe_allow_html=True)
+
         desired_order = [
             "Keyword Coverage",
             "Impact Metrics",
@@ -503,38 +732,32 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             if not item:
                 continue
             score = item.get("score", 0)
-            # Unified color/label logic
             if score >= 85:
-                color = "#22C55E"   # green
-                strength = "EXCELLENT"
+                color = "#22C55E"; strength = "EXCELLENT"; grade = "A"
             elif score >= 70:
-                color = "#3B82F6"   # blue
-                strength = "STRONG"
+                color = "#3B82F6"; strength = "STRONG"; grade = "B"
             elif score >= 50:
-                color = "#EAB308"   # yellow
-                strength = "AVERAGE"
+                color = "#EAB308"; strength = "AVG"; grade = "C"
             else:
-                color = "#EF4444"   # red
-                strength = "WEAK"
+                color = "#EF4444"; strength = "WEAK"; grade = "D"
             st.markdown(f"""
-            <div style="display:flex;align-items:center;margin-bottom:8px;gap:10px;">
-                <div style="width:150px;font-size:0.9rem;color:#cfcfcf;">{label}</div>
-                <div style="width:60px;font-weight:600;">{score}</div>
-                <div style="flex:1;height:6px;background:#1e1e1e;border-radius:6px;overflow:hidden;">
+            <div style="display:flex;align-items:center;margin-bottom:10px;gap:10px;background:#0d1117;border-radius:10px;padding:9px 12px;border-left:3px solid {color};">
+                <div style="width:140px;font-size:0.88rem;color:#cfcfcf;font-weight:500;">{label}</div>
+                <div style="width:34px;font-weight:900;font-size:1rem;color:{color};">{score}</div>
+                <div style="flex:1;height:10px;background:#1a1a2e;border-radius:8px;overflow:hidden;">
                     <div class="animated-bar shimmer" style="
                         --target-width:{score}%;
                         --bar-color:{color};
+                        height:100%;
                         width:0%;
                         animation-delay:{i * 0.15}s;
-                        background:linear-gradient(90deg,{color},{color}AA);"
+                        background:linear-gradient(90deg,{color},{color}77);"
                     ></div>
                 </div>
-                <div style="width:80px;text-align:right;font-size:0.8rem;font-weight:700;color:{color};">{strength}</div>
+                <div style="width:34px;text-align:center;font-size:0.95rem;font-weight:900;color:{color};background:{color}22;border-radius:6px;padding:2px 0;">{grade}</div>
             </div>
             """, unsafe_allow_html=True)
 
-
-        # Section rendering helper (premium style)
         def parse_weak_bullets(section_lines):
             import re
             bullets = []
@@ -566,18 +789,18 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 return
             import re
             section_lines = lines[idx+1:next_idx] if next_idx else lines[idx+1:]
-            # Add subtle spacing before each section
             st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
-            # Standardized section header
             st.markdown(f"""
             <div style="
                 margin:16px 0 6px 0;
-                font-size:1rem;
-                font-weight:700;
+                font-size:1.1rem;
+                font-weight:800;
                 color:#ffffff;
                 display:flex;
                 align-items:center;
                 gap:8px;
+                font-family:inherit;
+                letter-spacing:0.5px;
             ">
                 <span>{icon}</span> {title}
             </div>
@@ -609,22 +832,47 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     </div>
                     """, unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
+            elif title in ("Keywords Detected", "Keywords Missing"):
+                pill_color = "#22C55E" if title == "Keywords Detected" else "#EF4444"
+                pill_bg = "#0d2a1a" if title == "Keywords Detected" else "#2a0d0d"
+                pill_border = "#22C55E44" if title == "Keywords Detected" else "#EF444444"
+                all_pills_html = ""
+                for l in section_lines:
+                    line = l.strip()
+                    if not line:
+                        continue
+                    if re.fullmatch(r'[-_*\s]{3,}', line):
+                        continue
+                    if line.endswith(':') and not line.startswith(('-', '•', '*')):
+                        if all_pills_html:
+                            st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;'>{all_pills_html}</div>", unsafe_allow_html=True)
+                            all_pills_html = ""
+                        cat = line.rstrip(':')
+                        st.markdown(f"<div style='font-size:0.7rem;color:#6B7280;letter-spacing:2px;margin:10px 0 6px 0;font-weight:700;'>{cat.upper()}</div>", unsafe_allow_html=True)
+                    elif line.startswith(('-', '•', '*')):
+                        keyword = re.sub(r'^[-•*]\s*', '', line).strip()
+                        if keyword:
+                            all_pills_html += f'<span style="background:{pill_bg};color:{pill_color};border:1px solid {pill_border};border-radius:20px;padding:4px 13px;font-size:0.82rem;font-weight:600;white-space:nowrap;">{keyword}</span>'
+                    else:
+                        if all_pills_html:
+                            st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;'>{all_pills_html}</div>", unsafe_allow_html=True)
+                            all_pills_html = ""
+                        st.markdown(f"<div style='font-size:0.85rem;color:#9CA3AF;margin:4px 0;'>{line}</div>", unsafe_allow_html=True)
+                if all_pills_html:
+                    st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px;'>{all_pills_html}</div>", unsafe_allow_html=True)
             else:
                 st.markdown(f"<div style='border-radius:8px;padding:4px 0 2px 0;margin-bottom:2px;'>", unsafe_allow_html=True)
                 for l in section_lines:
                     line = l.strip()
-                    # Skip markdown horizontal rules and empty lines
                     if not line:
                         continue
-                    if re.fullmatch(r'[-_*\\s]{3,}', line):
+                    if re.fullmatch(r'[-_*\s]{3,}', line):
                         continue
                     st.markdown(l)
                 st.markdown("</div>", unsafe_allow_html=True)
-            # Add a subtle divider after each section except the last
             if next_idx is not None:
                 st.markdown("<div style='height:1px;background:#222;margin:10px 0 6px 0;opacity:0.5;'></div>", unsafe_allow_html=True)
 
-        # Render sections as cards/boxes
         render_section("Match Probability", "🎯", match_idx, detected_idx, color="#00C9FF")
         render_section("Keywords Detected", "✅", detected_idx, missing_idx, color="#22C55E", bg="#172a1a")
         render_section("Keywords Missing", "⚠️", missing_idx, weak_idx, color="#EF4444", bg="#2a1818")
@@ -639,12 +887,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         render_section("Keyword Density", "📊", density_idx, roast_idx, color="#00C9FF")
         render_section("Roast Level", "🔥", roast_idx, final_idx, color="#FF8C00")
 
-        # Final Recommendation as a banner
+        # Final Recommendation
         if final_idx is not None:
             rec_lines = lines[final_idx+1:]
-
-            # Only allow valid recommendation words
             VALID_VERDICTS = {"optimize", "reformat", "critical rewrite"}
+            PROMPT_LEAK_SIGNALS = {
+                "tone:", "analytical", "robotic", "diagnostic",
+                "sound like", "maximum 600", "be concise", "no filler",
+                "every sentence must", "choose one:",
+            }
             verdict = None
             clean_content = []
             for l in rec_lines:
@@ -652,20 +903,18 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 if not stripped:
                     continue
                 lower = stripped.lower()
-                # Capture verdict
                 if lower in VALID_VERDICTS and verdict is None:
                     verdict = stripped.upper()
                     continue
-                # Remove prompt leakage
-                if stripped.startswith("Tone:") or "analytical" in lower:
+                if any(signal in lower for signal in PROMPT_LEAK_SIGNALS) and len(stripped) < 80:
                     continue
                 clean_content.append(stripped)
             display_verdict = verdict or "OPTIMIZE"
             st.markdown(f"""
-            <div style="background:linear-gradient(90deg,#FF8C00,#FF6B35);color:#fff;padding:18px 22px;border-radius:12px;font-size:1.18rem;font-weight:900;margin:18px 0 0 0;box-shadow:0 2px 12px #FF8C0033;">
+            <div style="background:linear-gradient(90deg,#FF8C00,#FF6B35);color:#fff;padding:18px 22px;border-radius:12px;margin:18px 0 0 0;box-shadow:0 2px 12px #FF8C0033;">
                 <div style="font-size:1.3em;font-weight:900;margin-bottom:10px;">⭐ FINAL RECOMMENDATION</div>
-                <div style="font-size:1.6rem;font-weight:900;letter-spacing:2px;margin-bottom:12px;">{display_verdict}</div>
-                {''.join(f'<div style="margin-top:6px;">{line}</div>' for line in clean_content)}
+                <div style="font-size:1.6rem;font-weight:900;letter-spacing:2px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:10px;">{display_verdict}</div>
+                {''.join(f'<div style="margin-top:6px;font-size:1rem;font-weight:400;line-height:1.6;">{line}</div>' for line in clean_content)}
             </div>
             """, unsafe_allow_html=True)
 
@@ -676,22 +925,11 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         </div>
         """, unsafe_allow_html=True)
 
-        # Save to session for sharing
         st.session_state["last_roast"] = roast_result
+        _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color)
+        share_text = f"I just scored {overall_score}/100 on the ATS Scanner 🤖\nHere's my resume breakdown — would yours survive? 👀\n🔥 Try it free → Resume Ripper AI\n#ResumeRoaster #ATSTips #JobSearch #CareerTips #AI"
+        _render_share_box(share_text, roast_result, sel["name"])
 
-        # Share section
-        st.markdown("")
-        col1, col2 = st.columns(2)
-        with col1:
-            share_text = f"I just got my resume roasted by the {sel['name']} 🔥\nWould you survive the roast? 😅\n#ResumeRoaster #AI #CareerTips"
-            st.code(share_text, language=None)
-        with col2:
-            st.download_button(
-                label="📥 Download Roast",
-                data=roast_result,
-                file_name="my_resume_roast.md",
-                mime="text/markdown",
-            )
     else:
         # Fallback: original rendering for other personas
         st.markdown('<div class="section-label">Your Roast</div>', unsafe_allow_html=True)
@@ -712,18 +950,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         )
         st.markdown('</div>', unsafe_allow_html=True)
         st.session_state["last_roast"] = roast_result
-        st.markdown("")
-        col1, col2 = st.columns(2)
-        with col1:
-            share_text = f"I just got my resume roasted by the {sel['name']} 🔥\nWould you survive the roast? 😅\n#ResumeRoaster #AI #CareerTips"
-            st.code(share_text, language=None)
-        with col2:
-            st.download_button(
-                label="📥 Download Roast",
-                data=roast_result,
-                file_name="my_resume_roast.md",
-                mime="text/markdown",
-            )
+        share_text = f"I just got my resume roasted by the {sel['name']} 🔥\nWould you survive the roast? 😅\n#ResumeRoaster #AI #CareerTips"
+        _render_share_box(share_text, roast_result, sel["name"])
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
