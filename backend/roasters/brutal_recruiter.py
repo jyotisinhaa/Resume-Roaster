@@ -1,3 +1,4 @@
+import re
 from openai import OpenAI
 
 SYSTEM_PROMPT = """
@@ -92,4 +93,14 @@ Now tear this resume apart and structure it exactly according to the system prom
 
     content = response.choices[0].message.content
 
-    return content, None
+    score_breakdown = _extract_score(content)
+    return content, score_breakdown
+
+
+def _extract_score(content: str):
+    """Extract the recruiter score from the response."""
+    match = re.search(r'Recruiter Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)
+    if match:
+        score = int(match.group(1))
+        return [{"label": "Recruiter Score", "score": score, "out_of": 10}]
+    return None

@@ -520,10 +520,195 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+#  BRUTAL RECRUITER LINKEDIN SHARE CARD
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, verdict_text: str, linkedin_roast: str):
+    """Render a screenshot-ready LinkedIn share card for the Brutal Recruiter."""
+    import json as _json
+    circumference = round(2 * 3.14159 * 40, 1)
+    dash = round(score_val / 10 * circumference, 1)
+
+    low_v = verdict_text.lower()
+    if "hire" in low_v and "maybe" not in low_v and "pass" not in low_v:
+        v_color = "#22C55E"; v_icon = "✅ HIRE"
+    elif "maybe" in low_v:
+        v_color = "#EAB308"; v_icon = "🤔 MAYBE"
+    else:
+        v_color = "#EF4444"; v_icon = "❌ PASS"
+
+    import re as _re
+    def _li_clean(text: str) -> str:
+        text = text.strip()
+        text = _re.sub(r'^#{1,6}\s*', '', text)
+        text = _re.sub(r'\*\*', '', text)
+        text = _re.sub(r'\*(?!\s)', '', text)
+        text = _re.sub(r'^[-–—•]\s*', '', text)
+        text = _re.sub(r'(?i)^verdict\s*:\s*', '', text)
+        return text.strip()
+
+    clean_verdict = _li_clean(verdict_text)
+    clean_roast   = _li_clean(linkedin_roast)
+    roast_display = (clean_roast[:120] + "…") if len(clean_roast) > 120 else clean_roast
+
+    li_text = (
+        f"I just survived the Brutal Recruiter on Resume Ripper AI 😤\n\n"
+        f"Recruiter Score: {score_val}/10 — {sc_label}\n"
+        f"Verdict: {clean_verdict}\n\n"
+        f"🔥 \"{clean_roast[:100]}{'…' if len(clean_roast) > 100 else ''}\"\n\n"
+        f"Would your resume survive the roast?\n"
+        f"#ResumeRoaster #BrutalRecruiter #JobSearch #CareerTips #AI"
+    )
+    li_text_json = _json.dumps(li_text)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#FF4B4B;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">😤 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
+    components.html(f"""
+    <style>
+    .br-card {{
+        background:linear-gradient(135deg,#1a0505 0%,#2a0d0d 60%,#1a0505 100%);
+        border:1px solid #5a1a1a;
+        border-radius:18px;
+        padding:22px 20px 18px 20px;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+        max-width:520px;
+        margin:0 auto;
+        position:relative;
+        overflow:hidden;
+        box-shadow:0 8px 40px #FF4B4B18;
+    }}
+    .br-card::before {{
+        content:'';
+        position:absolute;
+        top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);
+    }}
+    .br-header {{
+        display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
+    }}
+    .br-brand {{
+        font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase;
+    }}
+    .br-badge {{
+        font-size:0.7rem;color:#FF4B4B;font-weight:800;letter-spacing:1px;
+        background:#FF4B4B18;border:1px solid #FF4B4B44;border-radius:20px;padding:3px 10px;
+    }}
+    .br-hero {{
+        display:flex;align-items:center;gap:20px;margin-bottom:18px;
+    }}
+    .br-roast-box {{
+        background:#2a0d0d;border-left:3px solid #A855F7;border-radius:8px;
+        padding:10px 14px;margin-bottom:16px;
+        font-size:0.82rem;color:#E9D5FF;font-style:italic;line-height:1.5;
+    }}
+    .br-footer {{
+        border-top:1px solid #3a1a1a;
+        padding-top:12px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }}
+    .br-cta {{
+        font-size:0.78rem;color:#FF8C00;font-weight:700;
+    }}
+    .br-sub {{
+        font-size:0.72rem;color:#374151;
+    }}
+    </style>
+    <div class="br-card">
+        <div class="br-header">
+            <div class="br-brand">🔥 Resume Ripper AI</div>
+            <div class="br-badge">😤 Brutal Recruiter</div>
+        </div>
+        <div class="br-hero">
+            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="#3a1a1a" stroke-width="9"/>
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 45 45)"
+                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Recruiter Score</div>
+                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                    <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
+                </div>
+            </div>
+        </div>
+        <div class="br-roast-box">🔥 "{roast_display}"</div>
+        <div class="br-footer">
+            <div class="br-cta">🔥 Try Resume Ripper AI — it's free!</div>
+            <div class="br-sub">Would you survive the roast?</div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="saveCardImage()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#FF4B4B;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+            transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+            📸 Save Card as Image
+        </button>
+        <button onclick="postLinkedIn()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+            transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+            💼 Post on LinkedIn
+        </button>
+    </div>
+    <div id="br-hint" style="
+        display:none;max-width:520px;margin:8px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    const LI_TEXT = {li_text_json};
+
+    function saveCardImage() {{
+        const card = document.querySelector('.br-card');
+        html2canvas(card, {{
+            backgroundColor: '#1a0505',
+            scale: 2,
+            useCORS: true,
+            logging: false
+        }}).then(canvas => {{
+            const link = document.createElement('a');
+            link.download = 'brutal_recruiter_score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.getElementById('br-hint').style.display = 'block';
+            setTimeout(() => {{ document.getElementById('br-hint').style.display = 'none'; }}, 4000);
+        }});
+    }}
+
+    function postLinkedIn() {{
+        saveCardImage();
+        setTimeout(() => {{
+            window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(LI_TEXT), '_blank');
+        }}, 800);
+    }}
+    </script>
+    """, height=420)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 #  SHARE BOX
 # ═══════════════════════════════════════════════════════════════════════════════
-def _render_share_box(share_text: str, roast_result: str, sel_name: str):
-    """Render share buttons: LinkedIn, Copy text, Download report."""
+def _render_share_box(share_text: str, roast_result: str, sel_name: str, show_linkedin: bool = True):
+    """Render share buttons: LinkedIn (optional), Copy text, Download report."""
     import json
 
     share_text_json = json.dumps(share_text)
@@ -569,7 +754,7 @@ def _render_share_box(share_text: str, roast_result: str, sel_name: str):
     }}
     </style>
     <div class="sb-actions">
-        <button class="sb-btn sb-li"   onclick="sbLinkedIn()">💼 Post on LinkedIn</button>
+        {'<button class="sb-btn sb-li" onclick="sbLinkedIn()">💼 Post on LinkedIn</button>' if show_linkedin else ''}
         <button class="sb-btn sb-copy" onclick="sbCopyText()">📋 Copy Text</button>
         <button class="sb-btn sb-dl"   onclick="sbDownload()">📥 Download</button>
     </div>
@@ -929,6 +1114,198 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color)
         share_text = f"I just scored {overall_score}/100 on the ATS Scanner 🤖\nHere's my resume breakdown — would yours survive? 👀\n🔥 Try it free → Resume Ripper AI\n#ResumeRoaster #ATSTips #JobSearch #CareerTips #AI"
         _render_share_box(share_text, roast_result, sel["name"])
+
+    elif sel.get("name", "").lower() == "brutal recruiter":
+        import re
+
+        lines = roast_result.split('\n')
+
+        def find_section_br(header):
+            for i, l in enumerate(lines):
+                stripped = re.sub(r'[^\w\s]', '', l).strip().upper()
+                if header.upper() in stripped:
+                    return i
+            return None
+
+        def _clean(text: str) -> str:
+            """Strip markdown artifacts: headings, bold, italic, leading dashes/bullets."""
+            text = text.strip()
+            text = re.sub(r'^#{1,6}\s*', '', text)            # remove ## heading markers
+            text = re.sub(r'\*\*', '', text)                   # remove bold **
+            text = re.sub(r'\*(?!\s)', '', text)               # remove stray *
+            text = re.sub(r'^[-–—•]\s*', '', text)             # remove leading dash/bullet
+            text = re.sub(r'(?i)^verdict\s*:\s*', '', text)    # remove leading "Verdict:" label
+            return text.strip()
+
+        gut_end = find_section_br("RECRUITER SCORE")
+        gut_lines = lines[:gut_end] if gut_end is not None else []
+        gut_text = _clean(" ".join(l.strip() for l in gut_lines if l.strip()))
+        # Strip leading all-caps name (e.g. "ANURAG SINGH") and reaction label
+        gut_text = re.sub(r'^[A-Z][A-Z\s]{2,30}\s+', '', gut_text)
+        gut_text = re.sub(r'(?i)^(instant|gut|first)\s*(reaction|impression)\s*:\s*', '', gut_text).strip()
+
+        score_val = None
+        score_breakdown_br = score_breakdown or []
+        if score_breakdown_br:
+            score_val = score_breakdown_br[0].get("score", 5)
+        else:
+            m = re.search(r'Recruiter Score[:\s]*(\d+)\s*/\s*10', roast_result, re.IGNORECASE)
+            if m:
+                score_val = int(m.group(1))
+        if score_val is None:
+            score_val = 5
+
+        eye_idx    = find_section_br("WHAT CAUGHT MY EYE")
+        flags_idx  = find_section_br("RED FLAGS")
+        rewrite_idx = find_section_br("IF I WERE REWRITING")
+        verdict_idx = None
+        linkedin_idx = None
+        for i, l in enumerate(lines):
+            low = l.strip().lower()
+            if verdict_idx is None and any(v in low for v in ["hire", "maybe", "pass"]) and ("/" in low or "·" in low or "—" in low or "-" in low or len(l.strip()) < 120):
+                if i > (rewrite_idx or 0):
+                    verdict_idx = i
+            if linkedin_idx is None and ("linkedin" in low or "screenshot" in low or "zinger" in low):
+                if i > (verdict_idx or rewrite_idx or 0):
+                    linkedin_idx = i
+
+        # Score color
+        if score_val >= 8:
+            sc_color = "#22C55E"; sc_grade = "A"; sc_label = "STRONG"
+        elif score_val >= 6:
+            sc_color = "#EAB308"; sc_grade = "B"; sc_label = "DECENT"
+        elif score_val >= 4:
+            sc_color = "#FF8C00"; sc_grade = "C"; sc_label = "WEAK"
+        else:
+            sc_color = "#EF4444"; sc_grade = "D"; sc_label = "REJECTED"
+
+        circumference_br = round(2 * 3.14159 * 54, 1)
+        dash_br = round(score_val / 10 * circumference_br, 1)
+
+        # ── Hero Score Card ──────────────────────────────────────────────────
+        st.markdown(f"""
+        <div style="
+            background:linear-gradient(135deg,#1a0505 0%,#2a0d0d 60%,#1a0505 100%);
+            border:1px solid {sc_color}33;
+            border-radius:20px;
+            padding:28px 24px 22px 24px;
+            margin:16px 0 20px 0;
+            text-align:center;
+            position:relative;
+            overflow:hidden;
+        ">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
+            <div style="font-size:0.75rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:16px;">😤 BRUTAL RECRUITER VERDICT</div>
+            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="#2a1a1a" stroke-width="12"/>
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
+                        stroke-dasharray="{dash_br} {circumference_br}" stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                        style="filter:drop-shadow(0 0 8px {sc_color});"
+                    />
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
+                </div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
+            <div style="font-size:0.8rem;color:#6B7280;">Recruiter Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Gut Reaction ──────────────────────────────────────────────────────
+        if gut_text:
+            st.markdown(f"""
+            <div style="
+                background:linear-gradient(135deg,#1f0707 0%,#2a0d0d 100%);
+                border:1px solid #FF4B4B33;
+                border-radius:14px;
+                padding:20px 22px 18px 22px;
+                margin:0 0 18px 0;
+                position:relative;
+                overflow:hidden;
+            ">
+                <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#FF4B4B18;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
+                <div style="font-size:0.68rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">⚡ Gut Reaction</div>
+                <div style="font-size:1.05rem;color:#F3E7D1;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def render_br_section(title, icon, color, bg, start_idx, end_idx):
+            if start_idx is None:
+                return
+            section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
+            bullets = [_clean(re.sub(r'^[✅🚩📝]\s*', '', l.strip()))
+                       for l in section_lines if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
+            bullets = [b for b in bullets if b]
+            if not bullets:
+                return
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+                        display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
+                <span>{icon}</span> {title}
+                <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
+            </div>
+            """, unsafe_allow_html=True)
+            for b in bullets:
+                st.markdown(f"""
+                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
+                            padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
+                    <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
+                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("<div style='height:1px;background:#2a1a1a;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
+
+        render_br_section("What Caught My Eye", "✅", "#22C55E", "#0d2a1a", eye_idx, flags_idx)
+        render_br_section("Red Flags", "🚩", "#EF4444", "#2a0d0d", flags_idx, rewrite_idx)
+        render_br_section("If I Were Rewriting This", "📝", "#FF8C00", "#2a1f18", rewrite_idx, verdict_idx)
+
+        # Extract text for card — needed before rendering blocks
+        br_verdict_text = ""
+        br_roast_text = ""
+
+        # ── Verdict ──────────────────────────────────────────────────────────
+        if verdict_idx is not None:
+            verdict_end = linkedin_idx if linkedin_idx else len(lines)
+            verdict_lines = [l.strip() for l in lines[verdict_idx:verdict_end] if l.strip()]
+            br_verdict_text = _clean(verdict_lines[0]) if verdict_lines else ""
+            extra_lines = [_clean(l) for l in (verdict_lines[1:] if len(verdict_lines) > 1 else [])]
+            low_v = br_verdict_text.lower()
+            if "hire" in low_v and "maybe" not in low_v and "pass" not in low_v:
+                v_color = "#22C55E"; v_icon = "✅"
+            elif "maybe" in low_v:
+                v_color = "#EAB308"; v_icon = "🤔"
+            else:
+                v_color = "#EF4444"; v_icon = "❌"
+            st.markdown(f"""
+            <div style="background:linear-gradient(90deg,{v_color}22,#1a0505);border:1.5px solid {v_color}55;
+                        border-radius:12px;padding:16px 20px;margin:12px 0;">
+                <div style="font-size:0.72rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:6px;">⚖️ FINAL VERDICT</div>
+                <div style="font-size:1.3rem;font-weight:900;color:{v_color};margin-bottom:4px;">{v_icon} {br_verdict_text}</div>
+                {''.join(f'<div style="font-size:0.9rem;color:#9CA3AF;margin-top:4px;">{l}</div>' for l in extra_lines)}
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ── LinkedIn Roast ────────────────────────────────────────────────────
+        if linkedin_idx is not None:
+            roast_lines = [l.strip() for l in lines[linkedin_idx:] if l.strip()]
+            br_roast_text = _clean(" ".join(roast_lines))
+            st.markdown(f"""
+            <div style="background:linear-gradient(90deg,#2a0d2a,#1a0505);border:1.5px solid #A855F755;
+                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
+                <div style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:8px;">🔥 LINKEDIN ROAST</div>
+                <div style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{br_roast_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.session_state["last_roast"] = roast_result
+        _render_br_linkedin_card(score_val, sc_label, sc_grade, sc_color, br_verdict_text, br_roast_text)
+        share_text = f"I just got brutally roasted by the Brutal Recruiter 😤\nRecruiter Score: {score_val}/10 — {sc_label}\nWould you survive the roast? 🔥\n#ResumeRoaster #BrutalRecruiter #CareerTips #AI"
+        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
 
     else:
         # Fallback: original rendering for other personas
