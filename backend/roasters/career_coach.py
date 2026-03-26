@@ -2,6 +2,7 @@
 🧑‍🏫 Career Coach — Section-aware, actionable, typo-tolerant, punchy
 """
 
+import re
 from openai import OpenAI
 
 SYSTEM_PROMPT = """
@@ -81,4 +82,13 @@ Give your career coaching feedback in the format described in the system prompt.
         max_tokens=1200,
     )
 
-    return response.choices[0].message.content, None
+    content = response.choices[0].message.content
+    score_breakdown = _extract_score(content)
+    return content, score_breakdown
+
+
+def _extract_score(content: str):
+    match = re.search(r'Resume\s+Strength\s*:\s*(\d+)\s*/\s*10', content, re.IGNORECASE)
+    if match:
+        return [{"label": "Resume Strength", "score": int(match.group(1)), "out_of": 10}]
+    return None

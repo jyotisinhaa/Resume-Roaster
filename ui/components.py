@@ -401,9 +401,11 @@ def render_personality_selector() -> tuple[str, dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 #  LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
-def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: str, ov_grade: str, ov_color: str):
+def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: str, ov_grade: str, ov_color: str,
+                          roast_line: str = "", match_prob: str = "", recommendation: str = ""):
     """Render a screenshot-ready LinkedIn share card."""
     import streamlit as st
+    import json as _json
 
     desired_order = ["Keyword Coverage", "Impact Metrics", "Action Verbs", "ATS Formatting", "Skills Coverage"]
     label_to_item = {item.get("label", ""): item for item in score_breakdown}
@@ -431,8 +433,31 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
     circumference = round(2 * 3.14159 * 40, 1)
     dash = round(overall_score / 100 * circumference, 1)
 
-    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#FF8C00;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🔥 Share Your Results</div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:10px;">Screenshot this card or use the buttons below to share on LinkedIn.</div>', unsafe_allow_html=True)
+    # Build sub-score lines
+    sub_scores = ""
+    for label in desired_order:
+        item = label_to_item.get(label)
+        if item:
+            sub_scores += f"  • {label}: {item.get('score', 0)}/100\n"
+
+    roast_snippet = f'\n🔥 "{roast_line[:110]}{"…" if len(roast_line) > 110 else ""}"\n' if roast_line else ""
+    match_line    = f"\n{match_prob}" if match_prob else ""
+    rec_line      = f"\nFinal Recommendation: {recommendation}" if recommendation else ""
+
+    li_text = (
+        f"I just scanned my resume with the ATS Scanner on Resume Ripper AI 🤖\n\n"
+        f"ATS Score: {overall_score}/100 — {ov_label} (Grade {ov_grade})\n"
+        f"{match_line}\n"
+        f"\nScore Breakdown:\n{sub_scores}"
+        f"{roast_snippet}"
+        f"{rec_line}\n\n"
+        f"Would your resume survive the scan? 👀\n"
+        f"#ResumeRipper #ATSTips #JobSearch #CareerTips #AI"
+    )
+    li_text_json = _json.dumps(li_text)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#00C9FF;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🤖 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
     components.html(f"""
     <style>
     .li-card {{
@@ -516,7 +541,45 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
             <div class="li-sub">Would your resume survive?</div>
         </div>
     </div>
-    """, height=340)
+
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="saveATSCard()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#00C9FF;color:#000;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+        <button onclick="postATSLinkedIn()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+    </div>
+    <div id="ats-hint" style="
+        display:none;max-width:520px;margin:8px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    const ATS_LI_TEXT = {li_text_json};
+    function saveATSCard() {{
+        const card = document.querySelector('.li-card');
+        html2canvas(card, {{ backgroundColor:'#0a0f1e', scale:2, useCORS:true, logging:false }})
+        .then(canvas => {{
+            const link = document.createElement('a');
+            link.download = 'ats_scanner_score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.getElementById('ats-hint').style.display = 'block';
+            setTimeout(() => {{ document.getElementById('ats-hint').style.display = 'none'; }}, 4000);
+        }});
+    }}
+    function postATSLinkedIn() {{
+        window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(ATS_LI_TEXT), '_blank');
+    }}
+    </script>
+    """, height=430)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -695,10 +758,152 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     }}
 
     function postLinkedIn() {{
-        saveCardImage();
-        setTimeout(() => {{
-            window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(LI_TEXT), '_blank');
-        }}, 800);
+        window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(LI_TEXT), '_blank');
+    }}
+    </script>
+    """, height=420)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  CAREER COACH LINKEDIN SHARE CARD
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, closer_text: str,
+                             strengths: list = None, growth: list = None, actions: list = None):
+    """Render a screenshot-ready LinkedIn share card for the Career Coach."""
+    import json as _json, re as _re
+
+    circumference = round(2 * 3.14159 * 40, 1)
+    dash = round(score_val / 10 * circumference, 1)
+
+    def _cc_clean(text):
+        text = _re.sub(r'^#{1,6}\s*', '', text.strip())
+        text = _re.sub(r'\*\*', '', text)
+        text = _re.sub(r'\*(?!\s)', '', text)
+        text = _re.sub(r'^[-–—•🌟🎯🚀]\s*', '', text)
+        # Strip leading name (e.g. "Anurag, ..." or "Anurag! ...")
+        text = _re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
+        return text.strip()
+
+    clean_closer = _cc_clean(closer_text)
+    closer_display = (clean_closer[:120] + "…") if len(clean_closer) > 120 else clean_closer
+
+    li_text = (
+        f"Just got my resume reviewed by an AI Career Coach on Resume Ripper AI 🧑‍🏫\n\n"
+        f"Resume Strength: {score_val}/10 — {sc_label} (Grade {sc_grade})\n\n"
+        f"💬 \"{clean_closer}\"\n\n"
+        f"Would you like a free resume review? 🚀\n"
+        f"#ResumeRipper #CareerCoach #JobSearch #CareerTips #AI"
+    )
+    li_text_json = _json.dumps(li_text)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#22C55E;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🧑‍🏫 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
+    components.html(f"""
+    <style>
+    .cc-card {{
+        background:linear-gradient(135deg,#051a0a 0%,#0d2a14 60%,#051a0a 100%);
+        border:1px solid #1a5a2a;
+        border-radius:18px;
+        padding:22px 20px 18px 20px;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+        max-width:520px;
+        margin:0 auto;
+        position:relative;
+        overflow:hidden;
+        box-shadow:0 8px 40px #22C55E18;
+    }}
+    .cc-card::before {{
+        content:'';
+        position:absolute;
+        top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);
+    }}
+    .cc-header {{ display:flex;justify-content:space-between;align-items:center;margin-bottom:18px; }}
+    .cc-brand  {{ font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase; }}
+    .cc-badge  {{ font-size:0.7rem;color:#22C55E;font-weight:800;letter-spacing:1px;
+                  background:#22C55E18;border:1px solid #22C55E44;border-radius:20px;padding:3px 10px; }}
+    .cc-hero   {{ display:flex;align-items:center;gap:20px;margin-bottom:18px; }}
+    .cc-closer-box {{
+        background:#0a2a12;border-left:3px solid #22C55E;border-radius:8px;
+        padding:10px 14px;margin-bottom:16px;
+        font-size:0.82rem;color:#BBF7D0;font-style:italic;line-height:1.5;
+    }}
+    .cc-footer {{
+        border-top:1px solid #1a3a22;padding-top:12px;
+        display:flex;justify-content:space-between;align-items:center;
+    }}
+    .cc-cta {{ font-size:0.78rem;color:#FF8C00;font-weight:700; }}
+    .cc-sub  {{ font-size:0.72rem;color:#374151; }}
+    </style>
+    <div class="cc-card">
+        <div class="cc-header">
+            <div class="cc-brand">🔥 Resume Ripper AI</div>
+            <div class="cc-badge">🧑‍🏫 Career Coach</div>
+        </div>
+        <div class="cc-hero">
+            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="#1a3a22" stroke-width="9"/>
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 45 45)"
+                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Resume Strength</div>
+                <div style="margin-top:8px;">
+                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                </div>
+            </div>
+        </div>
+        <div class="cc-closer-box">💬 "{closer_display}"</div>
+        <div class="cc-footer">
+            <div class="cc-cta">🔥 Try Resume Ripper AI — it's free!</div>
+            <div class="cc-sub">Level up your resume today.</div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="saveCCCard()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#22C55E;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+        <button onclick="postCCLinkedIn()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+    </div>
+    <div id="cc-hint" style="
+        display:none;max-width:520px;margin:8px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    const CC_LI_TEXT = {li_text_json};
+    function saveCCCard() {{
+        const card = document.querySelector('.cc-card');
+        html2canvas(card, {{ backgroundColor:'#051a0a', scale:2, useCORS:true, logging:false }})
+        .then(canvas => {{
+            const link = document.createElement('a');
+            link.download = 'career_coach_score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.getElementById('cc-hint').style.display = 'block';
+            setTimeout(() => {{ document.getElementById('cc-hint').style.display = 'none'; }}, 4000);
+        }});
+    }}
+    function postCCLinkedIn() {{
+        window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(CC_LI_TEXT), '_blank');
     }}
     </script>
     """, height=420)
@@ -1110,10 +1315,31 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         </div>
         """, unsafe_allow_html=True)
 
+        # Extract roast one-liner for share text
+        ats_roast_line = ""
+        if roast_idx is not None:
+            roast_section = lines[roast_idx + 1: final_idx] if final_idx else lines[roast_idx + 1:]
+            for l in roast_section:
+                stripped = l.strip()
+                if stripped and not stripped.upper().startswith("ROAST LEVEL"):
+                    ats_roast_line = stripped
+                    break
+
+        # Extract match probability
+        ats_match_prob = ""
+        if match_idx is not None:
+            match_section = lines[match_idx + 1: detected_idx] if detected_idx else lines[match_idx + 1:]
+            for l in match_section:
+                stripped = l.strip().lstrip("-•").strip()
+                if stripped:
+                    ats_match_prob = stripped
+                    break
+
         st.session_state["last_roast"] = roast_result
-        _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color)
+        _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color,
+                              ats_roast_line, ats_match_prob, display_verdict)
         share_text = f"I just scored {overall_score}/100 on the ATS Scanner 🤖\nHere's my resume breakdown — would yours survive? 👀\n🔥 Try it free → Resume Ripper AI\n#ResumeRoaster #ATSTips #JobSearch #CareerTips #AI"
-        _render_share_box(share_text, roast_result, sel["name"])
+        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
 
     elif sel.get("name", "").lower() == "brutal recruiter":
         import re
@@ -1305,6 +1531,247 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         st.session_state["last_roast"] = roast_result
         _render_br_linkedin_card(score_val, sc_label, sc_grade, sc_color, br_verdict_text, br_roast_text)
         share_text = f"I just got brutally roasted by the Brutal Recruiter 😤\nRecruiter Score: {score_val}/10 — {sc_label}\nWould you survive the roast? 🔥\n#ResumeRoaster #BrutalRecruiter #CareerTips #AI"
+        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+
+    elif sel.get("name", "").lower() == "career coach":
+        import re
+
+        lines = roast_result.split('\n')
+
+        def find_section_cc(header):
+            for i, l in enumerate(lines):
+                if header.upper() in l.upper():
+                    return i
+            return None
+
+        def _clean_cc(text: str) -> str:
+            text = text.strip()
+            text = re.sub(r'^#{1,6}\s*', '', text)
+            text = re.sub(r'\*\*', '', text)
+            text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'^[-–—•🌟🎯🚀💪]\s*', '', text)
+            return text.strip()
+
+        # Score
+        score_val = None
+        if score_breakdown:
+            score_val = score_breakdown[0].get("score", 7)
+        else:
+            m = re.search(r'Resume\s+Strength\s*:\s*(\d+)\s*/\s*10', roast_result, re.IGNORECASE)
+            if m:
+                score_val = int(m.group(1))
+        if score_val is None:
+            score_val = 7
+
+        if score_val >= 8:
+            sc_color = "#22C55E"; sc_grade = "A"; sc_label = "STRONG"
+        elif score_val >= 6:
+            sc_color = "#3B82F6"; sc_grade = "B"; sc_label = "SOLID"
+        elif score_val >= 4:
+            sc_color = "#EAB308"; sc_grade = "C"; sc_label = "DEVELOPING"
+        else:
+            sc_color = "#EF4444"; sc_grade = "D"; sc_label = "NEEDS WORK"
+
+        circumference_cc = round(2 * 3.14159 * 54, 1)
+        dash_cc = round(score_val / 10 * circumference_cc, 1)
+
+        # Section indices
+        score_idx    = find_section_cc("RESUME STRENGTH")
+        strengths_idx = find_section_cc("YOUR STRENGTHS")
+        growth_idx   = find_section_cc("GROWTH AREAS")
+        action_idx   = find_section_cc("ACTION PLAN")
+
+        # Opening observation = lines before score line
+        opening_lines = lines[:score_idx] if score_idx else []
+        opening_text = _clean_cc(" ".join(l.strip() for l in opening_lines if l.strip()))
+        opening_text = re.sub(r'^[A-Z][A-Z\s]{2,30}\s+', '', opening_text).strip()
+
+        # Closer = lines after ACTION PLAN section
+        closer_text = ""
+        if action_idx is not None:
+            action_lines = lines[action_idx + 1:]
+            # find the last non-bullet paragraph as the closer
+            closer_candidates = [
+                _clean_cc(l) for l in reversed(action_lines)
+                if l.strip() and not l.strip().startswith(('-', '•', '*'))
+                and not re.fullmatch(r'[-_*\s]{2,}', l.strip())
+            ]
+            closer_text = closer_candidates[0] if closer_candidates else ""
+
+        # ── Hero Score Card ──────────────────────────────────────────────────
+        st.markdown(f"""
+        <div style="
+            background:linear-gradient(135deg,#051a0a 0%,#0d2a14 60%,#051a0a 100%);
+            border:1px solid {sc_color}33;
+            border-radius:20px;
+            padding:28px 24px 22px 24px;
+            margin:16px 0 20px 0;
+            text-align:center;
+            position:relative;overflow:hidden;
+        ">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
+            <div style="font-size:0.75rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🧑‍🏫 CAREER COACH ASSESSMENT</div>
+            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="#0d2a14" stroke-width="12"/>
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
+                        stroke-dasharray="{dash_cc} {circumference_cc}" stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                        style="filter:drop-shadow(0 0 8px {sc_color});"
+                    />
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
+                </div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
+            <div style="font-size:0.8rem;color:#6B7280;">Resume Strength &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Opening Observation ───────────────────────────────────────────────
+        if opening_text:
+            st.markdown(f"""
+            <div style="
+                background:linear-gradient(135deg,#071a0a 0%,#0f2a14 100%);
+                border:1px solid #22C55E33;
+                border-radius:14px;
+                padding:20px 22px 18px 22px;
+                margin:0 0 18px 0;
+                position:relative;overflow:hidden;
+            ">
+                <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#22C55E14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
+                <div style="font-size:0.68rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">💬 First Impression</div>
+                <div style="font-size:1.05rem;color:#D1FAE5;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def render_cc_section(title, icon, color, bg, start_idx, end_idx):
+            if start_idx is None:
+                return
+            section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
+
+            # Parse into items: each item is a (bullet_text, [example_lines]) tuple
+            items = []
+            current_bullet = None
+            current_examples = []
+            in_example = False
+
+            for raw in section_lines:
+                line = raw.strip()
+                if not line or re.fullmatch(r'[-_*\s]{2,}', line):
+                    continue
+                cleaned = _clean_cc(line)
+                if not cleaned:
+                    continue
+
+                # Detect start of an Example block
+                if re.match(r'^Example\s*:', cleaned, re.IGNORECASE):
+                    in_example = True
+                    example_content = re.sub(r'^Example\s*:\s*', '', cleaned, flags=re.IGNORECASE).strip()
+                    if example_content:
+                        current_examples.append(example_content)
+                    continue
+
+                # If line looks like a continuation of an example (indented or part of a list under Example)
+                if in_example and (raw.startswith('  ') or raw.startswith('\t') or line.startswith('-')):
+                    current_examples.append(cleaned)
+                    continue
+
+                # New bullet point — save the previous one
+                in_example = False
+                if current_bullet:
+                    items.append((current_bullet, current_examples))
+                current_bullet = cleaned
+                current_examples = []
+
+            if current_bullet:
+                items.append((current_bullet, current_examples))
+
+            if not items:
+                return
+
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+                        display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
+                <span>{icon}</span> {title}
+                <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            for bullet, examples in items:
+                example_html = ""
+                if examples:
+                    example_lines_html = "".join(
+                        f'<div style="margin-top:4px;color:#9CA3AF;font-size:0.82rem;line-height:1.5;">{e}</div>'
+                        for e in examples if e
+                    )
+                    example_html = f"""
+                    <div style="margin-top:8px;background:#0a0a0a;border-radius:6px;padding:8px 12px;
+                                border-left:2px solid {color}55;">
+                        <div style="font-size:0.68rem;color:{color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">EXAMPLE</div>
+                        {example_lines_html}
+                    </div>"""
+
+                st.markdown(f"""
+                <div style="background:{bg};border-radius:8px;padding:10px 14px;margin-bottom:10px;border-left:3px solid {color};">
+                    <div style="display:flex;align-items:flex-start;gap:10px;">
+                        <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
+                        <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{bullet}</span>
+                    </div>
+                    {example_html}
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("<div style='height:1px;background:#0d2a14;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
+
+        render_cc_section("Your Strengths",  "🌟", "#22C55E", "#071a0a", strengths_idx, growth_idx)
+        render_cc_section("Growth Areas",    "🎯", "#3B82F6", "#071522", growth_idx,    action_idx)
+        render_cc_section("Action Plan",     "🚀", "#F59E0B", "#1a1507", action_idx,    None)
+
+        # ── Motivational Closer ───────────────────────────────────────────────
+        if closer_text:
+            st.markdown(f"""
+            <div style="background:linear-gradient(90deg,#22C55E22,#071a0a);border:1.5px solid #22C55E44;
+                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
+                <div style="font-size:0.72rem;color:#22C55E;letter-spacing:2px;font-weight:800;margin-bottom:6px;">✨ COACH'S NOTE</div>
+                <div style="font-size:1rem;color:#D1FAE5;font-style:italic;line-height:1.6;">{closer_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def _extract_cc_bullets(start, end, limit=2):
+            if start is None:
+                return []
+            section = lines[start + 1: end] if end else lines[start + 1:]
+            result = []
+            for raw in section:
+                line = raw.strip()
+                if not line or re.fullmatch(r'[-_*\s]{2,}', line):
+                    continue
+                if re.match(r'^Example\s*:', line, re.IGNORECASE):
+                    continue
+                cleaned = _clean_cc(line)
+                if cleaned and len(cleaned) > 8:
+                    result.append(cleaned)
+                if len(result) >= limit:
+                    break
+            return result
+
+        cc_strengths = _extract_cc_bullets(strengths_idx, growth_idx)
+        cc_growth    = _extract_cc_bullets(growth_idx, action_idx)
+        cc_actions   = _extract_cc_bullets(action_idx, None)
+
+        st.session_state["last_roast"] = roast_result
+        _render_cc_linkedin_card(score_val, sc_label, sc_grade, sc_color,
+                                 closer_text or opening_text,
+                                 strengths=cc_strengths, growth=cc_growth, actions=cc_actions)
+        share_text = (
+            f"Just had my resume reviewed by an AI Career Coach 🧑‍🏫\n"
+            f"Resume Strength: {score_val}/10 — {sc_label}\n"
+            f"Getting actionable feedback to level up my job search! 🚀\n"
+            f"#ResumeRipper #CareerCoach #JobSearch #CareerTips #AI"
+        )
         _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
 
     else:
