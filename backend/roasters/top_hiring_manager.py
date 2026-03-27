@@ -2,6 +2,7 @@
 Top Hiring Manager — Professional, decisive, and role-focused feedback
 """
 
+import re
 from openai import OpenAI
 
 SYSTEM_PROMPT = """
@@ -103,4 +104,12 @@ def roast(resume_text: str, api_key: str) -> tuple:
         max_tokens=1024,
     )
 
-    return response.choices[0].message.content, None
+    content = response.choices[0].message.content
+    return content, _extract_score(content)
+
+
+def _extract_score(content: str):
+    match = re.search(r'Shortlist Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)
+    if match:
+        return [{"label": "Shortlist Score", "score": int(match.group(1)), "out_of": 10}]
+    return None

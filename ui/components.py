@@ -1053,6 +1053,161 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+#  TOP HIRING MANAGER LINKEDIN SHARE CARD
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str,
+                              verdict_text: str, interview_decision: str):
+    import json as _json, re as _re
+
+    circumference = round(2 * 3.14159 * 40, 1)
+    dash = round(score_val / 10 * circumference, 1)
+
+    def _hm_clean(text):
+        text = _re.sub(r'^#{1,6}\s*', '', text.strip())
+        text = _re.sub(r'\*\*', '', text)
+        text = _re.sub(r'\*(?!\s)', '', text)
+        text = _re.sub(r'^[-–—•✔️⚠️📈💼👀🏆]\s*', '', text)
+        text = _re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
+        return text.strip()
+
+    clean_verdict = _hm_clean(verdict_text)
+    clean_interview = _hm_clean(interview_decision)
+
+    low_v = clean_verdict.lower()
+    if "shortlist" in low_v:
+        v_color = "#22C55E"; v_icon = "✅ SHORTLIST"
+    elif "consider" in low_v:
+        v_color = "#F59E0B"; v_icon = "🤔 CONSIDER"
+    else:
+        v_color = "#EF4444"; v_icon = "❌ PASS"
+
+    low_i = clean_interview.lower()
+    if "yes" in low_i:
+        i_color = "#22C55E"; i_text = "Yes — Would Interview"
+    elif "maybe" in low_i or "possibly" in low_i:
+        i_color = "#F59E0B"; i_text = "Maybe"
+    else:
+        i_color = "#EF4444"; i_text = "No"
+
+    li_text = (
+        f"Just had my resume assessed by a Top Hiring Manager on Resume Ripper AI 🏆\n\n"
+        f"Shortlist Score: {score_val}/10 — {sc_label} (Grade {sc_grade})\n"
+        f"Verdict: {clean_verdict}\n"
+        f"Would I be interviewed? → {clean_interview}\n\n"
+        f"Would your resume make the shortlist? 👀\n"
+        f"#ResumeRipper #HiringManager #JobSearch #CareerTips #AI"
+    )
+    li_text_json = _json.dumps(li_text)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#F59E0B;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🏆 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
+    components.html(f"""
+    <style>
+    .hm-card {{
+        background:linear-gradient(135deg,#0f0c00 0%,#1f1800 60%,#0f0c00 100%);
+        border:1px solid #5a3a00;
+        border-radius:18px;
+        padding:22px 20px 18px 20px;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+        max-width:520px;
+        margin:0 auto;
+        position:relative;
+        overflow:hidden;
+        box-shadow:0 8px 40px #F59E0B18;
+    }}
+    .hm-card::before {{
+        content:'';position:absolute;top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);
+    }}
+    .hm-header {{ display:flex;justify-content:space-between;align-items:center;margin-bottom:18px; }}
+    .hm-brand  {{ font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase; }}
+    .hm-badge  {{ font-size:0.7rem;color:#F59E0B;font-weight:800;letter-spacing:1px;
+                  background:#F59E0B18;border:1px solid #F59E0B44;border-radius:20px;padding:3px 10px; }}
+    .hm-hero   {{ display:flex;align-items:center;gap:20px;margin-bottom:18px; }}
+    .hm-footer {{
+        border-top:1px solid #2a1f00;padding-top:12px;
+        display:flex;justify-content:space-between;align-items:center;
+    }}
+    </style>
+    <div class="hm-card">
+        <div class="hm-header">
+            <div class="hm-brand">🔥 Resume Ripper AI</div>
+            <div class="hm-badge">🏆 Top Hiring Manager</div>
+        </div>
+        <div class="hm-hero">
+            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1f00" stroke-width="9"/>
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 45 45)"
+                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Shortlist Score</div>
+                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                    <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
+                </div>
+            </div>
+        </div>
+        <div style="background:#1f1800;border-left:3px solid {i_color};border-radius:8px;padding:10px 14px;margin-bottom:16px;">
+            <div style="font-size:0.68rem;color:{i_color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">👀 INTERVIEW DECISION</div>
+            <div style="font-size:0.92rem;color:#FEF3C7;font-weight:700;">{i_text}</div>
+        </div>
+        <div class="hm-footer">
+            <div style="font-size:0.78rem;color:#FF8C00;font-weight:700;">🔥 Try Resume Ripper AI — it's free!</div>
+            <div style="font-size:0.72rem;color:#374151;">Would you make the shortlist?</div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="saveHMCard()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#F59E0B;color:#000;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+        <button onclick="postHMLinkedIn()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+    </div>
+    <div id="hm-hint" style="
+        display:none;max-width:520px;margin:8px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    const HM_LI_TEXT = {li_text_json};
+    function saveHMCard() {{
+        const card = document.querySelector('.hm-card');
+        html2canvas(card, {{ backgroundColor:'#0f0c00', scale:2, useCORS:true, logging:false }})
+        .then(canvas => {{
+            const link = document.createElement('a');
+            link.download = 'hiring_manager_score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.getElementById('hm-hint').style.display = 'block';
+            setTimeout(() => {{ document.getElementById('hm-hint').style.display = 'none'; }}, 4000);
+        }});
+    }}
+    function postHMLinkedIn() {{
+        window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(HM_LI_TEXT), '_blank');
+    }}
+    </script>
+    """, height=430)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 #  SHARE BOX
 # ═══════════════════════════════════════════════════════════════════════════════
 def _render_share_box(share_text: str, roast_result: str, sel_name: str, show_linkedin: bool = True):
@@ -2080,6 +2235,219 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             f"Cringe Score: {score_val}/10 — {sc_label}\n"
             f"Would your resume survive? 😂\n"
             f"#ResumeRipper #InternetTroll #JobSearch #CareerTips #AI"
+        )
+        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+
+    elif sel.get("name", "").lower() == "top hiring manager":
+        import re
+
+        lines = roast_result.split('\n')
+
+        def find_section_hm(header):
+            for i, l in enumerate(lines):
+                if header.upper() in l.upper():
+                    return i
+            return None
+
+        def _clean_hm(text: str) -> str:
+            text = text.strip()
+            text = re.sub(r'^#{1,6}\s*', '', text)
+            text = re.sub(r'\*\*', '', text)
+            text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'^[-–—•✔️⚠️📈💼👀🏆]\s*', '', text)
+            text = re.sub(r'(?i)^verdict\s*:\s*', '', text)
+            text = re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
+            return text.strip()
+
+        # Score
+        score_val = None
+        if score_breakdown:
+            score_val = score_breakdown[0].get("score", 6)
+        else:
+            m = re.search(r'Shortlist Score[:\s]*(\d+)\s*/\s*10', roast_result, re.IGNORECASE)
+            if m:
+                score_val = int(m.group(1))
+        if score_val is None:
+            score_val = 6
+
+        if score_val >= 8:
+            sc_color = "#22C55E"; sc_grade = "A"; sc_label = "STRONG HIRE"
+        elif score_val >= 6:
+            sc_color = "#F59E0B"; sc_grade = "B"; sc_label = "CONSIDER"
+        elif score_val >= 4:
+            sc_color = "#FF8C00"; sc_grade = "C"; sc_label = "BORDERLINE"
+        else:
+            sc_color = "#EF4444"; sc_grade = "D"; sc_label = "PASS"
+
+        circumference_hm = round(2 * 3.14159 * 54, 1)
+        dash_hm = round(score_val / 10 * circumference_hm, 1)
+
+        # Section indices
+        score_idx    = find_section_hm("SHORTLIST SCORE")
+        works_idx    = find_section_hm("WHAT WORKS")
+        concerns_idx = find_section_hm("CONCERNS")
+        improve_idx  = find_section_hm("IMPROVEMENT PLAN")
+        signal_idx   = find_section_hm("HIRING SIGNAL")
+        verdict_idx  = find_section_hm("VERDICT")
+        interview_idx = find_section_hm("WOULD I INTERVIEW")
+
+        # Instant impression = lines before score
+        impression_lines = lines[:score_idx] if score_idx else []
+        impression_text = _clean_hm(" ".join(l.strip() for l in impression_lines if l.strip()))
+        impression_text = re.sub(r'(?i)^instant\s+impression\s*:\s*', '', impression_text).strip()
+
+        # Verdict text
+        hm_verdict_text = ""
+        if verdict_idx is not None:
+            end = interview_idx if interview_idx else len(lines)
+            for l in lines[verdict_idx: end]:
+                c = _clean_hm(l)
+                if c and len(c) > 3:
+                    hm_verdict_text = c
+                    break
+
+        # Interview decision
+        hm_interview_text = ""
+        if interview_idx is not None:
+            for l in lines[interview_idx:]:
+                c = _clean_hm(l)
+                if c and len(c) > 2:
+                    hm_interview_text = c
+                    break
+
+        # Hiring signal text
+        hm_signal_text = ""
+        if signal_idx is not None:
+            sig_end = verdict_idx if verdict_idx else len(lines)
+            sig_lines = [_clean_hm(l) for l in lines[signal_idx + 1: sig_end]
+                         if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
+            hm_signal_text = " ".join(b for b in sig_lines if b)
+
+        # Verdict color
+        low_v = hm_verdict_text.lower()
+        if "shortlist" in low_v:
+            v_color = "#22C55E"; v_icon = "✅ SHORTLIST"
+        elif "consider" in low_v:
+            v_color = "#F59E0B"; v_icon = "🤔 CONSIDER"
+        else:
+            v_color = "#EF4444"; v_icon = "❌ PASS"
+
+        # Interview decision color
+        low_i = hm_interview_text.lower()
+        if "→ yes" in low_i or low_i.endswith("yes"):
+            i_color = "#22C55E"
+        elif "maybe" in low_i or "possibly" in low_i:
+            i_color = "#F59E0B"
+        else:
+            i_color = "#EF4444"
+
+        # ── Hero Score Card ──────────────────────────────────────────────────
+        st.markdown(f"""
+        <div style="
+            background:linear-gradient(135deg,#0f0c00 0%,#1f1800 60%,#0f0c00 100%);
+            border:1px solid {sc_color}33;
+            border-radius:20px;
+            padding:28px 24px 22px 24px;
+            margin:16px 0 20px 0;
+            text-align:center;
+            position:relative;overflow:hidden;
+        ">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
+            <div style="font-size:0.75rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🏆 TOP HIRING MANAGER ASSESSMENT</div>
+            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1f1800" stroke-width="12"/>
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
+                        stroke-dasharray="{dash_hm} {circumference_hm}" stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                        style="filter:drop-shadow(0 0 8px {sc_color});"
+                    />
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
+                </div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
+            <div style="font-size:0.8rem;color:#6B7280;">Shortlist Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Instant Impression ───────────────────────────────────────────────
+        if impression_text:
+            st.markdown(f"""
+            <div style="
+                background:linear-gradient(135deg,#0f0c00 0%,#1f1800 100%);
+                border:1px solid #F59E0B33;
+                border-radius:14px;
+                padding:20px 22px 18px 22px;
+                margin:0 0 18px 0;
+                position:relative;overflow:hidden;
+            ">
+                <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#F59E0B14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
+                <div style="font-size:0.68rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:10px;">⚡ INSTANT IMPRESSION</div>
+                <div style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def render_hm_section(title, icon, color, bg, start_idx, end_idx):
+            if start_idx is None:
+                return
+            section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
+            bullets = [_clean_hm(l) for l in section_lines
+                       if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
+            bullets = [b for b in bullets if b and len(b) > 4]
+            if not bullets:
+                return
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+                        display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
+                <span>{icon}</span> {title}
+                <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
+            </div>
+            """, unsafe_allow_html=True)
+            for b in bullets:
+                st.markdown(f"""
+                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
+                            padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
+                    <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
+                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("<div style='height:1px;background:#1f1800;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
+
+        render_hm_section("What Works",       "✔️", "#22C55E", "#071a0a", works_idx,    concerns_idx)
+        render_hm_section("Concerns",         "⚠️", "#EF4444", "#2a0d0d", concerns_idx, improve_idx)
+        render_hm_section("Improvement Plan", "📈", "#F59E0B", "#1a1507", improve_idx,  signal_idx)
+
+        # ── Hiring Signal ────────────────────────────────────────────────────
+        if hm_signal_text:
+            st.markdown(f"""
+            <div style="background:linear-gradient(90deg,#F59E0B22,#0f0c00);border:1.5px solid #F59E0B55;
+                        border-radius:12px;padding:16px 20px;margin:12px 0;">
+                <div style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:6px;">💼 HIRING SIGNAL</div>
+                <div style="font-size:0.95rem;color:#FEF3C7;line-height:1.6;">{hm_signal_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ── Verdict + Interview Decision ─────────────────────────────────────
+        if hm_verdict_text or hm_interview_text:
+            st.markdown(f"""
+            <div style="display:flex;gap:12px;margin:12px 0 18px 0;flex-wrap:wrap;">
+                {'<div style="flex:1;min-width:180px;background:linear-gradient(90deg,' + v_color + '22,#0f0c00);border:1.5px solid ' + v_color + '55;border-radius:12px;padding:14px 16px;"><div style="font-size:0.68rem;color:' + v_color + ';letter-spacing:2px;font-weight:800;margin-bottom:6px;">⚖️ VERDICT</div><div style="font-size:1.1rem;font-weight:900;color:' + v_color + ';">' + v_icon + '</div><div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">' + hm_verdict_text + '</div></div>' if hm_verdict_text else ''}
+                {'<div style="flex:1;min-width:180px;background:linear-gradient(90deg,' + i_color + '22,#0f0c00);border:1.5px solid ' + i_color + '55;border-radius:12px;padding:14px 16px;"><div style="font-size:0.68rem;color:' + i_color + ';letter-spacing:2px;font-weight:800;margin-bottom:6px;">👀 INTERVIEW?</div><div style="font-size:1rem;font-weight:700;color:' + i_color + ';">' + hm_interview_text + '</div></div>' if hm_interview_text else ''}
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.session_state["last_roast"] = roast_result
+        _render_hm_linkedin_card(score_val, sc_label, sc_grade, sc_color,
+                                  hm_verdict_text, hm_interview_text)
+        share_text = (
+            f"Just had my resume assessed by a Top Hiring Manager on Resume Ripper AI 🏆\n"
+            f"Shortlist Score: {score_val}/10 — {sc_label}\n"
+            f"Would your resume make the shortlist? 👀\n"
+            f"#ResumeRipper #HiringManager #JobSearch #CareerTips #AI"
         )
         _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
 
