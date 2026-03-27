@@ -120,7 +120,7 @@ def render_hero():
 def render_how_it_works():
     """Render the 3-step how-it-works cards."""
     st.markdown("""
-    <div class="section-label" style="font-size:2.2rem;font-weight:900;letter-spacing:2.5px;margin-bottom:2.2rem;margin-top:2.7rem;">How It Works</div>
+    <div class="section-label" style="margin-top:2rem;">How It Works</div>
     <div class="steps-row" style="display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem;margin:2.8rem 0;">
         <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
             <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">01</div>
@@ -232,6 +232,8 @@ PERSONALITIES = {
         "icon": "😤",
         "name": "Brutal Recruiter",
         "tagline": "No mercy. Your resume has 6 seconds.",
+        "description": "Unfiltered feedback matching real recruiter snap-judgements",
+        "badge": "Most Direct",
         "accent_from": "#FF4B4B",
         "accent_to": "#CC0000",
     },
@@ -239,6 +241,8 @@ PERSONALITIES = {
         "icon": "🤖",
         "name": "ATS Scanner",
         "tagline": "Beep boop. Scanning for red flags.",
+        "description": "Algorithm-grade keyword & formatting analysis",
+        "badge": "Data-Driven",
         "accent_from": "#00C9FF",
         "accent_to": "#0066FF",
     },
@@ -246,6 +250,8 @@ PERSONALITIES = {
         "icon": "🧑‍🏫",
         "name": "Career Coach",
         "tagline": "Tough love with a growth mindset.",
+        "description": "Structured guidance to unlock your career potential",
+        "badge": "Most Encouraging",
         "accent_from": "#22C55E",
         "accent_to": "#16A34A",
     },
@@ -253,13 +259,17 @@ PERSONALITIES = {
         "icon": "🧌",
         "name": "Internet Troll",
         "tagline": "Maximum sarcasm. Zero chill.",
+        "description": "Savage humor wrapped around genuinely useful advice",
+        "badge": "Most Entertaining",
         "accent_from": "#A855F7",
         "accent_to": "#7C3AED",
     },
     "top_hiring_manager": {
         "icon": "👔",
         "name": "Top Hiring Manager",
-        "tagline": "Seasoned leader. Seeks excellence in any industry.",
+        "tagline": "Seasoned leader. Seeks excellence.",
+        "description": "Executive-level perspective on your hiring potential",
+        "badge": "Most Authoritative",
         "accent_from": "#F59E0B",
         "accent_to": "#D97706",
     },
@@ -269,16 +279,22 @@ PERSONALITIES = {
 def _card_html(key: str, p: dict, is_selected: bool) -> str:
     """Generate HTML for a single personality card."""
     sel_cls = " selected" if is_selected else ""
+    af, at = p["accent_from"], p["accent_to"]
+    badge = p.get("badge", "")
+    desc  = p.get("description", "")
     return (
         f'<div class="persona-card{sel_cls}" data-persona="{key}" '
-        f'style="--accent-grad: linear-gradient(90deg, {p["accent_from"]}, {p["accent_to"]}); '
-        f'--accent-color: {p["accent_from"]}; '
-        f'--accent-glow: {p["accent_from"]}33; '
-        f'--accent-glow-inner: {p["accent_from"]}0a;">'
-        f'  <div class="persona-check">✓</div>'
-        f'  <div class="persona-icon">{p["icon"]}</div>'
-        f'  <div class="persona-name">{p["name"]}</div>'
-        f'  <div class="persona-tagline">{p["tagline"]}</div>'
+        f'style="--accent-grad:linear-gradient(135deg,{af},{at});'
+        f'--accent-color:{af};--accent-glow:{af}44;--accent-glow-inner:{af}0d;">'
+        f'<div class="persona-check">✓</div>'
+        f'<div class="pc-badge" style="color:{af};background:{af}18;border:1px solid {af}33;">{badge}</div>'
+        f'<div class="pc-icon-ring" style="background:linear-gradient(135deg,{af}18,{at}18);border:2px solid {af}2e;">'
+        f'<span class="persona-icon">{p["icon"]}</span>'
+        f'</div>'
+        f'<div class="persona-name">{p["name"]}</div>'
+        f'<div class="persona-tagline">{p["tagline"]}</div>'
+        f'<div class="pc-sep" style="background:linear-gradient(90deg,{af}33,transparent);"></div>'
+        f'<div class="pc-desc">{desc}</div>'
         f'</div>'
     )
 
@@ -296,15 +312,11 @@ def render_personality_selector() -> tuple[str, dict]:
     persona_keys = list(PERSONALITIES.keys())
     selected_key = st.session_state["selected_personality"]
 
-    row1_html = '<div class="persona-grid">' + ''.join(
-        _card_html(k, PERSONALITIES[k], k == selected_key) for k in persona_keys[:3]
+    grid_html = '<div class="pc-grid">' + ''.join(
+        _card_html(k, PERSONALITIES[k], k == selected_key) for k in persona_keys
     ) + '</div>'
 
-    row2_html = '<div class="persona-grid-row2">' + ''.join(
-        _card_html(k, PERSONALITIES[k], k == selected_key) for k in persona_keys[3:]
-    ) + '</div>'
-
-    st.markdown(row1_html + row2_html, unsafe_allow_html=True)
+    st.markdown(grid_html, unsafe_allow_html=True)
 
     persona_labels = [f"{PERSONALITIES[k]['icon']} {PERSONALITIES[k]['name']}" for k in persona_keys]
     default_idx = persona_keys.index(selected_key)
@@ -386,11 +398,18 @@ def render_personality_selector() -> tuple[str, dict]:
     </script>
     """, height=0)
 
+    af, at = sel["accent_from"], sel["accent_to"]
     st.markdown(
-        f'<div class="persona-selected-banner">'
-        f'  <span class="sel-icon">{sel["icon"]}</span> '
-        f'  <span class="sel-name">{sel["name"]}</span> — '
-        f'  <span class="sel-tag">{sel["tagline"]}</span>'
+        f'<div class="persona-selected-banner" style="border-color:{af};box-shadow:0 0 24px {af}22;">'
+        f'  <div class="psb-left">'
+        f'    <div class="psb-icon" style="background:linear-gradient(135deg,{af}22,{at}22);border:1.5px solid {af}44;box-shadow:0 4px 16px {af}22;">{sel["icon"]}</div>'
+        f'    <div class="psb-info">'
+        f'      <div class="psb-label">Selected Roaster</div>'
+        f'      <div class="psb-name" style="color:{af};">{sel["name"]}</div>'
+        f'      <div class="psb-tag">{sel["tagline"]}</div>'
+        f'    </div>'
+        f'  </div>'
+        f'  <div class="psb-pill" style="background:linear-gradient(135deg,{af},{at});">{sel.get("badge","")}</div>'
         f'</div>',
         unsafe_allow_html=True,
     )

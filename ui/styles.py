@@ -63,7 +63,7 @@ def get_css() -> str:
         text-transform: uppercase;
         color: #FF8C00;
         margin-bottom: 2.2rem;
-        margin-top: 2.7rem;
+        margin-top: 4rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -234,9 +234,8 @@ def get_css() -> str:
         padding: 2.5rem 2rem 3.5rem !important;
         transition: border-color 0.3s, box-shadow 0.3s !important;
         text-align: center !important;
-        max-width: 100% !important;
-        width: calc(100% + 4rem) !important;
-        margin-left: -2rem !important;
+        width: 100% !important;
+        margin-left: 0 !important;
     }
     [data-testid="stFileUploader"]:hover {
         border-color: #FF8C0077 !important;
@@ -460,110 +459,212 @@ def get_css() -> str:
     }
 
     /* ── Personality Cards ── */
-    .persona-grid {
+    .pc-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    .persona-grid-row2 {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        max-width: 67%;
-        margin-left: auto;
-        margin-right: auto;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.9rem;
+        margin-bottom: 1.2rem;
+        width: 100%;
     }
     .persona-card {
-        background: #15100c;
-        border: 2px solid #2a1f18;
-        border-radius: 16px;
-        padding: 1.5rem 1.2rem 1.3rem;
+        background: #0f0d0b;
+        border: 1.5px solid #2a1f18;
+        border-radius: 20px;
+        padding: 1.3rem 0.9rem 1.1rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
         user-select: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
+    /* Gradient top accent bar */
     .persona-card::before {
         content: '';
         position: absolute;
         top: 0; left: 0; right: 0;
         height: 3px;
         background: var(--accent-grad);
+        opacity: 0.4;
+        transition: opacity 0.3s, height 0.3s;
+        border-radius: 20px 20px 0 0;
+    }
+    /* Bottom inner glow */
+    .persona-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 50%;
+        background: linear-gradient(to top, var(--accent-glow-inner, transparent), transparent);
+        pointer-events: none;
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity 0.35s;
     }
     .persona-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-color, #FF8C0055);
-        box-shadow: 0 12px 40px var(--accent-glow, rgba(255,140,0,0.12));
+        transform: translateY(-6px);
+        border-color: var(--accent-color);
+        box-shadow: 0 16px 48px var(--accent-glow), 0 0 0 1px var(--accent-color);
+        background: #131009;
     }
-    .persona-card:hover::before { opacity: 1; }
+    .persona-card:hover::before { opacity: 1; height: 4px; }
+    .persona-card:hover::after  { opacity: 1; }
     .persona-card.selected {
-        border-color: var(--accent-color, #FF8C00);
-        box-shadow: 0 0 30px var(--accent-glow, rgba(255,140,0,0.2)),
-                    inset 0 0 25px var(--accent-glow-inner, rgba(255,140,0,0.04));
-        background: #1a120c;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px var(--accent-color), 0 8px 40px var(--accent-glow);
+        background: #151108;
     }
-    .persona-card.selected::before { opacity: 1; }
-    .persona-card.selected .persona-icon {
-        transform: scale(1.15);
+    .persona-card.selected::before { opacity: 1; height: 4px; }
+    .persona-card.selected::after  { opacity: 1; }
+    .persona-card.selected .persona-name { color: var(--accent-color); }
+    .persona-card.selected .pc-icon-ring {
+        box-shadow: 0 4px 20px var(--accent-glow);
     }
-    .persona-card.selected .persona-name {
-        color: var(--accent-color, #FF8C00);
-    }
-    .persona-icon {
-        font-size: 2.6rem;
-        margin-bottom: 0.7rem;
-        transition: transform 0.3s;
-        filter: drop-shadow(0 0 10px var(--accent-glow, rgba(255,140,0,0.2)));
-    }
-    .persona-name {
-        font-weight: 800;
-        font-size: 1rem;
-        color: #e0d5cc;
-        margin-bottom: 0.4rem;
-        letter-spacing: 0.5px;
-        transition: color 0.3s;
-    }
-    .persona-tagline {
-        font-size: 0.78rem;
-        color: #7a6e64;
-        line-height: 1.45;
-        font-style: italic;
-    }
+    /* Selected check badge */
     .persona-check {
         position: absolute;
-        top: 10px;
-        right: 12px;
-        font-size: 0.85rem;
+        top: 10px; right: 10px;
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: var(--accent-color, #FF8C00);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity 0.25s;
     }
-    .persona-card.selected .persona-check {
-        opacity: 1;
-    }
-    .persona-selected-banner {
-        text-align: center;
-        padding: 1.3rem 1.2rem 1.3rem 1.2rem;
-        border-radius: 12px;
-        background: #1a130d;
-        border: 1px solid #FF8C0033;
-        margin-bottom: 2.5rem;
-    }
-    .persona-selected-banner .sel-icon { font-size: 1.4rem; }
-    .persona-selected-banner .sel-name {
+    .persona-card.selected .persona-check { opacity: 1; }
+    /* Badge chip */
+    .pc-badge {
+        font-size: 0.58rem;
         font-weight: 700;
-        color: #FF8C00;
-        font-size: 0.92rem;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        padding: 3px 9px;
+        border-radius: 20px;
+        margin-bottom: 0.8rem;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+        white-space: nowrap;
     }
-    .persona-selected-banner .sel-tag {
-        color: #7a6e64;
-        font-size: 0.8rem;
+    .persona-card:hover .pc-badge,
+    .persona-card.selected .pc-badge { opacity: 1; }
+    /* Icon ring */
+    .pc-icon-ring {
+        width: 62px; height: 62px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.8rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .persona-card:hover .pc-icon-ring { transform: scale(1.08); }
+    .persona-card.selected .pc-icon-ring { transform: scale(1.1); }
+    .persona-icon {
+        font-size: 2.2rem;
+        line-height: 1;
+        display: block;
+        filter: drop-shadow(0 2px 8px var(--accent-glow, rgba(255,140,0,0.2)));
+    }
+    /* Name */
+    .persona-name {
+        font-weight: 800;
+        font-size: 0.88rem;
+        color: #e0d5cc;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.3px;
+        transition: color 0.3s;
+        line-height: 1.2;
+    }
+    /* Tagline */
+    .persona-tagline {
+        font-size: 0.68rem;
+        color: #6a5e55;
+        line-height: 1.4;
         font-style: italic;
+        margin-bottom: 0.65rem;
+    }
+    /* Separator */
+    .pc-sep {
+        width: 100%;
+        height: 1px;
+        margin-bottom: 0.55rem;
+        border-radius: 1px;
+    }
+    /* Description */
+    .pc-desc {
+        font-size: 0.63rem;
+        color: #5a504a;
+        line-height: 1.45;
+        transition: color 0.3s;
+        margin-top: auto;
+    }
+    .persona-card:hover .pc-desc,
+    .persona-card.selected .pc-desc {
+        color: var(--accent-color);
+        opacity: 0.75;
+    }
+    /* ── Selected Banner ── */
+    .persona-selected-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1.3rem;
+        border-radius: 14px;
+        background: #0f0d0b;
+        border: 1.5px solid #FF8C0033;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+    .psb-left {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+    }
+    .psb-icon {
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+    }
+    .psb-info { text-align: left; }
+    .psb-label {
+        font-size: 0.6rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #4a4040;
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+    }
+    .psb-name {
+        font-weight: 800;
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+    }
+    .psb-tag {
+        font-size: 0.72rem;
+        color: #6a5e55;
+        font-style: italic;
+    }
+    .psb-pill {
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: #fff;
+        padding: 5px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
     /* Hide the radio widget used for state management */
     div[data-testid="stRadio"].persona-radio-hidden {
@@ -653,24 +754,19 @@ def get_css() -> str:
     .stApp.light-mode .file-info-name { color: #2d2420; }
     .stApp.light-mode .file-info-meta { color: #8a7e74; }
     /* Persona cards */
-    .stApp.light-mode .persona-card {
-        background: #ffffff;
-        border-color: #e8e0d8;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    }
-    .stApp.light-mode .persona-card:hover {
-        background: #fffcf9;
-    }
-    .stApp.light-mode .persona-card.selected {
-        background: #fffaf5;
-    }
+    .stApp.light-mode .persona-card { background: #ffffff; border-color: #e8e0d8; }
+    .stApp.light-mode .persona-card:hover { background: #fffcf9; }
+    .stApp.light-mode .persona-card.selected { background: #fffaf5; }
     .stApp.light-mode .persona-name { color: #2d2420; }
-    .stApp.light-mode .persona-card.selected .persona-name {
-        color: var(--accent-color, #FF8C00);
-    }
+    .stApp.light-mode .persona-card.selected .persona-name { color: var(--accent-color, #FF8C00); }
     .stApp.light-mode .persona-tagline { color: #8a7e74; }
+    .stApp.light-mode .pc-desc { color: #b0a8a0; }
+    .stApp.light-mode .persona-card:hover .pc-desc,
+    .stApp.light-mode .persona-card.selected .pc-desc { color: var(--accent-color); opacity: 0.85; }
+    .stApp.light-mode .psb-label { color: #b0a8a0; }
+    .stApp.light-mode .psb-tag { color: #8a7e74; }
     .stApp.light-mode .persona-selected-banner {
-        background: #fffaf5;
+        background: #ffffff;
         border-color: #FF8C0033;
     }
     /* Roast result */
