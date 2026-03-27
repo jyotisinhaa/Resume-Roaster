@@ -2,6 +2,7 @@
 🧌 Internet Troll — Maximum sarcasm. Zero chill. (Grounded + No Hallucination Version)
 """
 
+import re
 from openai import OpenAI
 
 SYSTEM_PROMPT = """
@@ -118,4 +119,12 @@ Make it funny, memeable, and brutally honest — but useful.
         max_tokens=1024,
     )
 
-    return response.choices[0].message.content, None
+    content = response.choices[0].message.content
+    return content, _extract_score(content)
+
+
+def _extract_score(content: str):
+    match = re.search(r'Cringe Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)
+    if match:
+        return [{"label": "Cringe Score", "score": int(match.group(1)), "out_of": 10}]
+    return None

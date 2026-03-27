@@ -910,6 +910,149 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+#  INTERNET TROLL LINKEDIN SHARE CARD
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, closing_roast: str):
+    """Render a screenshot-ready LinkedIn share card for the Internet Troll."""
+    import json as _json, re as _re
+
+    circumference = round(2 * 3.14159 * 40, 1)
+    dash = round(score_val / 10 * circumference, 1)
+
+    def _it_clean(text):
+        text = _re.sub(r'^#{1,6}\s*', '', text.strip())
+        text = _re.sub(r'\*\*', '', text)
+        text = _re.sub(r'\*(?!\s)', '', text)
+        text = _re.sub(r'^[-–—•😂🤡🧠💀]\s*', '', text)
+        text = _re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
+        return text.strip()
+
+    clean_roast = _it_clean(closing_roast)
+    roast_display = (clean_roast[:120] + "…") if len(clean_roast) > 120 else clean_roast
+
+    li_text = (
+        f"Just got my resume roasted by the Internet Troll on Resume Ripper AI 🧌\n\n"
+        f"Cringe Score: {score_val}/10 — {sc_label}\n\n"
+        f"🔥 \"{clean_roast[:110]}{'…' if len(clean_roast) > 110 else ''}\"\n\n"
+        f"Would your resume survive the roast? 😂\n"
+        f"#ResumeRipper #InternetTroll #JobSearch #CareerTips #AI"
+    )
+    li_text_json = _json.dumps(li_text)
+
+    st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#A855F7;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🧌 Share Your Results</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
+    components.html(f"""
+    <style>
+    .it-card {{
+        background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 60%,#0d0514 100%);
+        border:1px solid #3b1a5a;
+        border-radius:18px;
+        padding:22px 20px 18px 20px;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+        max-width:520px;
+        margin:0 auto;
+        position:relative;
+        overflow:hidden;
+        box-shadow:0 8px 40px #A855F718;
+    }}
+    .it-card::before {{
+        content:'';
+        position:absolute;
+        top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);
+    }}
+    .it-header {{ display:flex;justify-content:space-between;align-items:center;margin-bottom:18px; }}
+    .it-brand  {{ font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase; }}
+    .it-badge  {{ font-size:0.7rem;color:#A855F7;font-weight:800;letter-spacing:1px;
+                  background:#A855F718;border:1px solid #A855F744;border-radius:20px;padding:3px 10px; }}
+    .it-hero   {{ display:flex;align-items:center;gap:20px;margin-bottom:18px; }}
+    .it-roast-box {{
+        background:#1a0a2e;border-left:3px solid #A855F7;border-radius:8px;
+        padding:10px 14px;margin-bottom:16px;
+        font-size:0.82rem;color:#E9D5FF;font-style:italic;line-height:1.5;
+    }}
+    .it-footer {{
+        border-top:1px solid #2a1a3a;padding-top:12px;
+        display:flex;justify-content:space-between;align-items:center;
+    }}
+    .it-cta {{ font-size:0.78rem;color:#FF8C00;font-weight:700; }}
+    .it-sub  {{ font-size:0.72rem;color:#374151; }}
+    </style>
+    <div class="it-card">
+        <div class="it-header">
+            <div class="it-brand">🔥 Resume Ripper AI</div>
+            <div class="it-badge">🧌 Internet Troll</div>
+        </div>
+        <div class="it-hero">
+            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1a3a" stroke-width="9"/>
+                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                        transform="rotate(-90 45 45)"
+                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Cringe Score</div>
+                <div style="margin-top:8px;">
+                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                </div>
+            </div>
+        </div>
+        <div class="it-roast-box">🔥 "{roast_display}"</div>
+        <div class="it-footer">
+            <div class="it-cta">🔥 Try Resume Ripper AI — it's free!</div>
+            <div class="it-sub">Would your resume survive?</div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="saveITCard()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#A855F7;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+        <button onclick="postITLinkedIn()" style="
+            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+    </div>
+    <div id="it-hint" style="
+        display:none;max-width:520px;margin:8px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+    const IT_LI_TEXT = {li_text_json};
+    function saveITCard() {{
+        const card = document.querySelector('.it-card');
+        html2canvas(card, {{ backgroundColor:'#0d0514', scale:2, useCORS:true, logging:false }})
+        .then(canvas => {{
+            const link = document.createElement('a');
+            link.download = 'internet_troll_score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.getElementById('it-hint').style.display = 'block';
+            setTimeout(() => {{ document.getElementById('it-hint').style.display = 'none'; }}, 4000);
+        }});
+    }}
+    function postITLinkedIn() {{
+        window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(IT_LI_TEXT), '_blank');
+    }}
+    </script>
+    """, height=420)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 #  SHARE BOX
 # ═══════════════════════════════════════════════════════════════════════════════
 def _render_share_box(share_text: str, roast_result: str, sel_name: str, show_linkedin: bool = True):
@@ -1771,6 +1914,172 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             f"Resume Strength: {score_val}/10 — {sc_label}\n"
             f"Getting actionable feedback to level up my job search! 🚀\n"
             f"#ResumeRipper #CareerCoach #JobSearch #CareerTips #AI"
+        )
+        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+
+    elif sel.get("name", "").lower() == "internet troll":
+        import re
+
+        lines = roast_result.split('\n')
+
+        def find_section_it(header):
+            for i, l in enumerate(lines):
+                if header.upper() in l.upper():
+                    return i
+            return None
+
+        def _clean_it(text: str) -> str:
+            text = text.strip()
+            text = re.sub(r'^#{1,6}\s*', '', text)
+            text = re.sub(r'\*\*', '', text)
+            text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'^[-–—•😂🤡🧠💀]\s*', '', text)
+            text = re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
+            return text.strip()
+
+        # Score
+        score_val = None
+        if score_breakdown:
+            score_val = score_breakdown[0].get("score", 5)
+        else:
+            m = re.search(r'Cringe Score[:\s]*(\d+)\s*/\s*10', roast_result, re.IGNORECASE)
+            if m:
+                score_val = int(m.group(1))
+        if score_val is None:
+            score_val = 5
+
+        # Cringe score: 10 = max cringe (inverted palette)
+        if score_val >= 8:
+            sc_color = "#EF4444"; sc_grade = "F"; sc_label = "MAX CRINGE"
+        elif score_val >= 6:
+            sc_color = "#F59E0B"; sc_grade = "D"; sc_label = "PRETTY BAD"
+        elif score_val >= 4:
+            sc_color = "#A855F7"; sc_grade = "C"; sc_label = "MID"
+        else:
+            sc_color = "#22C55E"; sc_grade = "A"; sc_label = "TOLERABLE"
+
+        circumference_it = round(2 * 3.14159 * 54, 1)
+        dash_it = round(score_val / 10 * circumference_it, 1)
+
+        # Section indices
+        score_idx   = find_section_it("CRINGE SCORE")
+        memes_idx   = find_section_it("MEMES WRITE THEMSELVES")
+        plots_idx   = find_section_it("PLOT HOLES")
+        serious_idx = find_section_it("OK BUT SERIOUSLY")
+
+        # Opening one-liner = lines before score
+        opening_lines = lines[:score_idx] if score_idx else []
+        opening_text = _clean_it(" ".join(l.strip() for l in opening_lines if l.strip()))
+
+        # Closing roast = non-bullet lines after the last section
+        closing_text = ""
+        last_idx = serious_idx
+        if last_idx is not None:
+            for l in reversed(lines[last_idx + 1:]):
+                stripped = l.strip()
+                if stripped and not stripped.startswith(('-', '•', '*')) \
+                        and not re.fullmatch(r'[-_*\s]{2,}', stripped):
+                    closing_text = _clean_it(stripped)
+                    break
+
+        # ── Hero Score Card ──────────────────────────────────────────────────
+        st.markdown(f"""
+        <div style="
+            background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 60%,#0d0514 100%);
+            border:1px solid {sc_color}33;
+            border-radius:20px;
+            padding:28px 24px 22px 24px;
+            margin:16px 0 20px 0;
+            text-align:center;
+            position:relative;overflow:hidden;
+        ">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
+            <div style="font-size:0.75rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🧌 INTERNET TROLL VERDICT</div>
+            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1a0a2e" stroke-width="12"/>
+                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
+                        stroke-dasharray="{dash_it} {circumference_it}" stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                        style="filter:drop-shadow(0 0 8px {sc_color});"
+                    />
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
+                </div>
+            </div>
+            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
+            <div style="font-size:0.8rem;color:#6B7280;">Cringe Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Opening One-Liner ────────────────────────────────────────────────
+        if opening_text:
+            st.markdown(f"""
+            <div style="
+                background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 100%);
+                border:1px solid #A855F733;
+                border-radius:14px;
+                padding:20px 22px 18px 22px;
+                margin:0 0 18px 0;
+                position:relative;overflow:hidden;
+            ">
+                <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#A855F714;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
+                <div style="font-size:0.68rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:10px;">💀 OPENING ROAST</div>
+                <div style="font-size:1.05rem;color:#E9D5FF;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def render_it_section(title, icon, color, bg, start_idx, end_idx):
+            if start_idx is None:
+                return
+            section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
+            bullets = [_clean_it(re.sub(r'^[😂🤡🧠💀]\s*', '', l.strip()))
+                       for l in section_lines
+                       if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
+            bullets = [b for b in bullets if b and len(b) > 4]
+            if not bullets:
+                return
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+                        display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
+                <span>{icon}</span> {title}
+                <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
+            </div>
+            """, unsafe_allow_html=True)
+            for b in bullets:
+                st.markdown(f"""
+                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
+                            padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
+                    <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
+                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("<div style='height:1px;background:#1a0a2e;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
+
+        render_it_section("The Memes Write Themselves", "😂", "#EF4444", "#2a0d0d",   memes_idx,  plots_idx)
+        render_it_section("Plot Holes in Your Career Story", "🤡", "#F59E0B", "#1a1507", plots_idx,  serious_idx)
+        render_it_section("OK But Seriously",             "🧠", "#A855F7", "#1a0a2e",  serious_idx, None)
+
+        # ── Closing Viral Roast ──────────────────────────────────────────────
+        if closing_text:
+            st.markdown(f"""
+            <div style="background:linear-gradient(90deg,#A855F722,#0d0514);border:1.5px solid #A855F755;
+                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
+                <div style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:6px;">🔥 CLOSING ROAST</div>
+                <div style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{closing_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.session_state["last_roast"] = roast_result
+        _render_it_linkedin_card(score_val, sc_label, sc_grade, sc_color, closing_text or opening_text)
+        share_text = (
+            f"Just got my resume roasted by the Internet Troll 🧌\n"
+            f"Cringe Score: {score_val}/10 — {sc_label}\n"
+            f"Would your resume survive? 😂\n"
+            f"#ResumeRipper #InternetTroll #JobSearch #CareerTips #AI"
         )
         _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
 
