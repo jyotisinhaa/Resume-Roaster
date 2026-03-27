@@ -68,6 +68,8 @@ def get_css() -> str:
         align-items: center;
         gap: 0.5rem;
         line-height: 1.08;
+        width: 100%;
+        box-sizing: border-box;
     }
         /* Upload Zone Customization */
         [data-testid="stFileUploader"] {
@@ -115,8 +117,14 @@ def get_css() -> str:
     .section-label::after {
         content: '';
         flex: 1;
-        height: 1px;
-        background: linear-gradient(90deg, #FF8C0066, transparent);
+        height: 2px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #FF8C00aa, transparent);
+        min-width: 0;
+    }
+    /* Ensure Streamlit's markdown container doesn't shrink-wrap the section label */
+    [data-testid="stMarkdownContainer"]:has(.section-label) {
+        width: 100% !important;
     }
 
         /* ATS Score Breakdown */
