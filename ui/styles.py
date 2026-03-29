@@ -10,33 +10,9 @@ def get_css() -> str:
     .stApp:not(.light-mode) .hero-desc {
         color: #bdbdbd !important;
     }
-    .stApp.light-mode .hero-desc {
-        color: #2a1f18 !important;
-    }
-<style>
     /* ── Dark Mode Hero Text ── */
     .stApp:not(.light-mode) .hero-main-text {
         color: #fff !important;
-    }
-    /* ── Light Mode Overrides ── */
-    .stApp.light-mode {
-        background: radial-gradient(ellipse at top, #fff7e6 0%, #fbead1 40%, #fff 100%) !important;
-        color: #2a1f18 !important;
-    }
-    .stApp.light-mode .stMarkdown,
-    .stApp.light-mode .stMarkdown p,
-    .stApp.light-mode .stMarkdown li,
-    .stApp.light-mode .stMarkdown h1,
-    .stApp.light-mode .stMarkdown h2,
-    .stApp.light-mode .stMarkdown h3,
-    .stApp.light-mode .stMarkdown h4 {
-        color: #2a1f18 !important;
-    }
-    .stApp.light-mode .hero-main-text {
-        color: #2a1f18 !important;
-    }
-    .stApp.light-mode .section-label {
-        color: #FF8C00 !important;
     }
     /* ── Reset & Base ── */
     .stApp {
@@ -380,7 +356,8 @@ def get_css() -> str:
     button[key="roast_btn"] {
         background: linear-gradient(90deg, #FF4B4B, #FF8C00) !important;
         color: white !important;
-        font-weight: 800 !important;
+        font-weight: 900 !important;
+        font-family: 'Arial Black', Impact, 'Helvetica Neue', sans-serif !important;
         font-size: 1.15rem !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
@@ -389,6 +366,13 @@ def get_css() -> str:
         padding: 1rem 2rem !important;
         width: 100% !important;
         box-shadow: 0 6px 30px rgba(255, 75, 75, 0.3) !important;
+    }
+    /* Target any child elements (p, span, div) Streamlit wraps button text in */
+    div[data-testid="stButton"] > button[kind="secondary"]:last-of-type *,
+    button[key="roast_btn"] * {
+        font-weight: 900 !important;
+        font-family: 'Arial Black', Impact, 'Helvetica Neue', sans-serif !important;
+        color: white !important;
     }
 
     /* All buttons base */
@@ -705,110 +689,219 @@ def get_css() -> str:
     /* ══════════════════════════════════════════════════════════
        LIGHT MODE OVERRIDES
        ══════════════════════════════════════════════════════════ */
+
+    /* ── Background & Global ── */
     .stApp.light-mode {
-        background: radial-gradient(ellipse at top, #fefcfa 0%, #f5f0eb 40%, #f0ebe5 100%) !important;
-        color: #2d2420 !important;
+        background: linear-gradient(160deg, #fff9f3 0%, #fdf4ea 45%, #f8ede0 100%) !important;
+        color: #111111 !important;
     }
+    /* ── Dark text for Streamlit native widgets + custom classes ── */
+    /* Only targets block-level/label elements — never spans (roast results use inline-colored spans) */
+    .stApp.light-mode p,
+    .stApp.light-mode label,
+    .stApp.light-mode h1, .stApp.light-mode h2,
+    .stApp.light-mode h3, .stApp.light-mode h4,
+    .stApp.light-mode li,
+    .stApp.light-mode [data-testid="stWidgetLabel"],
+    .stApp.light-mode [data-testid="stWidgetLabel"] *,
+    .stApp.light-mode [data-baseweb="radio"] label,
+    .stApp.light-mode [data-baseweb="radio"] div,
     .stApp.light-mode .stMarkdown,
     .stApp.light-mode .stMarkdown p,
     .stApp.light-mode .stMarkdown li,
     .stApp.light-mode .stMarkdown h1,
     .stApp.light-mode .stMarkdown h2,
     .stApp.light-mode .stMarkdown h3,
-    .stApp.light-mode .stMarkdown h4 {
-        color: #2d2420 !important;
+    .stApp.light-mode .stMarkdown h4 { color: #111111 !important; }
+
+    /* Our custom classes that have hardcoded light colors in base CSS */
+    .stApp.light-mode .persona-name,
+    .stApp.light-mode .file-info-name,
+    .stApp.light-mode .file-info-card .file-info-name,
+    .stApp.light-mode .psb-name { color: #111111 !important; }
+
+    /* Roast result section headers (white text, visible on dark bg in dark mode) */
+    .stApp.light-mode .rsh { color: #111111 !important; }
+
+    /* ── Persona note cards (Gut Reaction, First Impression, Coach's Note, Hiring Signal etc.) ── */
+    .stApp.light-mode .persona-note {
+        background: #ffffff !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07) !important;
+        /* border preserved from inline style so accent color stays */
     }
-    /* Hero */
-    .stApp.light-mode .hero-subtitle { color: #8a7e74 !important; }
-    /* Step cards */
+    .stApp.light-mode .persona-note-text {
+        color: #111111 !important;
+    }
+    .stApp.light-mode .persona-note-subtext {
+        color: #3d2b1a !important;
+    }
+    /* Keep accent label color visible */
+    .stApp.light-mode .persona-note-label {
+        opacity: 1 !important;
+    }
+
+    /* ── Final Verdict light mode: extra lines ── */
+    .stApp.light-mode .fv-extra-line { color: #3d2a1a !important; }
+
+    /* HM Verdict / Interview decision cards — light mode */
+    .stApp.light-mode .hm-decision-card {
+        background: #ffffff !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+        border-width: 2px !important;
+        /* border-color preserved from inline so accent color stays */
+    }
+
+    /* Muted gray inline text on light backgrounds — force darker */
+    .stApp.light-mode [style*="color:#9CA3AF"],
+    .stApp.light-mode [style*="color:#6B7280"],
+    .stApp.light-mode [style*="color:#9ca3af"],
+    .stApp.light-mode [style*="color:#6b7280"] { color: #4a3828 !important; }
+
+    /* Accent/muted colors */
+    .stApp.light-mode .section-label { color: #E65C00 !important; }
+    .stApp.light-mode .hero-ai-badge { color: #E65C00 !important; }
+    .stApp.light-mode .file-info-check { color: #22c55e !important; }
+    .stApp.light-mode .persona-card.selected .persona-name { color: var(--accent-color) !important; }
+    .stApp.light-mode .persona-card:hover .pc-desc,
+    .stApp.light-mode .persona-card.selected .pc-desc { color: var(--accent-color) !important; opacity: 0.9 !important; }
+    /* Muted secondary text */
+    .stApp.light-mode .hero-subtitle,
+    .stApp.light-mode .hero-desc,
+    .stApp.light-mode .persona-tagline,
+    .stApp.light-mode .pc-desc,
+    .stApp.light-mode .psb-label,
+    .stApp.light-mode .psb-tag,
+    .stApp.light-mode .upload-subtitle,
+    .stApp.light-mode .step-desc,
+    .stApp.light-mode .file-info-meta,
+    .stApp.light-mode .footer { color: #3d2b1a !important; }
+
+    /* ── Hero ── */
+    .stApp.light-mode .hero-main-text { color: #111111 !important; }
+    .stApp.light-mode .hero-desc { color: #5a4030 !important; }
+    .stApp.light-mode .hero-subtitle { color: #9a8878 !important; }
+    /* Fix hardcoded dark hero badge pill */
+    .stApp.light-mode .hero-ai-badge {
+        background: #fff3e0 !important;
+        color: #E65C00 !important;
+        border: 1.5px solid #FF8C0040 !important;
+        box-shadow: 0 2px 10px rgba(255,140,0,0.12) !important;
+    }
+
+    /* ── Section Labels ── */
+    .stApp.light-mode .section-label { color: #E65C00 !important; }
+    .stApp.light-mode .section-label::after {
+        background: linear-gradient(90deg, #FF8C0088, transparent) !important;
+    }
+
+    /* ── Step Cards ── */
     .stApp.light-mode .step-card {
-        background: #ffffff;
-        border-color: #e8e0d8;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        background: #ffffff !important;
+        border: 1.5px solid #ffd49a !important;
+        box-shadow: 0 4px 20px rgba(255,140,0,0.09) !important;
     }
     .stApp.light-mode .step-card:hover {
-        box-shadow: 0 8px 30px rgba(255,140,0,0.08);
-        border-color: #FF8C0055;
+        box-shadow: 0 10px 32px rgba(255,140,0,0.16) !important;
+        border-color: #FF8C0077 !important;
     }
-    .stApp.light-mode .step-num { color: #e8e0d8; }
-    .stApp.light-mode .step-title { color: #2d2420; }
-    .stApp.light-mode .step-desc { color: #8a7e74; }
-    /* Upload zone */
+    /* ── Upload Zone ── */
     .stApp.light-mode [data-testid="stFileUploader"] {
-        background: #fdfcfb !important;
-        border-color: #FF8C0055 !important;
+        background: #fffdf8 !important;
+        border: 2px dashed #FF8C0066 !important;
+        box-shadow: 0 2px 18px rgba(255,140,0,0.07) !important;
     }
     .stApp.light-mode [data-testid="stFileUploader"]:hover {
-        border-color: #FF8C0088 !important;
-        box-shadow: 0 0 40px rgba(255,140,0,0.06), inset 0 0 30px rgba(255,140,0,0.01) !important;
+        border-color: #FF8C00aa !important;
+        box-shadow: 0 4px 30px rgba(255,140,0,0.13) !important;
     }
-    .stApp.light-mode [data-testid="stFileUploader"] label p {
-        color: #2d2420 !important;
-    }
-    /* File info card */
+    /* Uploaded filename text inside the uploader widget */
+    .stApp.light-mode [data-testid="stFileUploader"] span,
+    .stApp.light-mode [data-testid="stFileUploader"] p,
+    .stApp.light-mode [data-testid="stFileUploaderFileName"],
+    .stApp.light-mode [data-testid="stFileUploaderFileName"] span,
+    .stApp.light-mode [data-testid="stFileUploader"] section span,
+    .stApp.light-mode [data-testid="stFileUploader"] section div span { color: #111111 !important; }
+
+    /* ── File Info Card ── */
     .stApp.light-mode .file-info-card {
-        background: #ffffff;
-        border-color: #FF8C0022;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        background: #ffffff !important;
+        border: 1.5px solid #ffd49a !important;
+        box-shadow: 0 4px 16px rgba(255,140,0,0.08) !important;
     }
-    .stApp.light-mode .file-info-name { color: #2d2420; }
-    .stApp.light-mode .file-info-meta { color: #8a7e74; }
-    /* Persona cards */
-    .stApp.light-mode .persona-card { background: #ffffff; border-color: #e8e0d8; }
-    .stApp.light-mode .persona-card:hover { background: #fffcf9; }
-    .stApp.light-mode .persona-card.selected { background: #fffaf5; }
-    .stApp.light-mode .persona-name { color: #2d2420; }
-    .stApp.light-mode .persona-card.selected .persona-name { color: var(--accent-color, #FF8C00); }
-    .stApp.light-mode .persona-tagline { color: #8a7e74; }
-    .stApp.light-mode .pc-desc { color: #b0a8a0; }
-    .stApp.light-mode .persona-card:hover .pc-desc,
-    .stApp.light-mode .persona-card.selected .pc-desc { color: var(--accent-color); opacity: 0.85; }
-    .stApp.light-mode .psb-label { color: #b0a8a0; }
-    .stApp.light-mode .psb-tag { color: #8a7e74; }
+
+    /* ── Persona Cards ── */
+    .stApp.light-mode .persona-card {
+        background: #ffffff !important;
+        border: 1.5px solid #edddc8 !important;
+        box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+    }
+    .stApp.light-mode .persona-card:hover {
+        background: #fffcf8 !important;
+        box-shadow: 0 8px 32px var(--accent-glow), 0 0 0 1px var(--accent-color) !important;
+    }
+    .stApp.light-mode .persona-card.selected {
+        background: #fffaf4 !important;
+        box-shadow: 0 0 0 2px var(--accent-color), 0 8px 32px var(--accent-glow) !important;
+    }
+
+    /* ── Selected Banner ── */
     .stApp.light-mode .persona-selected-banner {
-        background: #ffffff;
-        border-color: #FF8C0033;
+        background: #ffffff !important;
+        border-color: #ffd49a !important;
+        box-shadow: 0 4px 20px rgba(255,140,0,0.1) !important;
     }
-    /* Roast result */
+
+    /* ── ATS Score Breakdown ── */
+    .stApp.light-mode .ats-score-breakdown {
+        background: #ffffff !important;
+        border: 1px solid #edddc8 !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
+    }
+
+    /* ── Roast Result — keep dark bg so light text stays readable ── */
     .stApp.light-mode .roast-result {
-        background: #ffffff;
-        border-color: #FF8C0033;
-        box-shadow: 0 4px 30px rgba(255,140,0,0.04);
-        color: #2d2420;
+        background: #15100c !important;
+        border-color: #FF8C0033 !important;
+        box-shadow: 0 4px 30px rgba(255,140,0,0.12) !important;
     }
-    /* Buttons */
+
+    /* ── Buttons ── */
     .stApp.light-mode .stButton > button {
         background: #ffffff !important;
-        color: #2d2420 !important;
-        border-color: #e8e0d8 !important;
+        color: #111111 !important;
+        border: 1.5px solid #edddc8 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
     }
     .stApp.light-mode .stButton > button:hover {
         border-color: #FF8C00 !important;
-        box-shadow: 0 4px 20px rgba(255,140,0,0.1) !important;
+        box-shadow: 0 4px 20px rgba(255,140,0,0.15) !important;
     }
-    /* Footer & divider */
-    .stApp.light-mode .footer { color: #8a7e74; }
-    .stApp.light-mode .footer b { color: #5a4e44; }
-    .stApp.light-mode hr { border-color: #e8e0d8 !important; }
-    /* Streamlit code blocks */
+
+    /* ── Footer & Divider ── */
+    .stApp.light-mode .footer { color: #9a8878 !important; }
+    .stApp.light-mode .footer b { color: #6a5844 !important; }
+    .stApp.light-mode hr { border-color: #edddc8 !important; }
+
+    /* ── Code Blocks ── */
     .stApp.light-mode .stCode,
     .stApp.light-mode [data-testid="stCode"] {
-        background: #faf7f4 !important;
-        color: #2d2420 !important;
+        background: #faf6f0 !important;
+        color: #111111 !important;
     }
-    /* Section label line */
-    .stApp.light-mode .section-label::after {
-        background: linear-gradient(90deg, #FF8C0044, transparent);
-    }
-    /* Toggle button in light mode */
+
+    /* ── Theme Toggle ── */
     .stApp.light-mode .theme-toggle {
-        background: #ffffff;
-        border-color: #e8e0d8;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        background: #ffffff !important;
+        border-color: #edddc8 !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
     }
     .stApp.light-mode .theme-toggle:hover {
-        border-color: #FF8C00;
-        box-shadow: 0 4px 20px rgba(255,140,0,0.15);
+        border-color: #FF8C00 !important;
+        box-shadow: 0 4px 20px rgba(255,140,0,0.2) !important;
     }
+
+    /* ── Final Verdict ── */
+    .final-verdict-card { }
+    .fv-extra-line { color: #cccccc; }
 </style>
 """

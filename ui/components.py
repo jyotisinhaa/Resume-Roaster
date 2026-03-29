@@ -102,7 +102,7 @@ def render_hero():
     <div class="hero" style="margin-top:2.5rem;">
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:2.2rem;width:100%;">
             <span style="font-size:6.5rem;font-weight:900;letter-spacing:1.5px;text-align:center;line-height:1.02;" class="hero-main-text">Resume<span style="color:#FF8C00;">Ripper</span></span>
-            <span style="display:inline-block;background:#2a1f18;padding:0.5em 1.2em;border-radius:2em;font-weight:700;color:#FF8C00;font-size:1.15rem;letter-spacing:1px;margin-top:0.7em;">🔥 AI-Powered Resume Feedback</span>
+            <span class="hero-ai-badge" style="display:inline-block;background:#2a1f18;padding:0.5em 1.2em;border-radius:2em;font-weight:700;color:#FF8C00;font-size:1.15rem;letter-spacing:1px;margin-top:0.7em;">🔥 AI-Powered Resume Feedback</span>
         </div>
         <div class="hero-main-text" style="font-size:2.8rem;font-weight:900;line-height:1.08;margin-bottom:0.5rem;">
             Get your resume<br><span style="color:#FF8C00;">brutally roasted</span><br>by 5 AI experts
@@ -1337,11 +1337,7 @@ def _render_share_box(share_text: str, roast_result: str, sel_name: str, show_li
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, elapsed: float):
     """Render the roast results card + share/download section."""
-    st.markdown("""
-    <div style="font-size:0.75rem;color:#9CA3AF;margin-bottom:6px;">
-    Analyzing resume signals...
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="roast-area">', unsafe_allow_html=True)
 
     if sel.get("name", "").lower() == "ats scanner" and score_breakdown:
         import re
@@ -1421,7 +1417,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # Score Breakdown
         st.markdown(f"""
         <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px 0;">
-            <div style="font-size:1.1rem;font-weight:800;letter-spacing:0.5px;color:#ffffff;font-family:inherit;">📊 Score Breakdown</div>
+            <div class="rsh" style="font-size:1.1rem;font-weight:800;letter-spacing:0.5px;color:#ffffff;font-family:inherit;">📊 Score Breakdown</div>
             <div style="height:1px;flex:1;margin-left:12px;background:linear-gradient(90deg,#00C9FF,transparent);opacity:0.4;"></div>
         </div>
         """, unsafe_allow_html=True)
@@ -1498,7 +1494,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             section_lines = lines[idx+1:next_idx] if next_idx else lines[idx+1:]
             st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="
+            <div class="rsh" style="
                 margin:16px 0 6px 0;
                 font-size:1.1rem;
                 font-weight:800;
@@ -1513,32 +1509,51 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             </div>
             """, unsafe_allow_html=True)
             if title == "Weak Bullets Detected":
-                st.markdown(f"<div style='border-radius:8px;padding:8px 0 2px 0;margin-bottom:2px;'>", unsafe_allow_html=True)
                 bullets = parse_weak_bullets(section_lines)
                 for b in bullets:
-                    st.markdown(f"""
-                    <div style="
-                        background:#111;
-                        border:1px solid #2a2a2a;
-                        border-radius:10px;
-                        padding:14px;
-                        margin-bottom:12px;
-                    ">
-                        <div style="color:#9CA3AF;font-size:0.8rem;margin-bottom:4px;">ORIGINAL</div>
-                        <div style="color:#E5E7EB;margin-bottom:10px;">
-                            {b.get("Original") or "<i>Missing</i>"}
-                        </div>
-                        <div style="color:#F87171;font-size:0.8rem;margin-bottom:4px;">ISSUE</div>
-                        <div style="margin-bottom:10px;color:#FCA5A5;">
-                            {b.get("Issue") or "<i>Missing</i>"}
-                        </div>
-                        <div style="color:#34D399;font-size:0.8rem;margin-bottom:4px;">IMPROVED</div>
-                        <div style="color:#6EE7B7;">
-                            {b.get("Improved Version") or "<i>Missing</i>"}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+                    orig    = b.get("Original") or "<i>—</i>"
+                    issue   = b.get("Issue") or "<i>—</i>"
+                    improved = b.get("Improved Version") or "<i>—</i>"
+                    st.markdown(
+                        '<div style="'
+                        'background:#13100d;'
+                        'border:1px solid #2e2418;'
+                        'border-radius:16px;'
+                        'margin-bottom:16px;'
+                        'overflow:hidden;'
+                        'box-shadow:0 4px 18px rgba(0,0,0,0.25);">'
+
+                        # ── ORIGINAL row ──────────────────────────────────────
+                        '<div style="padding:14px 18px 12px 18px;border-bottom:1px solid #2e2418;">'
+                        '<span style="display:inline-block;background:#374151;color:#F9FAFB;'
+                        'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
+                        'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
+                        'text-transform:uppercase;">📄 Original</span>'
+                        f'<div style="color:#CBD5E1;font-size:0.92rem;line-height:1.6;">{orig}</div>'
+                        '</div>'
+
+                        # ── ISSUE row ─────────────────────────────────────────
+                        '<div style="padding:12px 18px 12px 18px;border-bottom:1px solid #2e2418;'
+                        'background:rgba(239,68,68,0.07);">'
+                        '<span style="display:inline-block;background:#EF4444;color:#fff;'
+                        'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
+                        'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
+                        'text-transform:uppercase;">⚠ Issue</span>'
+                        f'<div style="color:#FECACA;font-size:0.92rem;line-height:1.6;">{issue}</div>'
+                        '</div>'
+
+                        # ── IMPROVED row ──────────────────────────────────────
+                        '<div style="padding:12px 18px 16px 18px;background:rgba(34,197,94,0.07);">'
+                        '<span style="display:inline-block;background:#22C55E;color:#fff;'
+                        'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
+                        'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
+                        'text-transform:uppercase;">✓ Improved</span>'
+                        f'<div style="color:#BBF7D0;font-size:0.92rem;line-height:1.6;">{improved}</div>'
+                        '</div>'
+
+                        '</div>',
+                        unsafe_allow_html=True,
+                    )
             elif title in ("Keywords Detected", "Keywords Missing"):
                 pill_color = "#22C55E" if title == "Keywords Detected" else "#EF4444"
                 pill_bg = "#0d2a1a" if title == "Keywords Detected" else "#2a0d0d"
@@ -1625,12 +1640,6 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             </div>
             """, unsafe_allow_html=True)
 
-        # Footer
-        st.markdown(f"""
-        <div style="text-align:right;font-size:12px;color:#777;margin-top:18px;">
-            {sel["icon"]} Generated by {sel["name"]} · {elapsed:.1f}s
-        </div>
-        """, unsafe_allow_html=True)
 
         # Extract roast one-liner for share text
         ats_roast_line = ""
@@ -1672,13 +1681,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         def _clean(text: str) -> str:
             """Strip markdown artifacts: headings, bold, italic, leading dashes/bullets."""
+            import html as _html
             text = text.strip()
-            text = re.sub(r'^#{1,6}\s*', '', text)            # remove ## heading markers
-            text = re.sub(r'\*\*', '', text)                   # remove bold **
-            text = re.sub(r'\*(?!\s)', '', text)               # remove stray *
-            text = re.sub(r'^[-–—•]\s*', '', text)             # remove leading dash/bullet
-            text = re.sub(r'(?i)^verdict\s*:\s*', '', text)    # remove leading "Verdict:" label
-            return text.strip()
+            text = re.sub(r'^#{1,6}\s*', '', text)
+            text = re.sub(r'\*\*', '', text)
+            text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'`[^`]*`', '', text)
+            text = re.sub(r'^[-–—•]\s*', '', text)
+            text = re.sub(r'(?i)^verdict\s*:\s*', '', text)
+            return _html.escape(text.strip())
 
         gut_end = find_section_br("RECRUITER SCORE")
         gut_lines = lines[:gut_end] if gut_end is not None else []
@@ -1761,7 +1772,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Gut Reaction ──────────────────────────────────────────────────────
         if gut_text:
             st.markdown(f"""
-            <div style="
+            <div class="persona-note" style="
                 background:linear-gradient(135deg,#1f0707 0%,#2a0d0d 100%);
                 border:1px solid #FF4B4B33;
                 border-radius:14px;
@@ -1771,8 +1782,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#FF4B4B18;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div style="font-size:0.68rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">⚡ Gut Reaction</div>
-                <div style="font-size:1.05rem;color:#F3E7D1;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
+                <div class="persona-note-label" style="font-size:0.68rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">⚡ Gut Reaction</div>
+                <div class="persona-note-text" style="font-size:1.05rem;color:#F3E7D1;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1787,7 +1798,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 return
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+            <div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
                         display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
                 <span>{icon}</span> {title}
                 <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
@@ -1824,24 +1835,52 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 v_color = "#EAB308"; v_icon = "🤔"
             else:
                 v_color = "#EF4444"; v_icon = "❌"
-            st.markdown(f"""
-            <div style="background:linear-gradient(90deg,{v_color}22,#1a0505);border:1.5px solid {v_color}55;
-                        border-radius:12px;padding:16px 20px;margin:12px 0;">
-                <div style="font-size:0.72rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:6px;">⚖️ FINAL VERDICT</div>
-                <div style="font-size:1.3rem;font-weight:900;color:{v_color};margin-bottom:4px;">{v_icon} {br_verdict_text}</div>
-                {''.join(f'<div style="font-size:0.9rem;color:#9CA3AF;margin-top:4px;">{l}</div>' for l in extra_lines)}
-            </div>
-            """, unsafe_allow_html=True)
+            # Convert hex verdict color to rgb for rgba() — avoids 8-digit hex browser quirks
+            _vr = int(v_color[1:3], 16)
+            _vg = int(v_color[3:5], 16)
+            _vb = int(v_color[5:7], 16)
+
+            # ── Header (separate call — avoids Markdown parser eating nested divs) ──
+            st.markdown(
+                f'<div class="final-verdict-header" style="margin:24px 0 10px 0;display:flex;align-items:center;gap:10px;">'
+                f'<span style="font-size:1.05rem;font-weight:900;color:{v_color};letter-spacing:1px;white-space:nowrap;text-transform:uppercase;">⚖️ Final Verdict</span>'
+                f'<div style="height:2px;flex:1;background:linear-gradient(90deg,rgba({_vr},{_vg},{_vb},0.7),transparent);border-radius:2px;"></div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+            # ── Box (separate call) ───────────────────────────────────────────────
+            _sep = (
+                f'<div style="height:1px;background:rgba({_vr},{_vg},{_vb},0.25);margin:12px 0 8px 0;"></div>'
+                if extra_lines else ""
+            )
+            _extras = "".join(
+                f'<div class="fv-extra-line" style="font-size:0.88rem;line-height:1.65;margin-top:4px;">{l}</div>'
+                for l in extra_lines
+            )
+            st.markdown(
+                f'<div class="final-verdict-card" style="'
+                f'background:rgba({_vr},{_vg},{_vb},0.09);'
+                f'border:2px solid rgba({_vr},{_vg},{_vb},0.65);'
+                f'border-radius:14px;padding:22px 26px;margin:0 0 20px 0;">'
+                f'<div style="font-size:1.5rem;font-weight:900;color:{v_color};'
+                f'font-family:\'Arial Black\',Impact,\'Helvetica Neue\',sans-serif;line-height:1.4;">'
+                f'{v_icon}&nbsp;&nbsp;{br_verdict_text}'
+                f'</div>'
+                f'{_sep}{_extras}'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
 
         # ── LinkedIn Roast ────────────────────────────────────────────────────
         if linkedin_idx is not None:
             roast_lines = [l.strip() for l in lines[linkedin_idx:] if l.strip()]
             br_roast_text = _clean(" ".join(roast_lines))
             st.markdown(f"""
-            <div style="background:linear-gradient(90deg,#2a0d2a,#1a0505);border:1.5px solid #A855F755;
+            <div class="persona-note" style="background:linear-gradient(90deg,#2a0d2a,#1a0505);border:1.5px solid #A855F755;
                         border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:8px;">🔥 LINKEDIN ROAST</div>
-                <div style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{br_roast_text}</div>
+                <div class="persona-note-label" style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:8px;">🔥 LINKEDIN ROAST</div>
+                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{br_roast_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1862,12 +1901,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             return None
 
         def _clean_cc(text: str) -> str:
+            import html as _html
             text = text.strip()
             text = re.sub(r'^#{1,6}\s*', '', text)
             text = re.sub(r'\*\*', '', text)
             text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'`[^`]*`', '', text)          # strip inline code spans
             text = re.sub(r'^[-–—•🌟🎯🚀💪]\s*', '', text)
-            return text.strip()
+            text = _html.escape(text.strip())             # escape <, >, & so they never break HTML
+            return text
 
         # Score
         score_val = None
@@ -1950,7 +1992,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Opening Observation ───────────────────────────────────────────────
         if opening_text:
             st.markdown(f"""
-            <div style="
+            <div class="persona-note" style="
                 background:linear-gradient(135deg,#071a0a 0%,#0f2a14 100%);
                 border:1px solid #22C55E33;
                 border-radius:14px;
@@ -1959,8 +2001,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 position:relative;overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#22C55E14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div style="font-size:0.68rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">💬 First Impression</div>
-                <div style="font-size:1.05rem;color:#D1FAE5;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
+                <div class="persona-note-label" style="font-size:0.68rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">💬 First Impression</div>
+                <div class="persona-note-text" style="font-size:1.05rem;color:#D1FAE5;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2011,7 +2053,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+            <div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
                         display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
                 <span>{icon}</span> {title}
                 <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
@@ -2050,10 +2092,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Motivational Closer ───────────────────────────────────────────────
         if closer_text:
             st.markdown(f"""
-            <div style="background:linear-gradient(90deg,#22C55E22,#071a0a);border:1.5px solid #22C55E44;
+            <div class="persona-note" style="background:linear-gradient(90deg,#22C55E22,#071a0a);border:1.5px solid #22C55E44;
                         border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div style="font-size:0.72rem;color:#22C55E;letter-spacing:2px;font-weight:800;margin-bottom:6px;">✨ COACH'S NOTE</div>
-                <div style="font-size:1rem;color:#D1FAE5;font-style:italic;line-height:1.6;">{closer_text}</div>
+                <div class="persona-note-label" style="font-size:0.72rem;color:#22C55E;letter-spacing:2px;font-weight:800;margin-bottom:6px;">✨ COACH'S NOTE</div>
+                <div class="persona-note-text" style="font-size:1rem;color:#D1FAE5;font-style:italic;line-height:1.6;">{closer_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2103,13 +2145,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             return None
 
         def _clean_it(text: str) -> str:
+            import html as _html
             text = text.strip()
             text = re.sub(r'^#{1,6}\s*', '', text)
             text = re.sub(r'\*\*', '', text)
             text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'`[^`]*`', '', text)
             text = re.sub(r'^[-–—•😂🤡🧠💀]\s*', '', text)
             text = re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
-            return text.strip()
+            return _html.escape(text.strip())
 
         # Score
         score_val = None
@@ -2191,7 +2235,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Opening One-Liner ────────────────────────────────────────────────
         if opening_text:
             st.markdown(f"""
-            <div style="
+            <div class="persona-note" style="
                 background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 100%);
                 border:1px solid #A855F733;
                 border-radius:14px;
@@ -2200,8 +2244,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 position:relative;overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#A855F714;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div style="font-size:0.68rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:10px;">💀 OPENING ROAST</div>
-                <div style="font-size:1.05rem;color:#E9D5FF;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
+                <div class="persona-note-label" style="font-size:0.68rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:10px;">💀 OPENING ROAST</div>
+                <div class="persona-note-text" style="font-size:1.05rem;color:#E9D5FF;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2217,7 +2261,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 return
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+            <div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
                         display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
                 <span>{icon}</span> {title}
                 <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
@@ -2240,10 +2284,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Closing Viral Roast ──────────────────────────────────────────────
         if closing_text:
             st.markdown(f"""
-            <div style="background:linear-gradient(90deg,#A855F722,#0d0514);border:1.5px solid #A855F755;
+            <div class="persona-note" style="background:linear-gradient(90deg,#A855F722,#0d0514);border:1.5px solid #A855F755;
                         border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:6px;">🔥 CLOSING ROAST</div>
-                <div style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{closing_text}</div>
+                <div class="persona-note-label" style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:6px;">🔥 CLOSING ROAST</div>
+                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{closing_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2269,14 +2313,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             return None
 
         def _clean_hm(text: str) -> str:
+            import html as _html
             text = text.strip()
             text = re.sub(r'^#{1,6}\s*', '', text)
             text = re.sub(r'\*\*', '', text)
             text = re.sub(r'\*(?!\s)', '', text)
+            text = re.sub(r'`[^`]*`', '', text)
             text = re.sub(r'^[-–—•✔️⚠️📈💼👀🏆]\s*', '', text)
             text = re.sub(r'(?i)^verdict\s*:\s*', '', text)
             text = re.sub(r'^[A-Z][a-z]+[,!]\s*', '', text)
-            return text.strip()
+            return _html.escape(text.strip())
 
         # Score
         score_val = None
@@ -2420,7 +2466,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 return
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
+            <div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
                         display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
                 <span>{icon}</span> {title}
                 <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
@@ -2443,19 +2489,38 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Hiring Signal ────────────────────────────────────────────────────
         if hm_signal_text:
             st.markdown(f"""
-            <div style="background:linear-gradient(90deg,#F59E0B22,#0f0c00);border:1.5px solid #F59E0B55;
-                        border-radius:12px;padding:16px 20px;margin:12px 0;">
-                <div style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:6px;">💼 HIRING SIGNAL</div>
-                <div style="font-size:0.95rem;color:#FEF3C7;line-height:1.6;">{hm_signal_text}</div>
+            <div class="persona-note" style="background:linear-gradient(90deg,#F59E0B18,#1a1200);
+                        border:1.5px solid #F59E0B66;border-radius:14px;padding:18px 20px;margin:14px 0;">
+                <div class="persona-note-label" style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:8px;">💼 HIRING SIGNAL</div>
+                <div class="persona-note-text" style="font-size:0.95rem;color:#FEF3C7;line-height:1.7;">{hm_signal_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
         # ── Verdict + Interview Decision ─────────────────────────────────────
         if hm_verdict_text or hm_interview_text:
+            verdict_card = ""
+            if hm_verdict_text:
+                verdict_card = f"""
+                <div class="persona-note hm-decision-card" style="flex:1;min-width:180px;
+                    background:linear-gradient(135deg,{v_color}18,#0f0c00);
+                    border:2px solid {v_color}66;border-radius:14px;padding:16px 18px;">
+                    <div class="persona-note-label" style="font-size:0.65rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">⚖️ VERDICT</div>
+                    <div style="font-size:1.2rem;font-weight:900;color:{v_color};margin-bottom:6px;">{v_icon}</div>
+                    <div class="persona-note-subtext" style="font-size:0.82rem;color:#9CA3AF;line-height:1.4;">{hm_verdict_text}</div>
+                </div>"""
+            interview_card = ""
+            if hm_interview_text:
+                interview_card = f"""
+                <div class="persona-note hm-decision-card" style="flex:1;min-width:180px;
+                    background:linear-gradient(135deg,{i_color}18,#0f0c00);
+                    border:2px solid {i_color}66;border-radius:14px;padding:16px 18px;">
+                    <div class="persona-note-label" style="font-size:0.65rem;color:{i_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">👀 WOULD I INTERVIEW?</div>
+                    <div class="persona-note-text" style="font-size:1rem;font-weight:800;color:{i_color};line-height:1.4;">{hm_interview_text}</div>
+                </div>"""
             st.markdown(f"""
-            <div style="display:flex;gap:12px;margin:12px 0 18px 0;flex-wrap:wrap;">
-                {'<div style="flex:1;min-width:180px;background:linear-gradient(90deg,' + v_color + '22,#0f0c00);border:1.5px solid ' + v_color + '55;border-radius:12px;padding:14px 16px;"><div style="font-size:0.68rem;color:' + v_color + ';letter-spacing:2px;font-weight:800;margin-bottom:6px;">⚖️ VERDICT</div><div style="font-size:1.1rem;font-weight:900;color:' + v_color + ';">' + v_icon + '</div><div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">' + hm_verdict_text + '</div></div>' if hm_verdict_text else ''}
-                {'<div style="flex:1;min-width:180px;background:linear-gradient(90deg,' + i_color + '22,#0f0c00);border:1.5px solid ' + i_color + '55;border-radius:12px;padding:14px 16px;"><div style="font-size:0.68rem;color:' + i_color + ';letter-spacing:2px;font-weight:800;margin-bottom:6px;">👀 INTERVIEW?</div><div style="font-size:1rem;font-weight:700;color:' + i_color + ';">' + hm_interview_text + '</div></div>' if hm_interview_text else ''}
+            <div style="display:flex;gap:14px;margin:14px 0 20px 0;flex-wrap:wrap;">
+                {verdict_card}
+                {interview_card}
             </div>
             """, unsafe_allow_html=True)
 
@@ -2492,6 +2557,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         st.session_state["last_roast"] = roast_result
         share_text = f"I just got my resume roasted by the {sel['name']} 🔥\nWould you survive the roast? 😅\n#ResumeRoaster #AI #CareerTips"
         _render_share_box(share_text, roast_result, sel["name"])
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
