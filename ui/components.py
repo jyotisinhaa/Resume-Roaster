@@ -2307,9 +2307,14 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         lines = roast_result.split('\n')
 
         def find_section_hm(header):
+            header_up = header.upper()
             for i, l in enumerate(lines):
-                if header.upper() in l.upper():
-                    return i
+                # Strip markdown/punctuation and check if this line IS the header
+                stripped = re.sub(r'[^A-Z0-9\s]', '', l.upper()).strip()
+                if stripped == header_up or stripped.startswith(header_up + ' ') or stripped.endswith(' ' + header_up):
+                    # Guard: header lines are short (not body text containing the word)
+                    if len(stripped.split()) <= len(header_up.split()) + 3:
+                        return i
             return None
 
         def _clean_hm(text: str) -> str:
@@ -2440,20 +2445,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # ── Instant Impression ───────────────────────────────────────────────
         if impression_text:
-            st.markdown(f"""
-            <div style="
-                background:linear-gradient(135deg,#0f0c00 0%,#1f1800 100%);
-                border:1px solid #F59E0B33;
-                border-radius:14px;
-                padding:20px 22px 18px 22px;
-                margin:0 0 18px 0;
-                position:relative;overflow:hidden;
-            ">
-                <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#F59E0B14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div style="font-size:0.68rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:10px;">⚡ INSTANT IMPRESSION</div>
-                <div style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background:linear-gradient(135deg,#0f0c00 0%,#1f1800 100%);'
+                'border:1px solid rgba(245,158,11,0.2);border-radius:14px;'
+                'padding:20px 22px 18px 22px;margin:0 0 18px 0;position:relative;overflow:hidden;">'
+                '<div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:rgba(245,158,11,0.08);font-family:Georgia,serif;line-height:1;user-select:none;">"</div>'
+                '<div style="font-size:0.68rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:10px;">⚡ INSTANT IMPRESSION</div>'
+                f'<div style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
 
         def render_hm_section(title, icon, color, bg, start_idx, end_idx):
             if start_idx is None:
@@ -2465,21 +2466,23 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             if not bullets:
                 return
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-            st.markdown(f"""
-            <div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;
-                        display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">
-                <span>{icon}</span> {title}
-                <div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="rsh" style="margin:12px 0 6px 0;font-size:1.05rem;font-weight:800;color:#ffffff;'
+                f'display:flex;align-items:center;gap:8px;letter-spacing:0.5px;">'
+                f'<span>{icon}</span> {title}'
+                f'<div style="height:1px;flex:1;background:linear-gradient(90deg,{color},transparent);opacity:0.5;margin-left:6px;"></div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
             for b in bullets:
-                st.markdown(f"""
-                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
-                            padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
-                    <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
-                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown(
+                    f'<div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;'
+                    f'padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">'
+                    f'<span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>'
+                    f'<span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
             st.markdown("<div style='height:1px;background:#1f1800;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
 
         render_hm_section("What Works",       "✔️", "#22C55E", "#071a0a", works_idx,    concerns_idx)
@@ -2488,41 +2491,52 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # ── Hiring Signal ────────────────────────────────────────────────────
         if hm_signal_text:
-            st.markdown(f"""
-            <div class="persona-note" style="background:linear-gradient(90deg,#F59E0B18,#1a1200);
-                        border:1.5px solid #F59E0B66;border-radius:14px;padding:18px 20px;margin:14px 0;">
-                <div class="persona-note-label" style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:8px;">💼 HIRING SIGNAL</div>
-                <div class="persona-note-text" style="font-size:0.95rem;color:#FEF3C7;line-height:1.7;">{hm_signal_text}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div class="persona-note" style="background:linear-gradient(90deg,rgba(245,158,11,0.09),#1a1200);'
+                'border:1.5px solid rgba(245,158,11,0.4);border-radius:14px;padding:18px 20px;margin:14px 0;">'
+                '<div class="persona-note-label" style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:8px;">💼 HIRING SIGNAL</div>'
+                f'<div class="persona-note-text" style="font-size:0.95rem;color:#FEF3C7;line-height:1.7;">{hm_signal_text}</div>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
 
         # ── Verdict + Interview Decision ─────────────────────────────────────
         if hm_verdict_text or hm_interview_text:
+            # Convert hex colors to rgb for rgba() usage
+            def _hex_rgb(h):
+                h = h.lstrip('#')
+                return int(h[0:2],16), int(h[2:4],16), int(h[4:6],16)
+            vr, vg, vb = _hex_rgb(v_color)
+            ir, ig, ib = _hex_rgb(i_color)
+
             verdict_card = ""
             if hm_verdict_text:
-                verdict_card = f"""
-                <div class="persona-note hm-decision-card" style="flex:1;min-width:180px;
-                    background:linear-gradient(135deg,{v_color}18,#0f0c00);
-                    border:2px solid {v_color}66;border-radius:14px;padding:16px 18px;">
-                    <div class="persona-note-label" style="font-size:0.65rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">⚖️ VERDICT</div>
-                    <div style="font-size:1.2rem;font-weight:900;color:{v_color};margin-bottom:6px;">{v_icon}</div>
-                    <div class="persona-note-subtext" style="font-size:0.82rem;color:#9CA3AF;line-height:1.4;">{hm_verdict_text}</div>
-                </div>"""
+                verdict_card = (
+                    f'<div class="persona-note hm-decision-card" style="flex:1;min-width:180px;'
+                    f'background:linear-gradient(135deg,rgba({vr},{vg},{vb},0.09),#0f0c00);'
+                    f'border:2px solid rgba({vr},{vg},{vb},0.4);border-radius:14px;padding:16px 18px;">'
+                    f'<div class="persona-note-label" style="font-size:0.65rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">⚖️ VERDICT</div>'
+                    f'<div style="font-size:1.2rem;font-weight:900;color:{v_color};margin-bottom:6px;">{v_icon}</div>'
+                    f'<div class="persona-note-subtext" style="font-size:0.82rem;color:#9CA3AF;line-height:1.4;">{hm_verdict_text}</div>'
+                    f'</div>'
+                )
             interview_card = ""
             if hm_interview_text:
-                interview_card = f"""
-                <div class="persona-note hm-decision-card" style="flex:1;min-width:180px;
-                    background:linear-gradient(135deg,{i_color}18,#0f0c00);
-                    border:2px solid {i_color}66;border-radius:14px;padding:16px 18px;">
-                    <div class="persona-note-label" style="font-size:0.65rem;color:{i_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">👀 WOULD I INTERVIEW?</div>
-                    <div class="persona-note-text" style="font-size:1rem;font-weight:800;color:{i_color};line-height:1.4;">{hm_interview_text}</div>
-                </div>"""
-            st.markdown(f"""
-            <div style="display:flex;gap:14px;margin:14px 0 20px 0;flex-wrap:wrap;">
-                {verdict_card}
-                {interview_card}
-            </div>
-            """, unsafe_allow_html=True)
+                interview_card = (
+                    f'<div class="persona-note hm-decision-card" style="flex:1;min-width:180px;'
+                    f'background:linear-gradient(135deg,rgba({ir},{ig},{ib},0.09),#0f0c00);'
+                    f'border:2px solid rgba({ir},{ig},{ib},0.4);border-radius:14px;padding:16px 18px;">'
+                    f'<div class="persona-note-label" style="font-size:0.65rem;color:{i_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">👀 WOULD I INTERVIEW?</div>'
+                    f'<div class="persona-note-text" style="font-size:1rem;font-weight:800;color:{i_color};line-height:1.4;">{hm_interview_text}</div>'
+                    f'</div>'
+                )
+            st.markdown(
+                f'<div style="display:flex;gap:14px;margin:14px 0 20px 0;flex-wrap:wrap;">'
+                f'{verdict_card}'
+                f'{interview_card}'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
 
         st.session_state["last_roast"] = roast_result
         _render_hm_linkedin_card(score_val, sc_label, sc_grade, sc_color,
