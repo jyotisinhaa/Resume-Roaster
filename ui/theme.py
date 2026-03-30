@@ -47,6 +47,21 @@ def get_theme_toggle_js() -> str:
                 el.style.color = theme === 'light' ? '#111111' : '';
             });
         });
+        // Fix persona card & banner text — Streamlit's global textColor can override
+        // class-based rules, so we set inline styles directly.
+        var personaTextMap = [
+            { sel: '.persona-name',    light: '#111111',  dark: '#f0e8e0' },
+            { sel: '.persona-tagline', light: '#3a2a18',  dark: '#c8beb6' },
+            { sel: '.psb-name',        light: '#111111',  dark: '#f0e8e0' },
+            { sel: '.psb-label',       light: '#6a5244',  dark: '#a09890' },
+            { sel: '.psb-tag',         light: '#3a2a18',  dark: '#c8beb6' },
+            { sel: '.psb-desc',        light: '#2a1e12',  dark: '#ddd5cc' }
+        ];
+        personaTextMap.forEach(function(item) {
+            main.querySelectorAll(item.sel).forEach(function(el) {
+                el.style.setProperty('color', theme === 'light' ? item.light : item.dark, 'important');
+            });
+        });
     }
 
     function injectToggle() {

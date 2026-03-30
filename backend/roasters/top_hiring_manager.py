@@ -108,6 +108,41 @@ def roast(resume_text: str, api_key: str) -> tuple:
     return content, _extract_score(content)
 
 
+def roast_stream(resume_text: str, api_key: str):
+    """Stream the hiring manager review chunk by chunk."""
+    client = OpenAI(api_key=api_key)
+    user_message = f"""
+    Review this resume as a Top Hiring Manager.
+
+    Make a clear hiring decision based on:
+    - Business impact
+    - Role fit
+    - Hiring risk
+
+    Do not give generic advice — focus on whether this candidate should be interviewed.
+
+    ---
+    {resume_text[:12000]}
+    ---
+
+    Give your hiring decision using the defined structure.
+    """
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=0.7,
+        max_tokens=1024,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta
+
+
 def _extract_score(content: str):
     match = re.search(r'Shortlist Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)
     if match:

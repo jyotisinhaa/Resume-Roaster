@@ -123,6 +123,46 @@ Make it funny, memeable, and brutally honest — but useful.
     return content, _extract_score(content)
 
 
+def roast_stream(resume_text: str, api_key: str):
+    """Stream the troll roast chunk by chunk."""
+    client = OpenAI(api_key=api_key)
+    user_message = f"""
+Roast this resume with savage internet humor.
+
+IMPORTANT:
+- Only reference content that exists in the resume.
+- Do NOT invent section names or phrases.
+- If something is unclear, call it out instead of guessing.
+- Keep jokes grounded in actual text.
+
+Focus on:
+- Buzzwords
+- Weak bullets
+- Formatting issues
+- Clarity problems
+
+---
+{resume_text[:12000]}
+---
+
+Make it funny, memeable, and brutally honest — but useful.
+"""
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=0.9,
+        max_tokens=1024,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta
+
+
 def _extract_score(content: str):
     match = re.search(r'Cringe Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)
     if match:

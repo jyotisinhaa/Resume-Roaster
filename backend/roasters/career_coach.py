@@ -87,6 +87,41 @@ Give your career coaching feedback in the format described in the system prompt.
     return content, score_breakdown
 
 
+def roast_stream(resume_text: str, api_key: str):
+    """Stream the career coach review chunk by chunk."""
+    client = OpenAI(api_key=api_key)
+    user_message = f"""
+Review this resume as a career coach. Be honest but encouraging.
+Focus on actionable improvements that will make the biggest impact.
+Use robust section detection to give feedback on each section
+(intro, experience, skills, education, projects, certifications),
+even if headers are non-standard, creative, or misspelled.
+
+Provide concrete examples for bullet points, soft skills, and achievements.
+Prioritize the feedback so the most impactful changes are first.
+
+---
+{resume_text[:12000]}
+---
+
+Give your career coaching feedback in the format described in the system prompt.
+"""
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=0.8,
+        max_tokens=1200,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta
+
+
 def _extract_score(content: str):
     match = re.search(r'Resume\s+Strength\s*:\s*(\d+)\s*/\s*10', content, re.IGNORECASE)
     if match:

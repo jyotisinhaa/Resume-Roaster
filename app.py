@@ -13,7 +13,7 @@ import tempfile
 import logging
 
 from backend.parser import extract_text, validate_file
-from backend.roasters import get_roaster
+from backend.roasters import get_roaster, get_roaster_stream, get_score_extractor
 from ui.styles import get_css
 from ui.theme import get_theme_toggle_js
 from ui.components import (
@@ -149,19 +149,33 @@ if st.session_state.get("file_valid", False):
         logger.info(f"🔥 Sending to OpenAI (personality: {sel['name']})...")
         logger.info(f"📨 TEXT BEING SENT TO AI ({len(resume_text[:12000]):,} chars):\n{'─'*60}\n{resume_text[:12000]}\n{'─'*60}")
 
-        roaster_fn = get_roaster(selected_key)
+        stream_fn = get_roaster_stream(selected_key)
+        score_extractor = get_score_extractor(selected_key)
 
-        with st.spinner(f"{sel['icon']} {sel['name']} is reviewing your resume..."):
-            start_time = time.time()
-            try:
-                roast_result, score_breakdown = roaster_fn(resume_text, api_key)
-                elapsed = time.time() - start_time
-                logger.info(f"✅ Roast complete in {elapsed:.1f}s")
-                logger.info(f"📋 Roast result length: {len(roast_result):,} characters")
-            except Exception as e:
-                logger.error(f"❌ Roast API call failed: {e}")
-                st.error(f"❌ Roasting failed: {e}")
-                st.stop()
+        # ── Stream response into a live placeholder ────────────────────────────
+        stream_placeholder = st.empty()
+        roast_result = ""
+        start_time = time.time()
+        last_render = start_time
+
+        try:
+            for chunk in stream_fn(resume_text, api_key):
+                roast_result += chunk
+                now = time.time()
+                # Throttle UI updates to ~20fps to avoid hammering Streamlit
+                if now - last_render >= 0.05:
+                    stream_placeholder.markdown(roast_result + " ▌")
+                    last_render = now
+        except Exception as e:
+            logger.error(f"❌ Roast stream failed: {e}")
+            st.error(f"❌ Roasting failed: {e}")
+            st.stop()
+
+        elapsed = time.time() - start_time
+        stream_placeholder.empty()
+
+        score_breakdown = score_extractor(roast_result)
+        logger.info(f"✅ Roast complete in {elapsed:.1f}s — {len(roast_result):,} chars")
 
         render_roast_results(roast_result, score_breakdown, sel, elapsed)
 

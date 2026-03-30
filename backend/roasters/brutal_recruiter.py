@@ -97,6 +97,35 @@ Now tear this resume apart and structure it exactly according to the system prom
     return content, score_breakdown
 
 
+def roast_stream(resume_text: str, api_key: str, job_role: str = None):
+    """Stream the roast response chunk by chunk."""
+    client = OpenAI(api_key=api_key)
+    role_context = f"For a {job_role} role." if job_role else ""
+    user_message = f"""Review this resume as the most brutally honest recruiter alive. {role_context}
+No mercy. Tell me exactly what's wrong, what works, and how to fix it.
+
+---
+{resume_text[:12000]}
+---
+
+Now tear this resume apart and structure it exactly according to the system prompt.
+"""
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=0.6,
+        max_tokens=1024,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta
+
+
 def _extract_score(content: str):
     """Extract the recruiter score from the response."""
     match = re.search(r'Recruiter Score[:\s]*(\d+)\s*/\s*10', content, re.IGNORECASE)

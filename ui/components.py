@@ -231,8 +231,8 @@ PERSONALITIES = {
     "brutal_recruiter": {
         "icon": "😤",
         "name": "Brutal Recruiter",
-        "tagline": "No mercy. Your resume has 6 seconds.",
-        "description": "Unfiltered feedback matching real recruiter snap-judgements",
+        "tagline": "I've trashed 50,000+ resumes. Is yours next?",
+        "description": "The unfiltered truth recruiters think but never say out loud.",
         "badge": "Most Direct",
         "accent_from": "#FF4B4B",
         "accent_to": "#CC0000",
@@ -240,8 +240,8 @@ PERSONALITIES = {
     "ats_scanner": {
         "icon": "🤖",
         "name": "ATS Scanner",
-        "tagline": "Beep boop. Scanning for red flags.",
-        "description": "Algorithm-grade keyword & formatting analysis",
+        "tagline": "90% of resumes never reach a human. Will yours?",
+        "description": "Algorithm-grade scan — find every keyword gap before a bot kills your application.",
         "badge": "Data-Driven",
         "accent_from": "#00C9FF",
         "accent_to": "#0066FF",
@@ -249,8 +249,8 @@ PERSONALITIES = {
     "career_coach": {
         "icon": "🧑‍🏫",
         "name": "Career Coach",
-        "tagline": "Tough love with a growth mindset.",
-        "description": "Structured guidance to unlock your career potential",
+        "tagline": "Your potential is real. Your resume isn't showing it.",
+        "description": "Honest, actionable fixes that turn a forgettable resume into an interview magnet.",
         "badge": "Most Encouraging",
         "accent_from": "#22C55E",
         "accent_to": "#16A34A",
@@ -258,8 +258,8 @@ PERSONALITIES = {
     "internet_troll": {
         "icon": "🧌",
         "name": "Internet Troll",
-        "tagline": "Maximum sarcasm. Zero chill.",
-        "description": "Savage humor wrapped around genuinely useful advice",
+        "tagline": "Sir, this is a resume — not a cry for help.",
+        "description": "The most savage feedback you'll actually learn from. Roast-proof your resume.",
         "badge": "Most Entertaining",
         "accent_from": "#A855F7",
         "accent_to": "#7C3AED",
@@ -267,8 +267,8 @@ PERSONALITIES = {
     "top_hiring_manager": {
         "icon": "👔",
         "name": "Top Hiring Manager",
-        "tagline": "Seasoned leader. Seeks excellence.",
-        "description": "Executive-level perspective on your hiring potential",
+        "tagline": "I make $500K hiring calls. Earn your callback.",
+        "description": "C-suite lens on whether you'd even get a callback — no corporate fluff.",
         "badge": "Most Authoritative",
         "accent_from": "#F59E0B",
         "accent_to": "#D97706",
@@ -281,20 +281,17 @@ def _card_html(key: str, p: dict, is_selected: bool) -> str:
     sel_cls = " selected" if is_selected else ""
     af, at = p["accent_from"], p["accent_to"]
     badge = p.get("badge", "")
-    desc  = p.get("description", "")
     return (
         f'<div class="persona-card{sel_cls}" data-persona="{key}" '
         f'style="--accent-grad:linear-gradient(135deg,{af},{at});'
-        f'--accent-color:{af};--accent-glow:{af}44;--accent-glow-inner:{af}0d;">'
+        f'--accent-color:{af};--accent-glow:{af}55;--accent-glow-inner:{af}14;">'
         f'<div class="persona-check">✓</div>'
-        f'<div class="pc-badge" style="color:{af};background:{af}18;border:1px solid {af}33;">{badge}</div>'
-        f'<div class="pc-icon-ring" style="background:linear-gradient(135deg,{af}18,{at}18);border:2px solid {af}2e;">'
+        f'<div class="pc-badge" style="color:{af};background:{af}22;border:1px solid {af}55;">{badge}</div>'
+        f'<div class="pc-icon-ring" style="background:linear-gradient(135deg,{af}22,{at}11);border:2px solid {af}44;">'
         f'<span class="persona-icon">{p["icon"]}</span>'
         f'</div>'
         f'<div class="persona-name">{p["name"]}</div>'
         f'<div class="persona-tagline">{p["tagline"]}</div>'
-        f'<div class="pc-sep" style="background:linear-gradient(90deg,{af}33,transparent);"></div>'
-        f'<div class="pc-desc">{desc}</div>'
         f'</div>'
     )
 
@@ -399,17 +396,19 @@ def render_personality_selector() -> tuple[str, dict]:
     """, height=0)
 
     af, at = sel["accent_from"], sel["accent_to"]
+    _ar = int(af[1:3], 16); _ag = int(af[3:5], 16); _ab = int(af[5:7], 16)
     st.markdown(
-        f'<div class="persona-selected-banner" style="border-color:{af};box-shadow:0 0 24px {af}22;">'
+        f'<div class="persona-selected-banner" style="border-color:{af}66;box-shadow:0 0 32px rgba({_ar},{_ag},{_ab},0.18);">'
         f'  <div class="psb-left">'
-        f'    <div class="psb-icon" style="background:linear-gradient(135deg,{af}22,{at}22);border:1.5px solid {af}44;box-shadow:0 4px 16px {af}22;">{sel["icon"]}</div>'
+        f'    <div class="psb-icon" style="background:linear-gradient(135deg,{af}2a,{at}18);border:2px solid {af}55;box-shadow:0 4px 20px rgba({_ar},{_ag},{_ab},0.25);">{sel["icon"]}</div>'
         f'    <div class="psb-info">'
-        f'      <div class="psb-label">Selected Roaster</div>'
+        f'      <div class="psb-label">✦ Selected Roaster</div>'
         f'      <div class="psb-name" style="color:{af};">{sel["name"]}</div>'
         f'      <div class="psb-tag">{sel["tagline"]}</div>'
+        f'      <div class="psb-desc">{sel.get("description","")}</div>'
         f'    </div>'
         f'  </div>'
-        f'  <div class="psb-pill" style="background:linear-gradient(135deg,{af},{at});">{sel.get("badge","")}</div>'
+        f'  <div class="psb-pill" style="background:linear-gradient(135deg,{af},{at});box-shadow:0 4px 14px rgba({_ar},{_ag},{_ab},0.4);">{sel.get("badge","")}</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -421,7 +420,8 @@ def render_personality_selector() -> tuple[str, dict]:
 #  LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
 def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: str, ov_grade: str, ov_color: str,
-                          roast_line: str = "", match_prob: str = "", recommendation: str = ""):
+                          roast_line: str = "", match_prob: str = "", recommendation: str = "",
+                          copy_text: str = "", roast_result: str = ""):
     """Render a screenshot-ready LinkedIn share card."""
     import streamlit as st
     import json as _json
@@ -474,6 +474,8 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
         f"#ResumeRipper #ATSTips #JobSearch #CareerTips #AI"
     )
     li_text_json = _json.dumps(li_text)
+    copy_text_json = _json.dumps(copy_text or li_text)
+    roast_text_json = _json.dumps(roast_result)
 
     st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#00C9FF;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🤖 Share Your Results</div>', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
@@ -579,9 +581,29 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
         font-family:'Inter','Segoe UI',Arial,sans-serif;
     ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="atsCopyText()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+        <button onclick="atsDownload()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
+    </div>
+    <div id="ats-copy-fb" style="
+        display:none;max-width:520px;margin:6px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Copied to clipboard!</div>
+
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
     const ATS_LI_TEXT = {li_text_json};
+    const ATS_COPY_TEXT = {copy_text_json};
+    const ATS_ROAST_TEXT = {roast_text_json};
     function saveATSCard() {{
         const card = document.querySelector('.li-card');
         html2canvas(card, {{ backgroundColor:'#0a0f1e', scale:2, useCORS:true, logging:false }})
@@ -597,26 +619,59 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
     function postATSLinkedIn() {{
         window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(ATS_LI_TEXT), '_blank');
     }}
+    function atsCopyText() {{
+        var show = function() {{
+            var fb = document.getElementById('ats-copy-fb');
+            fb.style.display = 'block';
+            setTimeout(function() {{ fb.style.display = 'none'; }}, 2200);
+        }};
+        var fallback = function() {{
+            try {{
+                var ta = window.parent.document.createElement('textarea');
+                ta.value = ATS_COPY_TEXT; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+                window.parent.document.body.appendChild(ta); ta.focus(); ta.select();
+                window.parent.document.execCommand('copy');
+                window.parent.document.body.removeChild(ta); show();
+            }} catch(e) {{ alert('Copy failed — please copy manually.'); }}
+        }};
+        try {{ window.parent.navigator.clipboard.writeText(ATS_COPY_TEXT).then(show, fallback); }}
+        catch(e) {{ fallback(); }}
+    }}
+    function atsDownload() {{
+        var blob = new Blob([ATS_ROAST_TEXT], {{type:'text/plain;charset=utf-8'}});
+        var url = URL.createObjectURL(blob);
+        var a = window.parent.document.createElement('a');
+        a.href = url; a.download = 'ats_scanner_roast.txt';
+        window.parent.document.body.appendChild(a); a.click();
+        window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
+    }}
     </script>
-    """, height=430)
+    """, height=590)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  BRUTAL RECRUITER LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
-def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, verdict_text: str, linkedin_roast: str):
+def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, verdict_text: str, linkedin_roast: str,
+                             copy_text: str = "", roast_result_full: str = ""):
     """Render a screenshot-ready LinkedIn share card for the Brutal Recruiter."""
     import json as _json
-    circumference = round(2 * 3.14159 * 40, 1)
+    circumference = round(2 * 3.14159 * 54, 1)
     dash = round(score_val / 10 * circumference, 1)
 
     low_v = verdict_text.lower()
     if "hire" in low_v and "maybe" not in low_v and "pass" not in low_v:
         v_color = "#22C55E"; v_icon = "✅ HIRE"
+        v_bg = "rgba(34,197,94,0.12)"
+        v_msg = "You made it through. Don't blow the interview."
     elif "maybe" in low_v:
         v_color = "#EAB308"; v_icon = "🤔 MAYBE"
+        v_bg = "rgba(234,179,8,0.12)"
+        v_msg = "Borderline. One more pass and it could flip."
     else:
         v_color = "#EF4444"; v_icon = "❌ PASS"
+        v_bg = "rgba(239,68,68,0.12)"
+        v_msg = "Hard pass. Fix it before you apply anywhere."
 
     import re as _re
     def _li_clean(text: str) -> str:
@@ -630,7 +685,13 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
 
     clean_verdict = _li_clean(verdict_text)
     clean_roast   = _li_clean(linkedin_roast)
-    roast_display = (clean_roast[:120] + "…") if len(clean_roast) > 120 else clean_roast
+    roast_display = (clean_roast[:160] + "…") if len(clean_roast) > 160 else clean_roast
+    verdict_display = (clean_verdict[:120] + "…") if len(clean_verdict) > 120 else clean_verdict
+
+    # RGB components for rgba()
+    _scr = int(sc_color[1:3], 16)
+    _scg = int(sc_color[3:5], 16)
+    _scb = int(sc_color[5:7], 16)
 
     li_text = (
         f"I just survived the Brutal Recruiter on Resume Ripper AI 😤\n\n"
@@ -641,153 +702,352 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         f"#ResumeRoaster #BrutalRecruiter #JobSearch #CareerTips #AI"
     )
     li_text_json = _json.dumps(li_text)
+    br_copy_text_json = _json.dumps(copy_text or li_text)
+    br_roast_text_json = _json.dumps(roast_result_full)
 
     st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#FF4B4B;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">😤 Share Your Results</div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div style="font-size:0.82rem;color:#6B7280;margin-bottom:10px;">'
+        'Screenshot this card and share it on LinkedIn — dare your network to beat your score.</div>',
+        unsafe_allow_html=True,
+    )
     components.html(f"""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    * {{ box-sizing: border-box; }}
+
     .br-card {{
-        background:linear-gradient(135deg,#1a0505 0%,#2a0d0d 60%,#1a0505 100%);
-        border:1px solid #5a1a1a;
-        border-radius:18px;
-        padding:22px 20px 18px 20px;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-        max-width:520px;
-        margin:0 auto;
-        position:relative;
-        overflow:hidden;
-        box-shadow:0 8px 40px #FF4B4B18;
+        background: linear-gradient(160deg, #0f0202 0%, #1e0808 40%, #120404 100%);
+        border: 1.5px solid rgba({_scr},{_scg},{_scb},0.35);
+        border-radius: 24px;
+        padding: 32px 28px 26px 28px;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        max-width: 560px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 60px rgba({_scr},{_scg},{_scb},0.15), 0 20px 60px rgba(0,0,0,0.6);
     }}
+    /* top accent stripe */
     .br-card::before {{
-        content:'';
-        position:absolute;
-        top:0;left:0;right:0;height:2px;
-        background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, transparent 0%, {sc_color} 40%, {sc_color} 60%, transparent 100%);
     }}
-    .br-header {{
-        display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
+    /* subtle bg glow orb */
+    .br-card::after {{
+        content: '';
+        position: absolute;
+        top: -60px; right: -60px;
+        width: 200px; height: 200px;
+        background: radial-gradient(circle, rgba({_scr},{_scg},{_scb},0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }}
+
+    .br-toprow {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
     }}
     .br-brand {{
-        font-size:0.7rem;color:#6B7280;letter-spacing:2px;font-weight:700;text-transform:uppercase;
+        font-size: 0.75rem;
+        color: #6B7280;
+        letter-spacing: 2.5px;
+        font-weight: 700;
+        text-transform: uppercase;
     }}
+    .br-brand span {{ color: #FF4B4B; }}
     .br-badge {{
-        font-size:0.7rem;color:#FF4B4B;font-weight:800;letter-spacing:1px;
-        background:#FF4B4B18;border:1px solid #FF4B4B44;border-radius:20px;padding:3px 10px;
+        font-size: 0.7rem;
+        color: #FF4B4B;
+        font-weight: 800;
+        letter-spacing: 1px;
+        background: rgba(255,75,75,0.12);
+        border: 1px solid rgba(255,75,75,0.3);
+        border-radius: 20px;
+        padding: 4px 12px;
+        text-transform: uppercase;
     }}
-    .br-hero {{
-        display:flex;align-items:center;gap:20px;margin-bottom:18px;
+
+    /* ── Score ring + number ── */
+    .br-score-section {{
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 22px;
     }}
-    .br-roast-box {{
-        background:#2a0d0d;border-left:3px solid #A855F7;border-radius:8px;
-        padding:10px 14px;margin-bottom:16px;
-        font-size:0.82rem;color:#E9D5FF;font-style:italic;line-height:1.5;
+    .br-ring-wrap {{
+        position: relative;
+        width: 130px;
+        height: 130px;
+        flex-shrink: 0;
     }}
+    .br-ring-inner {{
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        line-height: 1;
+    }}
+    .br-score-num {{
+        font-size: 3rem;
+        font-weight: 900;
+        color: {sc_color};
+        line-height: 1;
+        display: block;
+        filter: drop-shadow(0 0 10px {sc_color});
+    }}
+    .br-score-denom {{
+        font-size: 0.65rem;
+        color: #6B7280;
+        letter-spacing: 1.5px;
+        margin-top: 2px;
+        display: block;
+    }}
+    .br-score-right {{
+        flex: 1;
+    }}
+    .br-verdict-label {{
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: {sc_color};
+        letter-spacing: 3px;
+        line-height: 1;
+        filter: drop-shadow(0 0 8px {sc_color});
+        margin-bottom: 6px;
+    }}
+    .br-grade-row {{
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+    }}
+    .br-pill {{
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }}
+    .br-verdict-sub {{
+        font-size: 0.82rem;
+        color: #9CA3AF;
+        font-style: italic;
+        line-height: 1.45;
+    }}
+
+    /* ── Verdict box ── */
+    .br-verdict-box {{
+        background: {v_bg};
+        border: 1px solid rgba({_scr},{_scg},{_scb},0.3);
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin-bottom: 16px;
+    }}
+    .br-verdict-tag {{
+        font-size: 0.62rem;
+        color: {v_color};
+        font-weight: 800;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }}
+    .br-verdict-text {{
+        font-size: 0.92rem;
+        color: #E5E7EB;
+        line-height: 1.55;
+    }}
+
+    /* ── Quote box ── */
+    .br-quote {{
+        background: rgba(168,85,247,0.08);
+        border-left: 3px solid #A855F7;
+        border-radius: 0 10px 10px 0;
+        padding: 12px 16px;
+        margin-bottom: 18px;
+        font-size: 0.85rem;
+        color: #E9D5FF;
+        font-style: italic;
+        line-height: 1.55;
+    }}
+
+    /* ── Footer ── */
     .br-footer {{
-        border-top:1px solid #3a1a1a;
-        padding-top:12px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }}
     .br-cta {{
-        font-size:0.78rem;color:#FF8C00;font-weight:700;
+        font-size: 0.8rem;
+        color: #FF8C00;
+        font-weight: 800;
     }}
-    .br-sub {{
-        font-size:0.72rem;color:#374151;
+    .br-hashtags {{
+        font-size: 0.68rem;
+        color: #374151;
+        letter-spacing: 0.5px;
     }}
     </style>
-    <div class="br-card">
-        <div class="br-header">
-            <div class="br-brand">🔥 Resume Ripper AI</div>
+
+    <div class="br-card" id="br-card">
+        <!-- Top row -->
+        <div class="br-toprow">
+            <div class="br-brand"><span>🔥</span> Resume Ripper AI</div>
             <div class="br-badge">😤 Brutal Recruiter</div>
         </div>
-        <div class="br-hero">
-            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="#3a1a1a" stroke-width="9"/>
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+
+        <!-- Score ring + verdict label -->
+        <div class="br-score-section">
+            <div class="br-ring-wrap">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                    <circle cx="65" cy="65" r="54" fill="none" stroke="rgba({_scr},{_scg},{_scb},0.15)" stroke-width="12"/>
+                    <circle cx="65" cy="65" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
                         stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 45 45)"
-                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                        transform="rotate(-90 65 65)"
+                        style="filter:drop-shadow(0 0 10px {sc_color});"/>
                 </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                <div class="br-ring-inner">
+                    <span class="br-score-num">{score_val}</span>
+                    <span class="br-score-denom">OUT OF 10</span>
                 </div>
             </div>
-            <div>
-                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
-                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Recruiter Score</div>
-                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
-                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
-                    <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
+            <div class="br-score-right">
+                <div class="br-verdict-label">{sc_label}</div>
+                <div class="br-grade-row">
+                    <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">Grade {sc_grade}</span>
+                    <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">{v_icon}</span>
                 </div>
+                <div class="br-verdict-sub">{v_msg}</div>
             </div>
         </div>
-        <div class="br-roast-box">🔥 "{roast_display}"</div>
+
+        <!-- Verdict box -->
+        <div class="br-verdict-box">
+            <div class="br-verdict-tag">⚖️ Recruiter Verdict</div>
+            <div class="br-verdict-text">{verdict_display}</div>
+        </div>
+
+        <!-- LinkedIn roast quote -->
+        <div class="br-quote">🔥 "{roast_display}"</div>
+
+        <!-- Footer -->
         <div class="br-footer">
             <div class="br-cta">🔥 Try Resume Ripper AI — it's free!</div>
-            <div class="br-sub">Would you survive the roast?</div>
+            <div class="br-hashtags">#ResumeRoaster #JobSearch #AI</div>
         </div>
     </div>
 
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+    <div style="display:flex;gap:10px;margin-top:14px;max-width:560px;margin-left:auto;margin-right:auto;">
         <button onclick="saveCardImage()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#FF4B4B;color:#fff;font-size:0.88rem;font-weight:700;
+            flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+            background:linear-gradient(90deg,#FF4B4B,#FF8C00);color:#fff;
+            font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
             font-family:'Inter','Segoe UI',Arial,sans-serif;
+            box-shadow:0 4px 20px rgba(255,75,75,0.35);
             transition:opacity 0.15s;
         " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
             📸 Save Card as Image
         </button>
         <button onclick="postLinkedIn()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+            flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+            background:#0A66C2;color:#fff;font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
             font-family:'Inter','Segoe UI',Arial,sans-serif;
+            box-shadow:0 4px 20px rgba(10,102,194,0.35);
             transition:opacity 0.15s;
         " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
             💼 Post on LinkedIn
         </button>
     </div>
     <div id="br-hint" style="
-        display:none;max-width:520px;margin:8px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        display:none;max-width:560px;margin:8px auto 0 auto;
+        font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
         font-family:'Inter','Segoe UI',Arial,sans-serif;
     ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:560px;margin-left:auto;margin-right:auto;">
+        <button onclick="brCopyText()" style="
+            width:100%;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+        <button onclick="brDownload()" style="
+            width:100%;padding:12px 0;border-radius:12px;border:1.5px solid #FF8C00;cursor:pointer;
+            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
+    </div>
+    <div id="br-copy-fb" style="
+        display:none;max-width:560px;margin:6px auto 0 auto;
+        font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
     const LI_TEXT = {li_text_json};
+    const BR_COPY_TEXT = {br_copy_text_json};
+    const BR_ROAST_TEXT = {br_roast_text_json};
 
     function saveCardImage() {{
-        const card = document.querySelector('.br-card');
+        var card = document.getElementById('br-card');
         html2canvas(card, {{
-            backgroundColor: '#1a0505',
+            backgroundColor: '#0f0202',
             scale: 2,
             useCORS: true,
             logging: false
-        }}).then(canvas => {{
-            const link = document.createElement('a');
-            link.download = 'brutal_recruiter_score.png';
+        }}).then(function(canvas) {{
+            var link = document.createElement('a');
+            link.download = 'resume_ripper_score.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             document.getElementById('br-hint').style.display = 'block';
-            setTimeout(() => {{ document.getElementById('br-hint').style.display = 'none'; }}, 4000);
+            setTimeout(function() {{ document.getElementById('br-hint').style.display = 'none'; }}, 4000);
         }});
     }}
 
     function postLinkedIn() {{
         window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(LI_TEXT), '_blank');
     }}
+    function brCopyText() {{
+        var show = function() {{
+            var fb = document.getElementById('br-copy-fb');
+            fb.style.display = 'block';
+            setTimeout(function() {{ fb.style.display = 'none'; }}, 2200);
+        }};
+        var fallback = function() {{
+            try {{
+                var ta = window.parent.document.createElement('textarea');
+                ta.value = BR_COPY_TEXT; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+                window.parent.document.body.appendChild(ta); ta.focus(); ta.select();
+                window.parent.document.execCommand('copy');
+                window.parent.document.body.removeChild(ta); show();
+            }} catch(e) {{ alert('Copy failed — please copy manually.'); }}
+        }};
+        try {{ window.parent.navigator.clipboard.writeText(BR_COPY_TEXT).then(show, fallback); }}
+        catch(e) {{ fallback(); }}
+    }}
+    function brDownload() {{
+        var blob = new Blob([BR_ROAST_TEXT], {{type:'text/plain;charset=utf-8'}});
+        var url = URL.createObjectURL(blob);
+        var a = window.parent.document.createElement('a');
+        a.href = url; a.download = 'brutal_recruiter_roast.txt';
+        window.parent.document.body.appendChild(a); a.click();
+        window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
+    }}
     </script>
-    """, height=420)
+    """, height=760)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  CAREER COACH LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
 def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, closer_text: str,
-                             strengths: list = None, growth: list = None, actions: list = None):
+                             strengths: list = None, growth: list = None, actions: list = None,
+                             copy_text: str = "", roast_result_full: str = ""):
     """Render a screenshot-ready LinkedIn share card for the Career Coach."""
     import json as _json, re as _re
 
@@ -814,6 +1074,8 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         f"#ResumeRipper #CareerCoach #JobSearch #CareerTips #AI"
     )
     li_text_json = _json.dumps(li_text)
+    cc_copy_text_json = _json.dumps(copy_text or li_text)
+    cc_roast_text_json = _json.dumps(roast_result_full)
 
     st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#22C55E;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🧑‍🏫 Share Your Results</div>', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
@@ -906,9 +1168,29 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         font-family:'Inter','Segoe UI',Arial,sans-serif;
     ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="ccCopyText()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+        <button onclick="ccDownload()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
+    </div>
+    <div id="cc-copy-fb" style="
+        display:none;max-width:520px;margin:6px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Copied to clipboard!</div>
+
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
     const CC_LI_TEXT = {li_text_json};
+    const CC_COPY_TEXT = {cc_copy_text_json};
+    const CC_ROAST_TEXT = {cc_roast_text_json};
     function saveCCCard() {{
         const card = document.querySelector('.cc-card');
         html2canvas(card, {{ backgroundColor:'#051a0a', scale:2, useCORS:true, logging:false }})
@@ -924,14 +1206,41 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     function postCCLinkedIn() {{
         window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(CC_LI_TEXT), '_blank');
     }}
+    function ccCopyText() {{
+        var show = function() {{
+            var fb = document.getElementById('cc-copy-fb');
+            fb.style.display = 'block';
+            setTimeout(function() {{ fb.style.display = 'none'; }}, 2200);
+        }};
+        var fallback = function() {{
+            try {{
+                var ta = window.parent.document.createElement('textarea');
+                ta.value = CC_COPY_TEXT; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+                window.parent.document.body.appendChild(ta); ta.focus(); ta.select();
+                window.parent.document.execCommand('copy');
+                window.parent.document.body.removeChild(ta); show();
+            }} catch(e) {{ alert('Copy failed — please copy manually.'); }}
+        }};
+        try {{ window.parent.navigator.clipboard.writeText(CC_COPY_TEXT).then(show, fallback); }}
+        catch(e) {{ fallback(); }}
+    }}
+    function ccDownload() {{
+        var blob = new Blob([CC_ROAST_TEXT], {{type:'text/plain;charset=utf-8'}});
+        var url = URL.createObjectURL(blob);
+        var a = window.parent.document.createElement('a');
+        a.href = url; a.download = 'career_coach_roast.txt';
+        window.parent.document.body.appendChild(a); a.click();
+        window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
+    }}
     </script>
-    """, height=420)
+    """, height=520)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  INTERNET TROLL LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
-def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, closing_roast: str):
+def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str, closing_roast: str,
+                             copy_text: str = "", roast_result_full: str = ""):
     """Render a screenshot-ready LinkedIn share card for the Internet Troll."""
     import json as _json, re as _re
 
@@ -957,6 +1266,8 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         f"#ResumeRipper #InternetTroll #JobSearch #CareerTips #AI"
     )
     li_text_json = _json.dumps(li_text)
+    it_copy_text_json = _json.dumps(copy_text or li_text)
+    it_roast_text_json = _json.dumps(roast_result_full)
 
     st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#A855F7;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🧌 Share Your Results</div>', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
@@ -1049,9 +1360,29 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         font-family:'Inter','Segoe UI',Arial,sans-serif;
     ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="itCopyText()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+        <button onclick="itDownload()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
+    </div>
+    <div id="it-copy-fb" style="
+        display:none;max-width:520px;margin:6px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Copied to clipboard!</div>
+
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
     const IT_LI_TEXT = {li_text_json};
+    const IT_COPY_TEXT = {it_copy_text_json};
+    const IT_ROAST_TEXT = {it_roast_text_json};
     function saveITCard() {{
         const card = document.querySelector('.it-card');
         html2canvas(card, {{ backgroundColor:'#0d0514', scale:2, useCORS:true, logging:false }})
@@ -1067,15 +1398,42 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     function postITLinkedIn() {{
         window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(IT_LI_TEXT), '_blank');
     }}
+    function itCopyText() {{
+        var show = function() {{
+            var fb = document.getElementById('it-copy-fb');
+            fb.style.display = 'block';
+            setTimeout(function() {{ fb.style.display = 'none'; }}, 2200);
+        }};
+        var fallback = function() {{
+            try {{
+                var ta = window.parent.document.createElement('textarea');
+                ta.value = IT_COPY_TEXT; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+                window.parent.document.body.appendChild(ta); ta.focus(); ta.select();
+                window.parent.document.execCommand('copy');
+                window.parent.document.body.removeChild(ta); show();
+            }} catch(e) {{ alert('Copy failed — please copy manually.'); }}
+        }};
+        try {{ window.parent.navigator.clipboard.writeText(IT_COPY_TEXT).then(show, fallback); }}
+        catch(e) {{ fallback(); }}
+    }}
+    function itDownload() {{
+        var blob = new Blob([IT_ROAST_TEXT], {{type:'text/plain;charset=utf-8'}});
+        var url = URL.createObjectURL(blob);
+        var a = window.parent.document.createElement('a');
+        a.href = url; a.download = 'internet_troll_roast.txt';
+        window.parent.document.body.appendChild(a); a.click();
+        window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
+    }}
     </script>
-    """, height=420)
+    """, height=520)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  TOP HIRING MANAGER LINKEDIN SHARE CARD
 # ═══════════════════════════════════════════════════════════════════════════════
 def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_color: str,
-                              verdict_text: str, interview_decision: str):
+                              verdict_text: str, interview_decision: str,
+                              copy_text: str = "", roast_result_full: str = ""):
     import json as _json, re as _re
 
     circumference = round(2 * 3.14159 * 40, 1)
@@ -1117,6 +1475,8 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         f"#ResumeRipper #HiringManager #JobSearch #CareerTips #AI"
     )
     li_text_json = _json.dumps(li_text)
+    hm_copy_text_json = _json.dumps(copy_text or li_text)
+    hm_roast_text_json = _json.dumps(roast_result_full)
 
     st.markdown('<div style="font-size:1.1rem;font-weight:800;color:#F59E0B;margin:24px 0 8px 0;letter-spacing:0.5px;font-family:inherit;">🏆 Share Your Results</div>', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
@@ -1204,9 +1564,29 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         font-family:'Inter','Segoe UI',Arial,sans-serif;
     ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
+        <button onclick="hmCopyText()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+        <button onclick="hmDownload()" style="
+            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
+    </div>
+    <div id="hm-copy-fb" style="
+        display:none;max-width:520px;margin:6px auto 0 auto;
+        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+        font-family:'Inter','Segoe UI',Arial,sans-serif;
+    ">✅ Copied to clipboard!</div>
+
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
     const HM_LI_TEXT = {li_text_json};
+    const HM_COPY_TEXT = {hm_copy_text_json};
+    const HM_ROAST_TEXT = {hm_roast_text_json};
     function saveHMCard() {{
         const card = document.querySelector('.hm-card');
         html2canvas(card, {{ backgroundColor:'#0f0c00', scale:2, useCORS:true, logging:false }})
@@ -1222,8 +1602,34 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     function postHMLinkedIn() {{
         window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(HM_LI_TEXT), '_blank');
     }}
+    function hmCopyText() {{
+        var show = function() {{
+            var fb = document.getElementById('hm-copy-fb');
+            fb.style.display = 'block';
+            setTimeout(function() {{ fb.style.display = 'none'; }}, 2200);
+        }};
+        var fallback = function() {{
+            try {{
+                var ta = window.parent.document.createElement('textarea');
+                ta.value = HM_COPY_TEXT; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+                window.parent.document.body.appendChild(ta); ta.focus(); ta.select();
+                window.parent.document.execCommand('copy');
+                window.parent.document.body.removeChild(ta); show();
+            }} catch(e) {{ alert('Copy failed — please copy manually.'); }}
+        }};
+        try {{ window.parent.navigator.clipboard.writeText(HM_COPY_TEXT).then(show, fallback); }}
+        catch(e) {{ fallback(); }}
+    }}
+    function hmDownload() {{
+        var blob = new Blob([HM_ROAST_TEXT], {{type:'text/plain;charset=utf-8'}});
+        var url = URL.createObjectURL(blob);
+        var a = window.parent.document.createElement('a');
+        a.href = url; a.download = 'hiring_manager_roast.txt';
+        window.parent.document.body.appendChild(a); a.click();
+        window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
+    }}
     </script>
-    """, height=430)
+    """, height=530)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1333,6 +1739,66 @@ def _render_share_box(share_text: str, roast_result: str, sel_name: str, show_li
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+#  SHARED HERO SCORE CARD  — single source of truth for all personas
+# ═══════════════════════════════════════════════════════════════════════════════
+def _render_hero_score_card(
+    header_icon: str,
+    header_text: str,
+    header_color: str,
+    bg_gradient: str,
+    ring_bg: str,
+    sc_color: str,
+    score_val,
+    out_of: str,
+    dash: float,
+    circumference: float,
+    sc_label: str,
+    sc_grade: str,
+    score_type_label: str,
+):
+    """Render the hero score card identically across all personas."""
+    st.markdown(
+        f'<div style="'
+        f'background:{bg_gradient};'
+        f'border:1.5px solid {sc_color}44;'
+        f'border-radius:20px;'
+        f'padding:28px 24px 22px 24px;'
+        f'margin:16px 0 20px 0;'
+        f'text-align:center;'
+        f'position:relative;overflow:hidden;">'
+        # top accent stripe
+        f'<div style="position:absolute;top:0;left:0;right:0;height:3px;'
+        f'background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>'
+        # header label
+        f'<div style="font-size:0.75rem;color:{header_color};letter-spacing:3px;font-weight:800;'
+        f'text-transform:uppercase;margin-bottom:16px;">{header_icon} {header_text}</div>'
+        # score ring
+        f'<div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">'
+        f'<svg width="150" height="150" viewBox="0 0 150 150">'
+        f'<circle cx="75" cy="75" r="54" fill="none" stroke="{ring_bg}" stroke-width="12"/>'
+        f'<circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"'
+        f' stroke-dasharray="{dash} {circumference}" stroke-linecap="round"'
+        f' transform="rotate(-90 75 75)"'
+        f' style="filter:drop-shadow(0 0 8px {sc_color});"/>'
+        f'</svg>'
+        f'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);'
+        f'text-align:center;line-height:1;">'
+        f'<div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>'
+        f'<div style="font-size:0.6rem;color:#9CA3AF;letter-spacing:1px;margin-top:4px;">OUT OF {out_of}</div>'
+        f'</div>'
+        f'</div>'
+        # verdict label
+        f'<div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:6px;">{sc_label}</div>'
+        # score type + grade
+        f'<div style="font-size:0.8rem;color:#9CA3AF;">'
+        f'{score_type_label} &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b>'
+        f'</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 #  ROAST RESULTS
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, elapsed: float):
@@ -1382,37 +1848,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         circumference = round(2 * 3.14159 * 54, 1)
         dash = round(overall_score / 100 * circumference, 1)
 
-        st.markdown(f"""
-        <div style="
-            background:linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 60%,#091422 100%);
-            border:1px solid {ov_color}33;
-            border-radius:20px;
-            padding:28px 24px 22px 24px;
-            margin:16px 0 20px 0;
-            text-align:center;
-            position:relative;
-            overflow:hidden;
-        ">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{ov_color},{ov_color}88,transparent);"></div>
-            <div style="font-size:0.75rem;color:#00C9FF;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🤖 ATS SCAN COMPLETE</div>
-            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1e2d3d" stroke-width="12"/>
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="{ov_color}" stroke-width="12"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                        style="filter:drop-shadow(0 0 8px {ov_color});"
-                    />
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:2.8rem;font-weight:900;color:{ov_color};line-height:1;">{overall_score}</div>
-                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 100</div>
-                </div>
-            </div>
-            <div style="font-size:1.5rem;font-weight:900;color:{ov_color};letter-spacing:3px;margin-bottom:4px;">{ov_label}</div>
-            <div style="font-size:0.8rem;color:#6B7280;">ATS Compatibility Score &nbsp;·&nbsp; Grade <b style="color:{ov_color};">{ov_grade}</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _render_hero_score_card(
+            header_icon="🤖", header_text="ATS SCAN COMPLETE",
+            header_color="#00C9FF",
+            bg_gradient="linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 60%,#091422 100%)",
+            ring_bg="#1e2d3d",
+            sc_color=ov_color, score_val=overall_score, out_of="100",
+            dash=dash, circumference=circumference,
+            sc_label=ov_label, sc_grade=ov_grade,
+            score_type_label="ATS Compatibility Score",
+        )
 
         # Score Breakdown
         st.markdown(f"""
@@ -1662,10 +2107,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     break
 
         st.session_state["last_roast"] = roast_result
-        _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color,
-                              ats_roast_line, ats_match_prob, display_verdict)
         share_text = f"I just scored {overall_score}/100 on the ATS Scanner 🤖\nHere's my resume breakdown — would yours survive? 👀\n🔥 Try it free → Resume Ripper AI\n#ResumeRoaster #ATSTips #JobSearch #CareerTips #AI"
-        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+        _render_linkedin_card(score_breakdown, overall_score, ov_label, ov_grade, ov_color,
+                              ats_roast_line, ats_match_prob, display_verdict,
+                              copy_text=share_text, roast_result=roast_result)
 
     elif sel.get("name", "").lower() == "brutal recruiter":
         import re
@@ -1737,37 +2182,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         dash_br = round(score_val / 10 * circumference_br, 1)
 
         # ── Hero Score Card ──────────────────────────────────────────────────
-        st.markdown(f"""
-        <div style="
-            background:linear-gradient(135deg,#1a0505 0%,#2a0d0d 60%,#1a0505 100%);
-            border:1px solid {sc_color}33;
-            border-radius:20px;
-            padding:28px 24px 22px 24px;
-            margin:16px 0 20px 0;
-            text-align:center;
-            position:relative;
-            overflow:hidden;
-        ">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
-            <div style="font-size:0.75rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:16px;">😤 BRUTAL RECRUITER VERDICT</div>
-            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="#2a1a1a" stroke-width="12"/>
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
-                        stroke-dasharray="{dash_br} {circumference_br}" stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                        style="filter:drop-shadow(0 0 8px {sc_color});"
-                    />
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
-                </div>
-            </div>
-            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
-            <div style="font-size:0.8rem;color:#6B7280;">Recruiter Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _render_hero_score_card(
+            header_icon="😤", header_text="BRUTAL RECRUITER VERDICT",
+            header_color="#FF4B4B",
+            bg_gradient="linear-gradient(135deg,#1a0505 0%,#2a0d0d 60%,#1a0505 100%)",
+            ring_bg="#2a1a1a",
+            sc_color=sc_color, score_val=score_val, out_of="10",
+            dash=dash_br, circumference=circumference_br,
+            sc_label=sc_label, sc_grade=sc_grade,
+            score_type_label="Recruiter Score",
+        )
 
         # ── Gut Reaction ──────────────────────────────────────────────────────
         if gut_text:
@@ -1885,9 +2309,9 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             """, unsafe_allow_html=True)
 
         st.session_state["last_roast"] = roast_result
-        _render_br_linkedin_card(score_val, sc_label, sc_grade, sc_color, br_verdict_text, br_roast_text)
         share_text = f"I just got brutally roasted by the Brutal Recruiter 😤\nRecruiter Score: {score_val}/10 — {sc_label}\nWould you survive the roast? 🔥\n#ResumeRoaster #BrutalRecruiter #CareerTips #AI"
-        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+        _render_br_linkedin_card(score_val, sc_label, sc_grade, sc_color, br_verdict_text, br_roast_text,
+                                 copy_text=share_text, roast_result_full=roast_result)
 
     elif sel.get("name", "").lower() == "career coach":
         import re
@@ -1958,36 +2382,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             closer_text = closer_candidates[0] if closer_candidates else ""
 
         # ── Hero Score Card ──────────────────────────────────────────────────
-        st.markdown(f"""
-        <div style="
-            background:linear-gradient(135deg,#051a0a 0%,#0d2a14 60%,#051a0a 100%);
-            border:1px solid {sc_color}33;
-            border-radius:20px;
-            padding:28px 24px 22px 24px;
-            margin:16px 0 20px 0;
-            text-align:center;
-            position:relative;overflow:hidden;
-        ">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
-            <div style="font-size:0.75rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🧑‍🏫 CAREER COACH ASSESSMENT</div>
-            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="#0d2a14" stroke-width="12"/>
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
-                        stroke-dasharray="{dash_cc} {circumference_cc}" stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                        style="filter:drop-shadow(0 0 8px {sc_color});"
-                    />
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
-                </div>
-            </div>
-            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
-            <div style="font-size:0.8rem;color:#6B7280;">Resume Strength &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _render_hero_score_card(
+            header_icon="🧑‍🏫", header_text="CAREER COACH ASSESSMENT",
+            header_color="#22C55E",
+            bg_gradient="linear-gradient(135deg,#051a0a 0%,#0d2a14 60%,#051a0a 100%)",
+            ring_bg="#0d2a14",
+            sc_color=sc_color, score_val=score_val, out_of="10",
+            dash=dash_cc, circumference=circumference_cc,
+            sc_label=sc_label, sc_grade=sc_grade,
+            score_type_label="Resume Strength",
+        )
 
         # ── Opening Observation ───────────────────────────────────────────────
         if opening_text:
@@ -2122,16 +2526,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         cc_actions   = _extract_cc_bullets(action_idx, None)
 
         st.session_state["last_roast"] = roast_result
-        _render_cc_linkedin_card(score_val, sc_label, sc_grade, sc_color,
-                                 closer_text or opening_text,
-                                 strengths=cc_strengths, growth=cc_growth, actions=cc_actions)
         share_text = (
             f"Just had my resume reviewed by an AI Career Coach 🧑‍🏫\n"
             f"Resume Strength: {score_val}/10 — {sc_label}\n"
             f"Getting actionable feedback to level up my job search! 🚀\n"
             f"#ResumeRipper #CareerCoach #JobSearch #CareerTips #AI"
         )
-        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+        _render_cc_linkedin_card(score_val, sc_label, sc_grade, sc_color,
+                                 closer_text or opening_text,
+                                 strengths=cc_strengths, growth=cc_growth, actions=cc_actions,
+                                 copy_text=share_text, roast_result_full=roast_result)
 
     elif sel.get("name", "").lower() == "internet troll":
         import re
@@ -2201,36 +2605,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     break
 
         # ── Hero Score Card ──────────────────────────────────────────────────
-        st.markdown(f"""
-        <div style="
-            background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 60%,#0d0514 100%);
-            border:1px solid {sc_color}33;
-            border-radius:20px;
-            padding:28px 24px 22px 24px;
-            margin:16px 0 20px 0;
-            text-align:center;
-            position:relative;overflow:hidden;
-        ">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
-            <div style="font-size:0.75rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🧌 INTERNET TROLL VERDICT</div>
-            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1a0a2e" stroke-width="12"/>
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
-                        stroke-dasharray="{dash_it} {circumference_it}" stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                        style="filter:drop-shadow(0 0 8px {sc_color});"
-                    />
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
-                </div>
-            </div>
-            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
-            <div style="font-size:0.8rem;color:#6B7280;">Cringe Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _render_hero_score_card(
+            header_icon="🧌", header_text="INTERNET TROLL VERDICT",
+            header_color="#A855F7",
+            bg_gradient="linear-gradient(135deg,#0d0514 0%,#1a0a2e 60%,#0d0514 100%)",
+            ring_bg="#1a0a2e",
+            sc_color=sc_color, score_val=score_val, out_of="10",
+            dash=dash_it, circumference=circumference_it,
+            sc_label=sc_label, sc_grade=sc_grade,
+            score_type_label="Cringe Score",
+        )
 
         # ── Opening One-Liner ────────────────────────────────────────────────
         if opening_text:
@@ -2292,14 +2676,14 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             """, unsafe_allow_html=True)
 
         st.session_state["last_roast"] = roast_result
-        _render_it_linkedin_card(score_val, sc_label, sc_grade, sc_color, closing_text or opening_text)
         share_text = (
             f"Just got my resume roasted by the Internet Troll 🧌\n"
             f"Cringe Score: {score_val}/10 — {sc_label}\n"
             f"Would your resume survive? 😂\n"
             f"#ResumeRipper #InternetTroll #JobSearch #CareerTips #AI"
         )
-        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+        _render_it_linkedin_card(score_val, sc_label, sc_grade, sc_color, closing_text or opening_text,
+                                 copy_text=share_text, roast_result_full=roast_result)
 
     elif sel.get("name", "").lower() == "top hiring manager":
         import re
@@ -2412,36 +2796,16 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             i_color = "#EF4444"
 
         # ── Hero Score Card ──────────────────────────────────────────────────
-        st.markdown(f"""
-        <div style="
-            background:linear-gradient(135deg,#0f0c00 0%,#1f1800 60%,#0f0c00 100%);
-            border:1px solid {sc_color}33;
-            border-radius:20px;
-            padding:28px 24px 22px 24px;
-            margin:16px 0 20px 0;
-            text-align:center;
-            position:relative;overflow:hidden;
-        ">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,{sc_color},{sc_color}88,transparent);"></div>
-            <div style="font-size:0.75rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:16px;">🏆 TOP HIRING MANAGER ASSESSMENT</div>
-            <div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="#1f1800" stroke-width="12"/>
-                    <circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
-                        stroke-dasharray="{dash_hm} {circumference_hm}" stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                        style="filter:drop-shadow(0 0 8px {sc_color});"
-                    />
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:2.8rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.6rem;color:#6B7280;letter-spacing:1px;margin-top:3px;">OUT OF 10</div>
-                </div>
-            </div>
-            <div style="font-size:1.5rem;font-weight:900;color:{sc_color};letter-spacing:3px;margin-bottom:4px;">{sc_label}</div>
-            <div style="font-size:0.8rem;color:#6B7280;">Shortlist Score &nbsp;·&nbsp; Grade <b style="color:{sc_color};">{sc_grade}</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _render_hero_score_card(
+            header_icon="🏆", header_text="TOP HIRING MANAGER ASSESSMENT",
+            header_color="#F59E0B",
+            bg_gradient="linear-gradient(135deg,#0f0c00 0%,#1f1800 60%,#0f0c00 100%)",
+            ring_bg="#1f1800",
+            sc_color=sc_color, score_val=score_val, out_of="10",
+            dash=dash_hm, circumference=circumference_hm,
+            sc_label=sc_label, sc_grade=sc_grade,
+            score_type_label="Shortlist Score",
+        )
 
         # ── Instant Impression ───────────────────────────────────────────────
         if impression_text:
@@ -2539,15 +2903,15 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             )
 
         st.session_state["last_roast"] = roast_result
-        _render_hm_linkedin_card(score_val, sc_label, sc_grade, sc_color,
-                                  hm_verdict_text, hm_interview_text)
         share_text = (
             f"Just had my resume assessed by a Top Hiring Manager on Resume Ripper AI 🏆\n"
             f"Shortlist Score: {score_val}/10 — {sc_label}\n"
             f"Would your resume make the shortlist? 👀\n"
             f"#ResumeRipper #HiringManager #JobSearch #CareerTips #AI"
         )
-        _render_share_box(share_text, roast_result, sel["name"], show_linkedin=False)
+        _render_hm_linkedin_card(score_val, sc_label, sc_grade, sc_color,
+                                  hm_verdict_text, hm_interview_text,
+                                  copy_text=share_text, roast_result_full=roast_result)
 
     else:
         # Fallback: original rendering for other personas

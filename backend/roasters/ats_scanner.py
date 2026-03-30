@@ -451,3 +451,44 @@ Begin ATS scan."""
     # Extract structured score breakdown for frontend
     score_breakdown = _add_visual_bars(output)
     return output, score_breakdown
+
+
+def roast_stream(resume_text: str, api_key: str):
+    """Stream the ATS scan chunk by chunk."""
+    client = OpenAI(api_key=api_key)
+    signals = _pre_analyze(resume_text)
+    pre_analysis = ""
+    if signals["metrics"]:
+        pre_analysis += f"\nDetected numeric metrics in resume: {signals['metrics']}"
+    if signals["technologies"]:
+        pre_analysis += f"\nDetected technologies in resume: {signals['technologies']}"
+    if signals["density"]:
+        density_str = ", ".join(f"{k}: {v}" for k, v in signals["density"])
+        pre_analysis += f"\nKeyword density (mentions): {density_str}"
+    user_message = f"""Run a full ATS compatibility scan on this resume.
+Analyze keyword optimization, formatting issues, and parsing compatibility.
+
+Pre-scan signals:{pre_analysis if pre_analysis else ' None detected — this is a red flag.'}
+
+---
+RESUME TEXT:
+{resume_text[:12000]}
+---
+
+Begin ATS scan."""
+
+    stream = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message + pre_analysis + "\nResume:\n" + resume_text},
+        ],
+        temperature=0.3,
+        max_tokens=2000,
+        top_p=0.9,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta

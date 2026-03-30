@@ -446,18 +446,18 @@ def get_css() -> str:
     .pc-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 0.9rem;
-        margin-bottom: 1.2rem;
+        gap: 1rem;
+        margin-bottom: 1.4rem;
         width: 100%;
     }
     .persona-card {
-        background: #0f0d0b;
-        border: 1.5px solid #2a1f18;
+        background: linear-gradient(160deg, #1c1610 0%, #141009 100%);
+        border: 1.5px solid #3a2a1e;
         border-radius: 20px;
-        padding: 1.3rem 0.9rem 1.1rem;
+        padding: 1.4rem 0.85rem 1.3rem;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
         user-select: none;
@@ -472,8 +472,8 @@ def get_css() -> str:
         top: 0; left: 0; right: 0;
         height: 3px;
         background: var(--accent-grad);
-        opacity: 0.4;
-        transition: opacity 0.3s, height 0.3s;
+        opacity: 0.5;
+        transition: opacity 0.25s, height 0.25s;
         border-radius: 20px 20px 0 0;
     }
     /* Bottom inner glow */
@@ -481,171 +481,163 @@ def get_css() -> str:
         content: '';
         position: absolute;
         bottom: 0; left: 0; right: 0;
-        height: 50%;
+        height: 55%;
         background: linear-gradient(to top, var(--accent-glow-inner, transparent), transparent);
         pointer-events: none;
         opacity: 0;
-        transition: opacity 0.35s;
+        transition: opacity 0.3s;
     }
     .persona-card:hover {
-        transform: translateY(-6px);
+        transform: translateY(-7px);
         border-color: var(--accent-color);
-        box-shadow: 0 16px 48px var(--accent-glow), 0 0 0 1px var(--accent-color);
-        background: #131009;
+        box-shadow: 0 18px 48px var(--accent-glow), 0 0 0 1px var(--accent-color);
+        background: linear-gradient(160deg, #221a12 0%, #18110a 100%);
     }
     .persona-card:hover::before { opacity: 1; height: 4px; }
     .persona-card:hover::after  { opacity: 1; }
     .persona-card.selected {
         border-color: var(--accent-color);
-        box-shadow: 0 0 0 2px var(--accent-color), 0 8px 40px var(--accent-glow);
-        background: #151108;
+        box-shadow: 0 0 0 2px var(--accent-color), 0 10px 44px var(--accent-glow);
+        background: linear-gradient(160deg, #201810 0%, #160e08 100%);
     }
     .persona-card.selected::before { opacity: 1; height: 4px; }
     .persona-card.selected::after  { opacity: 1; }
     .persona-card.selected .persona-name { color: var(--accent-color); }
+    .persona-card.selected .persona-tagline { color: #c8bdb5; }
     .persona-card.selected .pc-icon-ring {
-        box-shadow: 0 4px 20px var(--accent-glow);
+        box-shadow: 0 6px 24px var(--accent-glow);
     }
     /* Selected check badge */
     .persona-check {
         position: absolute;
         top: 10px; right: 10px;
-        width: 20px; height: 20px;
+        width: 22px; height: 22px;
         border-radius: 50%;
         background: var(--accent-color, #FF8C00);
         color: #fff;
-        font-size: 0.7rem;
-        font-weight: 800;
+        font-size: 0.72rem;
+        font-weight: 900;
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: opacity 0.25s;
+        transition: opacity 0.2s;
+        box-shadow: 0 2px 8px var(--accent-glow, rgba(255,140,0,0.4));
     }
     .persona-card.selected .persona-check { opacity: 1; }
     /* Badge chip */
     .pc-badge {
-        font-size: 0.58rem;
-        font-weight: 700;
-        letter-spacing: 0.7px;
+        font-size: 0.6rem;
+        font-weight: 800;
+        letter-spacing: 0.8px;
         text-transform: uppercase;
-        padding: 3px 9px;
+        padding: 4px 10px;
         border-radius: 20px;
-        margin-bottom: 0.8rem;
-        opacity: 0.8;
-        transition: opacity 0.3s;
+        margin-bottom: 0.9rem;
+        opacity: 0.85;
+        transition: opacity 0.25s;
         white-space: nowrap;
     }
     .persona-card:hover .pc-badge,
     .persona-card.selected .pc-badge { opacity: 1; }
     /* Icon ring */
     .pc-icon-ring {
-        width: 62px; height: 62px;
+        width: 72px; height: 72px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 0.8rem;
-        transition: transform 0.3s, box-shadow 0.3s;
+        margin-bottom: 1rem;
+        transition: transform 0.28s, box-shadow 0.28s;
     }
-    .persona-card:hover .pc-icon-ring { transform: scale(1.08); }
-    .persona-card.selected .pc-icon-ring { transform: scale(1.1); }
+    .persona-card:hover .pc-icon-ring { transform: scale(1.1); }
+    .persona-card.selected .pc-icon-ring { transform: scale(1.12); }
     .persona-icon {
-        font-size: 2.2rem;
+        font-size: 2.6rem;
         line-height: 1;
         display: block;
-        filter: drop-shadow(0 2px 8px var(--accent-glow, rgba(255,140,0,0.2)));
+        filter: drop-shadow(0 2px 10px var(--accent-glow, rgba(255,140,0,0.25)));
     }
     /* Name */
     .persona-name {
-        font-weight: 800;
-        font-size: 0.88rem;
-        color: #e0d5cc;
-        margin-bottom: 0.3rem;
-        letter-spacing: 0.3px;
-        transition: color 0.3s;
+        font-weight: 900;
+        font-size: 0.95rem;
+        color: #f0e8e0 !important;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.2px;
+        transition: color 0.25s;
         line-height: 1.2;
     }
     /* Tagline */
     .persona-tagline {
-        font-size: 0.68rem;
-        color: #6a5e55;
-        line-height: 1.4;
+        font-size: 0.7rem;
+        color: #c8beb6 !important;
+        line-height: 1.5;
         font-style: italic;
-        margin-bottom: 0.65rem;
-    }
-    /* Separator */
-    .pc-sep {
-        width: 100%;
-        height: 1px;
-        margin-bottom: 0.55rem;
-        border-radius: 1px;
-    }
-    /* Description */
-    .pc-desc {
-        font-size: 0.63rem;
-        color: #5a504a;
-        line-height: 1.45;
-        transition: color 0.3s;
-        margin-top: auto;
-    }
-    .persona-card:hover .pc-desc,
-    .persona-card.selected .pc-desc {
-        color: var(--accent-color);
-        opacity: 0.75;
     }
     /* ── Selected Banner ── */
     .persona-selected-banner {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.9rem 1.3rem;
-        border-radius: 14px;
-        background: #0f0d0b;
-        border: 1.5px solid #FF8C0033;
+        padding: 1.1rem 1.5rem;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1e1510 0%, #160f08 100%);
+        border: 1.5px solid #FF8C0044;
         margin-bottom: 1.5rem;
         gap: 1rem;
+        box-shadow: 0 6px 28px rgba(255,140,0,0.1);
     }
     .psb-left {
         display: flex;
         align-items: center;
-        gap: 0.9rem;
+        gap: 1rem;
+        flex: 1;
+        min-width: 0;
     }
     .psb-icon {
-        width: 48px; height: 48px;
-        border-radius: 12px;
+        width: 54px; height: 54px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         flex-shrink: 0;
     }
-    .psb-info { text-align: left; }
+    .psb-info { text-align: left; flex: 1; min-width: 0; }
     .psb-label {
-        font-size: 0.6rem;
-        letter-spacing: 1.2px;
+        font-size: 0.62rem;
+        letter-spacing: 1.5px;
         text-transform: uppercase;
-        color: #4a4040;
-        font-weight: 600;
-        margin-bottom: 0.1rem;
+        color: #a09890 !important;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
     }
     .psb-name {
-        font-weight: 800;
-        font-size: 1rem;
-        margin-bottom: 0.1rem;
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: #f0e8e0 !important;
+        margin-bottom: 0.15rem;
+        line-height: 1.2;
     }
     .psb-tag {
-        font-size: 0.72rem;
-        color: #6a5e55;
+        font-size: 0.78rem;
+        color: #c8beb6 !important;
         font-style: italic;
+        margin-bottom: 0.25rem;
+    }
+    .psb-desc {
+        font-size: 0.78rem;
+        color: #ddd5cc !important;
+        line-height: 1.55;
     }
     .psb-pill {
-        font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 0.8px;
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 1px;
         text-transform: uppercase;
         color: #fff;
-        padding: 5px 14px;
+        padding: 7px 16px;
         border-radius: 20px;
         white-space: nowrap;
         flex-shrink: 0;
@@ -767,14 +759,19 @@ def get_css() -> str:
     /* Muted secondary text */
     .stApp.light-mode .hero-subtitle,
     .stApp.light-mode .hero-desc,
-    .stApp.light-mode .persona-tagline,
-    .stApp.light-mode .pc-desc,
-    .stApp.light-mode .psb-label,
-    .stApp.light-mode .psb-tag,
     .stApp.light-mode .upload-subtitle,
     .stApp.light-mode .step-desc,
     .stApp.light-mode .file-info-meta,
     .stApp.light-mode .footer { color: #3d2b1a !important; }
+    /* Persona card text — needs higher contrast on white */
+    .stApp.light-mode .persona-name { color: #111111 !important; }
+    .stApp.light-mode .persona-tagline { color: #4a3828 !important; }
+    .stApp.light-mode .psb-label { color: #6a5244 !important; }
+    .stApp.light-mode .psb-tag { color: #4a3828 !important; }
+    .stApp.light-mode .psb-desc { color: #3a2a18 !important; }
+    .stApp.light-mode .persona-card { background: #ffffff !important; border-color: #e8d8c4 !important; }
+    .stApp.light-mode .persona-card.selected .persona-name { color: var(--accent-color) !important; }
+    .stApp.light-mode .persona-card.selected .persona-tagline { color: #3a2a18 !important; }
 
     /* ── Hero ── */
     .stApp.light-mode .hero-main-text { color: #111111 !important; }
@@ -832,16 +829,16 @@ def get_css() -> str:
     /* ── Persona Cards ── */
     .stApp.light-mode .persona-card {
         background: #ffffff !important;
-        border: 1.5px solid #edddc8 !important;
-        box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+        border: 1.5px solid #e8d8c4 !important;
+        box-shadow: 0 2px 14px rgba(0,0,0,0.07) !important;
     }
     .stApp.light-mode .persona-card:hover {
         background: #fffcf8 !important;
-        box-shadow: 0 8px 32px var(--accent-glow), 0 0 0 1px var(--accent-color) !important;
+        box-shadow: 0 10px 36px var(--accent-glow), 0 0 0 1.5px var(--accent-color) !important;
     }
     .stApp.light-mode .persona-card.selected {
         background: #fffaf4 !important;
-        box-shadow: 0 0 0 2px var(--accent-color), 0 8px 32px var(--accent-glow) !important;
+        box-shadow: 0 0 0 2px var(--accent-color), 0 10px 36px var(--accent-glow) !important;
     }
 
     /* ── Selected Banner ── */
