@@ -481,14 +481,20 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
     components.html(f"""
     <style>
+    html, body {{ margin:0; padding:0; }}
+    * {{ box-sizing:border-box; }}
+    .ats-wrapper {{
+        max-width:600px;
+        margin:0 auto;
+        padding:0;
+    }}
     .li-card {{
         background:linear-gradient(135deg,#0a0f1e 0%,#0d1b2a 60%,#091422 100%);
         border:1px solid #1e3a5f;
         border-radius:18px;
         padding:22px 20px 18px 20px;
         font-family:'Inter','Segoe UI',Arial,sans-serif;
-        max-width:520px;
-        margin:0 auto;
+        width:100%;
         position:relative;
         overflow:hidden;
         box-shadow:0 8px 40px #00C9FF18;
@@ -528,76 +534,85 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
     .li-sub {{
         font-size:0.72rem;color:#374151;
     }}
+    .ats-btn-row {{
+        display:flex;gap:10px;margin-top:14px;width:100%;
+    }}
+    .ats-btn-col {{
+        display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;
+    }}
     </style>
-    <div class="li-card">
-        <div class="li-header">
-            <div class="li-brand">🔥 Resume Ripper AI</div>
-            <div class="li-badge">🤖 ATS Scanner</div>
-        </div>
-        <div class="li-hero">
-            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="#1e2d3d" stroke-width="9"/>
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="{ov_color}" stroke-width="9"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 45 45)"
-                        style="filter:drop-shadow(0 0 6px {ov_color});"/>
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:1.7rem;font-weight:900;color:{ov_color};line-height:1;">{overall_score}</div>
-                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 100</div>
+
+    <div class="ats-wrapper">
+        <div class="li-card">
+            <div class="li-header">
+                <div class="li-brand">🔥 Resume Ripper AI</div>
+                <div class="li-badge">🤖 ATS Scanner</div>
+            </div>
+            <div class="li-hero">
+                <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="#1e2d3d" stroke-width="9"/>
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="{ov_color}" stroke-width="9"
+                            stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                            transform="rotate(-90 45 45)"
+                            style="filter:drop-shadow(0 0 6px {ov_color});"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                        <div style="font-size:1.7rem;font-weight:900;color:{ov_color};line-height:1;">{overall_score}</div>
+                        <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 100</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:900;color:{ov_color};letter-spacing:2px;line-height:1;">{ov_label}</div>
+                    <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">ATS Compatibility</div>
+                    <div style="margin-top:6px;">
+                        <span style="background:{ov_color}22;color:{ov_color};border:1px solid {ov_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {ov_grade}</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="font-size:1.8rem;font-weight:900;color:{ov_color};letter-spacing:2px;line-height:1;">{ov_label}</div>
-                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">ATS Compatibility</div>
-                <div style="margin-top:6px;">
-                    <span style="background:{ov_color}22;color:{ov_color};border:1px solid {ov_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {ov_grade}</span>
-                </div>
+            <div class="li-metrics">{metrics_html}</div>
+            <div class="li-footer">
+                <div class="li-cta">🔥 Try Resume Ripper AI — it's free!</div>
+                <div class="li-sub">Would your resume survive?</div>
             </div>
         </div>
-        <div class="li-metrics">{metrics_html}</div>
-        <div class="li-footer">
-            <div class="li-cta">🔥 Try Resume Ripper AI — it's free!</div>
-            <div class="li-sub">Would your resume survive?</div>
+
+        <div class="ats-btn-row">
+            <button onclick="saveATSCard()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#00C9FF;color:#000;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+            <button onclick="postATSLinkedIn()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
         </div>
-    </div>
+        <div id="ats-hint" style="
+            display:none;width:100%;margin:8px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="saveATSCard()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#00C9FF;color:#000;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
-        <button onclick="postATSLinkedIn()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+        <div class="ats-btn-col">
+            <button onclick="atsCopyText()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+            <button onclick="atsDownload()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
+        </div>
+        <div id="ats-copy-fb" style="
+            display:none;width:100%;margin:6px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Copied to clipboard!</div>
     </div>
-    <div id="ats-hint" style="
-        display:none;max-width:520px;margin:8px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="atsCopyText()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
-        <button onclick="atsDownload()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
-    </div>
-    <div id="ats-copy-fb" style="
-        display:none;max-width:520px;margin:6px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
@@ -744,7 +759,9 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     components.html(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    html, body {{ margin:0; padding:0; }}
     * {{ box-sizing: border-box; }}
+    .br-wrapper {{ max-width:600px; margin:0 auto; padding:0; }}
 
     .br-card {{
         background: linear-gradient(160deg, #0f0202 0%, #1e0808 40%, #120404 100%);
@@ -752,8 +769,7 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         border-radius: 24px;
         padding: 32px 28px 26px 28px;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-        max-width: 560px;
-        margin: 0 auto;
+        width: 100%;
         position: relative;
         overflow: hidden;
         box-shadow: 0 0 60px rgba({_scr},{_scg},{_scb},0.15), 0 20px 60px rgba(0,0,0,0.6);
@@ -923,98 +939,100 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     }}
     </style>
 
-    <div class="br-card" id="br-card">
-        <!-- Top row -->
-        <div class="br-toprow">
-            <div class="br-brand"><span>🔥</span> Resume Ripper AI</div>
-            <div class="br-badge">😤 Brutal Recruiter</div>
-        </div>
+    <div class="br-wrapper">
+        <div class="br-card" id="br-card">
+            <!-- Top row -->
+            <div class="br-toprow">
+                <div class="br-brand"><span>🔥</span> Resume Ripper AI</div>
+                <div class="br-badge">😤 Brutal Recruiter</div>
+            </div>
 
-        <!-- Score ring + verdict label -->
-        <div class="br-score-section">
-            <div class="br-ring-wrap">
-                <svg width="130" height="130" viewBox="0 0 130 130">
-                    <circle cx="65" cy="65" r="54" fill="none" stroke="rgba({_scr},{_scg},{_scb},0.15)" stroke-width="12"/>
-                    <circle cx="65" cy="65" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 65 65)"
-                        style="filter:drop-shadow(0 0 10px {sc_color});"/>
-                </svg>
-                <div class="br-ring-inner">
-                    <span class="br-score-num">{score_val}</span>
-                    <span class="br-score-denom">OUT OF 10</span>
+            <!-- Score ring + verdict label -->
+            <div class="br-score-section">
+                <div class="br-ring-wrap">
+                    <svg width="130" height="130" viewBox="0 0 130 130">
+                        <circle cx="65" cy="65" r="54" fill="none" stroke="rgba({_scr},{_scg},{_scb},0.15)" stroke-width="12"/>
+                        <circle cx="65" cy="65" r="54" fill="none" stroke="{sc_color}" stroke-width="12"
+                            stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                            transform="rotate(-90 65 65)"
+                            style="filter:drop-shadow(0 0 10px {sc_color});"/>
+                    </svg>
+                    <div class="br-ring-inner">
+                        <span class="br-score-num">{score_val}</span>
+                        <span class="br-score-denom">OUT OF 10</span>
+                    </div>
+                </div>
+                <div class="br-score-right">
+                    <div class="br-verdict-label">{sc_label}</div>
+                    <div class="br-grade-row">
+                        <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">Grade {sc_grade}</span>
+                        <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">{v_icon}</span>
+                    </div>
+                    <div class="br-verdict-sub">{v_msg}</div>
                 </div>
             </div>
-            <div class="br-score-right">
-                <div class="br-verdict-label">{sc_label}</div>
-                <div class="br-grade-row">
-                    <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">Grade {sc_grade}</span>
-                    <span class="br-pill" style="background:rgba({_scr},{_scg},{_scb},0.15);color:{sc_color};border:1px solid rgba({_scr},{_scg},{_scb},0.4);">{v_icon}</span>
-                </div>
-                <div class="br-verdict-sub">{v_msg}</div>
+
+            <!-- Verdict box -->
+            <div class="br-verdict-box">
+                <div class="br-verdict-tag">⚖️ Recruiter Verdict</div>
+                <div class="br-verdict-text">{verdict_display}</div>
+            </div>
+
+            <!-- LinkedIn roast quote -->
+            <div class="br-quote">🔥 "{roast_display}"</div>
+
+            <!-- Footer -->
+            <div class="br-footer">
+                <div class="br-cta">🔥 Try Resume Ripper AI — it's free!</div>
+                <div class="br-hashtags">#ResumeRoaster #JobSearch #AI</div>
             </div>
         </div>
 
-        <!-- Verdict box -->
-        <div class="br-verdict-box">
-            <div class="br-verdict-tag">⚖️ Recruiter Verdict</div>
-            <div class="br-verdict-text">{verdict_display}</div>
+        <div style="display:flex;gap:10px;margin-top:14px;width:100%;">
+            <button onclick="saveCardImage()" style="
+                flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+                background:linear-gradient(90deg,#FF4B4B,#FF8C00);color:#fff;
+                font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;
+                box-shadow:0 4px 20px rgba(255,75,75,0.35);
+                transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+                📸 Save Card as Image
+            </button>
+            <button onclick="postLinkedIn()" style="
+                flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+                background:#0A66C2;color:#fff;font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;
+                box-shadow:0 4px 20px rgba(10,102,194,0.35);
+                transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+                💼 Post on LinkedIn
+            </button>
         </div>
+        <div id="br-hint" style="
+            display:none;width:100%;margin:8px 0 0 0;
+            font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
-        <!-- LinkedIn roast quote -->
-        <div class="br-quote">🔥 "{roast_display}"</div>
-
-        <!-- Footer -->
-        <div class="br-footer">
-            <div class="br-cta">🔥 Try Resume Ripper AI — it's free!</div>
-            <div class="br-hashtags">#ResumeRoaster #JobSearch #AI</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
+            <button onclick="brCopyText()" style="
+                width:100%;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
+                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+            <button onclick="brDownload()" style="
+                width:100%;padding:12px 0;border-radius:12px;border:1.5px solid #FF8C00;cursor:pointer;
+                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
-    </div>
-
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:560px;margin-left:auto;margin-right:auto;">
-        <button onclick="saveCardImage()" style="
-            flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
-            background:linear-gradient(90deg,#FF4B4B,#FF8C00);color:#fff;
-            font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
+        <div id="br-copy-fb" style="
+            display:none;width:100%;margin:6px 0 0 0;
+            font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
             font-family:'Inter','Segoe UI',Arial,sans-serif;
-            box-shadow:0 4px 20px rgba(255,75,75,0.35);
-            transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
-            📸 Save Card as Image
-        </button>
-        <button onclick="postLinkedIn()" style="
-            flex:1;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.9rem;font-weight:800;letter-spacing:0.5px;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;
-            box-shadow:0 4px 20px rgba(10,102,194,0.35);
-            transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
-            💼 Post on LinkedIn
-        </button>
+        ">✅ Copied to clipboard!</div>
     </div>
-    <div id="br-hint" style="
-        display:none;max-width:560px;margin:8px auto 0 auto;
-        font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:560px;margin-left:auto;margin-right:auto;">
-        <button onclick="brCopyText()" style="
-            width:100%;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
-            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
-        <button onclick="brDownload()" style="
-            width:100%;padding:12px 0;border-radius:12px;border:1.5px solid #FF8C00;cursor:pointer;
-            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
-    </div>
-    <div id="br-copy-fb" style="
-        display:none;max-width:560px;margin:6px auto 0 auto;
-        font-size:0.76rem;color:#22C55E;text-align:center;font-weight:700;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
@@ -1136,14 +1154,16 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
     components.html(f"""
     <style>
+    html, body {{ margin:0; padding:0; }}
+    * {{ box-sizing:border-box; }}
+    .cc-wrapper {{ max-width:600px; margin:0 auto; padding:0; }}
     .cc-card {{
         background:linear-gradient(135deg,#051a0a 0%,#0d2a14 60%,#051a0a 100%);
         border:1px solid #1a5a2a;
         border-radius:18px;
         padding:22px 20px 18px 20px;
         font-family:'Inter','Segoe UI',Arial,sans-serif;
-        max-width:520px;
-        margin:0 auto;
+        width:100%;
         position:relative;
         overflow:hidden;
         box-shadow:0 8px 40px #22C55E18;
@@ -1171,75 +1191,77 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     .cc-cta {{ font-size:0.78rem;color:#FF8C00;font-weight:700; }}
     .cc-sub  {{ font-size:0.72rem;color:#374151; }}
     </style>
-    <div class="cc-card">
-        <div class="cc-header">
-            <div class="cc-brand">🔥 Resume Ripper AI</div>
-            <div class="cc-badge">🧑‍🏫 Career Coach</div>
-        </div>
-        <div class="cc-hero">
-            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="#1a3a22" stroke-width="9"/>
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 45 45)"
-                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+    <div class="cc-wrapper">
+        <div class="cc-card">
+            <div class="cc-header">
+                <div class="cc-brand">🔥 Resume Ripper AI</div>
+                <div class="cc-badge">🧑‍🏫 Career Coach</div>
+            </div>
+            <div class="cc-hero">
+                <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="#1a3a22" stroke-width="9"/>
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                            stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                            transform="rotate(-90 45 45)"
+                            style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                        <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                        <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                    <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Resume Strength</div>
+                    <div style="margin-top:8px;">
+                        <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
-                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Resume Strength</div>
-                <div style="margin-top:8px;">
-                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
-                </div>
+            <div class="cc-closer-box">💬 "{closer_display}"</div>
+            <div class="cc-footer">
+                <div class="cc-cta">🔥 Try Resume Ripper AI — it's free!</div>
+                <div class="cc-sub">Level up your resume today.</div>
             </div>
         </div>
-        <div class="cc-closer-box">💬 "{closer_display}"</div>
-        <div class="cc-footer">
-            <div class="cc-cta">🔥 Try Resume Ripper AI — it's free!</div>
-            <div class="cc-sub">Level up your resume today.</div>
+
+        <div style="display:flex;gap:10px;margin-top:14px;width:100%;">
+            <button onclick="saveCCCard()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#22C55E;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+            <button onclick="postCCLinkedIn()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
         </div>
-    </div>
+        <div id="cc-hint" style="
+            display:none;width:100%;margin:8px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="saveCCCard()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#22C55E;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
-        <button onclick="postCCLinkedIn()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
+            <button onclick="ccCopyText()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+            <button onclick="ccDownload()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
+        </div>
+        <div id="cc-copy-fb" style="
+            display:none;width:100%;margin:6px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Copied to clipboard!</div>
     </div>
-    <div id="cc-hint" style="
-        display:none;max-width:520px;margin:8px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="ccCopyText()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
-        <button onclick="ccDownload()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
-    </div>
-    <div id="cc-copy-fb" style="
-        display:none;max-width:520px;margin:6px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
@@ -1356,14 +1378,16 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
     components.html(f"""
     <style>
+    html, body {{ margin:0; padding:0; }}
+    * {{ box-sizing:border-box; }}
+    .it-wrapper {{ max-width:600px; margin:0 auto; padding:0; }}
     .it-card {{
         background:linear-gradient(135deg,#0d0514 0%,#1a0a2e 60%,#0d0514 100%);
         border:1px solid #3b1a5a;
         border-radius:18px;
         padding:22px 20px 18px 20px;
         font-family:'Inter','Segoe UI',Arial,sans-serif;
-        max-width:520px;
-        margin:0 auto;
+        width:100%;
         position:relative;
         overflow:hidden;
         box-shadow:0 8px 40px #A855F718;
@@ -1391,75 +1415,77 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     .it-cta {{ font-size:0.78rem;color:#FF8C00;font-weight:700; }}
     .it-sub  {{ font-size:0.72rem;color:#374151; }}
     </style>
-    <div class="it-card">
-        <div class="it-header">
-            <div class="it-brand">🔥 Resume Ripper AI</div>
-            <div class="it-badge">🧌 Internet Troll</div>
-        </div>
-        <div class="it-hero">
-            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1a3a" stroke-width="9"/>
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 45 45)"
-                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+    <div class="it-wrapper">
+        <div class="it-card">
+            <div class="it-header">
+                <div class="it-brand">🔥 Resume Ripper AI</div>
+                <div class="it-badge">🧌 Internet Troll</div>
+            </div>
+            <div class="it-hero">
+                <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1a3a" stroke-width="9"/>
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                            stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                            transform="rotate(-90 45 45)"
+                            style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                        <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                        <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                    <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Cringe Score</div>
+                    <div style="margin-top:8px;">
+                        <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
-                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Cringe Score</div>
-                <div style="margin-top:8px;">
-                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
-                </div>
+            <div class="it-roast-box">🔥 "{roast_display}"</div>
+            <div class="it-footer">
+                <div class="it-cta">🔥 Try Resume Ripper AI — it's free!</div>
+                <div class="it-sub">Would your resume survive?</div>
             </div>
         </div>
-        <div class="it-roast-box">🔥 "{roast_display}"</div>
-        <div class="it-footer">
-            <div class="it-cta">🔥 Try Resume Ripper AI — it's free!</div>
-            <div class="it-sub">Would your resume survive?</div>
+
+        <div style="display:flex;gap:10px;margin-top:14px;width:100%;">
+            <button onclick="saveITCard()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#A855F7;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+            <button onclick="postITLinkedIn()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
         </div>
-    </div>
+        <div id="it-hint" style="
+            display:none;width:100%;margin:8px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="saveITCard()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#A855F7;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
-        <button onclick="postITLinkedIn()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
+            <button onclick="itCopyText()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+            <button onclick="itDownload()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
+        </div>
+        <div id="it-copy-fb" style="
+            display:none;width:100%;margin:6px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Copied to clipboard!</div>
     </div>
-    <div id="it-hint" style="
-        display:none;max-width:520px;margin:8px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="itCopyText()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
-        <button onclick="itDownload()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
-    </div>
-    <div id="it-copy-fb" style="
-        display:none;max-width:520px;margin:6px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
@@ -1591,14 +1617,16 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     st.markdown('<div style="font-size:0.82rem;color:#6B7280;margin-bottom:6px;">Save the card as an image, then attach it to your LinkedIn post.</div>', unsafe_allow_html=True)
     components.html(f"""
     <style>
+    html, body {{ margin:0; padding:0; }}
+    * {{ box-sizing:border-box; }}
+    .hm-wrapper {{ max-width:600px; margin:0 auto; padding:0; }}
     .hm-card {{
         background:linear-gradient(135deg,#0f0c00 0%,#1f1800 60%,#0f0c00 100%);
         border:1px solid #5a3a00;
         border-radius:18px;
         padding:22px 20px 18px 20px;
         font-family:'Inter','Segoe UI',Arial,sans-serif;
-        max-width:520px;
-        margin:0 auto;
+        width:100%;
         position:relative;
         overflow:hidden;
         box-shadow:0 8px 40px #F59E0B18;
@@ -1617,79 +1645,81 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         display:flex;justify-content:space-between;align-items:center;
     }}
     </style>
-    <div class="hm-card">
-        <div class="hm-header">
-            <div class="hm-brand">🔥 Resume Ripper AI</div>
-            <div class="hm-badge">🏆 Top Hiring Manager</div>
-        </div>
-        <div class="hm-hero">
-            <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1f00" stroke-width="9"/>
-                    <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
-                        stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
-                        transform="rotate(-90 45 45)"
-                        style="filter:drop-shadow(0 0 6px {sc_color});"/>
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
-                    <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
-                    <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+    <div class="hm-wrapper">
+        <div class="hm-card">
+            <div class="hm-header">
+                <div class="hm-brand">🔥 Resume Ripper AI</div>
+                <div class="hm-badge">🏆 Top Hiring Manager</div>
+            </div>
+            <div class="hm-hero">
+                <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="#2a1f00" stroke-width="9"/>
+                        <circle cx="45" cy="45" r="40" fill="none" stroke="{sc_color}" stroke-width="9"
+                            stroke-dasharray="{dash} {circumference}" stroke-linecap="round"
+                            transform="rotate(-90 45 45)"
+                            style="filter:drop-shadow(0 0 6px {sc_color});"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1;">
+                        <div style="font-size:1.7rem;font-weight:900;color:{sc_color};line-height:1;">{score_val}</div>
+                        <div style="font-size:0.52rem;color:#6B7280;letter-spacing:1px;">/ 10</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
+                    <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Shortlist Score</div>
+                    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+                        <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
+                        <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="font-size:1.8rem;font-weight:900;color:{sc_color};letter-spacing:2px;line-height:1;">{sc_label}</div>
-                <div style="font-size:0.82rem;color:#9CA3AF;margin-top:4px;">Shortlist Score</div>
-                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
-                    <span style="background:{sc_color}22;color:{sc_color};border:1px solid {sc_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">Grade {sc_grade}</span>
-                    <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
-                </div>
+            <div style="background:#1f1800;border-left:3px solid {i_color};border-radius:8px;padding:10px 14px;margin-bottom:16px;">
+                <div style="font-size:0.68rem;color:{i_color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">👀 INTERVIEW DECISION</div>
+                <div style="font-size:0.92rem;color:#FEF3C7;font-weight:700;">{i_text}</div>
+            </div>
+            <div class="hm-footer">
+                <div style="font-size:0.78rem;color:#FF8C00;font-weight:700;">🔥 Try Resume Ripper AI — it's free!</div>
+                <div style="font-size:0.72rem;color:#374151;">Would you make the shortlist?</div>
             </div>
         </div>
-        <div style="background:#1f1800;border-left:3px solid {i_color};border-radius:8px;padding:10px 14px;margin-bottom:16px;">
-            <div style="font-size:0.68rem;color:{i_color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">👀 INTERVIEW DECISION</div>
-            <div style="font-size:0.92rem;color:#FEF3C7;font-weight:700;">{i_text}</div>
-        </div>
-        <div class="hm-footer">
-            <div style="font-size:0.78rem;color:#FF8C00;font-weight:700;">🔥 Try Resume Ripper AI — it's free!</div>
-            <div style="font-size:0.72rem;color:#374151;">Would you make the shortlist?</div>
-        </div>
-    </div>
 
-    <div style="display:flex;gap:10px;margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="saveHMCard()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#F59E0B;color:#000;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
-        <button onclick="postHMLinkedIn()" style="
-            flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
-    </div>
-    <div id="hm-hint" style="
-        display:none;max-width:520px;margin:8px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Card saved! Attach the image to your LinkedIn post.</div>
+        <div style="display:flex;gap:10px;margin-top:14px;width:100%;">
+            <button onclick="saveHMCard()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#F59E0B;color:#000;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📸 Save Card as Image</button>
+            <button onclick="postHMLinkedIn()" style="
+                flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#0A66C2;color:#fff;font-size:0.88rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">💼 Post on LinkedIn</button>
+        </div>
+        <div id="hm-hint" style="
+            display:none;width:100%;margin:8px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Card saved! Attach the image to your LinkedIn post.</div>
 
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;">
-        <button onclick="hmCopyText()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-            background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
-        <button onclick="hmDownload()" style="
-            width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-            background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
-            font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-        " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
+            <button onclick="hmCopyText()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
+                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+            <button onclick="hmDownload()" style="
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
+                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
+        </div>
+        <div id="hm-copy-fb" style="
+            display:none;width:100%;margin:6px 0 0 0;
+            font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
+            font-family:'Inter','Segoe UI',Arial,sans-serif;
+        ">✅ Copied to clipboard!</div>
     </div>
-    <div id="hm-copy-fb" style="
-        display:none;max-width:520px;margin:6px auto 0 auto;
-        font-size:0.75rem;color:#22C55E;text-align:center;font-weight:600;
-        font-family:'Inter','Segoe UI',Arial,sans-serif;
-    ">✅ Copied to clipboard!</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
@@ -2200,6 +2230,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         render_section("Roast Level", "🔥", roast_idx, final_idx, color="#FF8C00")
 
         # Final Recommendation
+        display_verdict = "OPTIMIZE"
         if final_idx is not None:
             rec_lines = lines[final_idx+1:]
             VALID_VERDICTS = {"optimize", "reformat", "critical rewrite"}
