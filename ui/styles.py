@@ -855,11 +855,141 @@ def get_css() -> str:
         box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
     }
 
-    /* ── Roast Result — keep dark bg so light text stays readable ── */
+    /* ── Roast Result — light background in light mode ── */
     .stApp.light-mode .roast-result {
-        background: #15100c !important;
-        border-color: #FF8C0033 !important;
-        box-shadow: 0 4px 30px rgba(255,140,0,0.12) !important;
+        background: #faf7f2 !important;
+        border-color: #e0cdb8 !important;
+        box-shadow: 0 4px 30px rgba(255,140,0,0.08) !important;
+    }
+
+    /* ── Section headers (.rsh) — override inline white color in light mode ──
+       (The base .rsh color rule is already at line ~716 above)              ── */
+    .stApp.light-mode .rsh [style*="color:#ffffff"],
+    .stApp.light-mode .rsh [style*="color:#fff"],
+    .stApp.light-mode .rsh [style*="color: #fff"] { color: #111111 !important; }
+
+    /* ── Hero score card — light background in light mode ── */
+    .stApp.light-mode .hero-score-card {
+        background: #faf7f2 !important;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.07) !important;
+    }
+    /* Ring track circle: was dark (e.g. #2a1a1a) — make it a soft warm gray on light bg */
+    .stApp.light-mode .hero-score-card .ring-track {
+        stroke: #ddd5cc !important;
+    }
+
+    /* ── Result item boxes (bullet cards across all personas) ──
+       NOTE: not using .roast-area ancestor selector — Streamlit wraps each
+       st.markdown() in its own div, so descendant selectors across calls fail. ── */
+    .stApp.light-mode .result-item-box {
+        background: #f0ebe4 !important;
+        background-color: #f0ebe4 !important;
+    }
+    .stApp.light-mode .result-item-box .rib-text,
+    .stApp.light-mode .result-item-box [style*="color:#E5E7EB"],
+    .stApp.light-mode .result-item-box [style*="color:#cfcfcf"],
+    .stApp.light-mode .result-item-box [style*="color:#CBD5E1"] {
+        color: #1a1008 !important;
+    }
+    .stApp.light-mode .result-item-box [style*="color:#9CA3AF"] {
+        color: #5a4030 !important;
+    }
+    /* inline dark label text inside result-item-box (e.g. ATS score labels #cfcfcf) */
+    .stApp.light-mode .result-item-box [style*="color:#cfcfcf"],
+    .stApp.light-mode .result-item-box [style*="color:#ffffff"],
+    .stApp.light-mode .result-item-box [style*="color:#fff"] {
+        color: #1a1008 !important;
+    }
+
+    /* ── ATS score breakdown: progress bar track ── */
+    .stApp.light-mode .ats-bar-track {
+        background: #ddd5cc !important;
+    }
+
+    /* ── ATS Weak Bullets card ── */
+    .stApp.light-mode .ats-wb-card {
+        background: #faf7f2 !important;
+        border-color: #e0cdb8 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+    }
+    .stApp.light-mode .ats-wb-row-orig {
+        border-bottom-color: #e0cdb8 !important;
+    }
+    .stApp.light-mode .ats-wb-row-issue {
+        background: rgba(239,68,68,0.06) !important;
+        border-bottom-color: #e0cdb8 !important;
+    }
+    .stApp.light-mode .ats-wb-row-imp {
+        background: rgba(34,197,94,0.06) !important;
+    }
+    .stApp.light-mode .ats-wb-text {
+        color: #1a1008 !important;
+    }
+    /* Original badge (gray bg + white text) → light on light bg */
+    .stApp.light-mode .ats-wb-badge-orig {
+        background: #c8bdb0 !important;
+        color: #1a1008 !important;
+    }
+
+    /* ── ATS keyword pills (detected=green bg, missing=red bg) ── */
+    .stApp.light-mode .ats-kw-pill {
+        background: #f0ebe4 !important;
+    }
+
+    /* ── HM Instant Impression box ── */
+    .stApp.light-mode .hm-instant-impression {
+        background: rgba(245,158,11,0.06) !important;
+        border-color: rgba(245,158,11,0.25) !important;
+    }
+    .stApp.light-mode .hm-impression-text {
+        color: #1a1008 !important;
+    }
+
+    /* ── Internet Troll roast box ── */
+    .stApp.light-mode .it-roast-box {
+        background: #f0ebe4 !important;
+        border-color: #A855F755 !important;
+    }
+    .stApp.light-mode .it-roast-box * { color: #1a1008 !important; }
+
+    /* ── Persona note cards — override inline light colors on light bg ── */
+    .stApp.light-mode .persona-note [style*="color:#ffffff"],
+    .stApp.light-mode .persona-note [style*="color:#fff"],
+    .stApp.light-mode .persona-note [style*="color:#E5E7EB"],
+    .stApp.light-mode .persona-note [style*="color:#cfcfcf"],
+    .stApp.light-mode .persona-note [style*="color:#CBD5E1"],
+    .stApp.light-mode .persona-note [style*="color:#e0d5cc"] { color: #1a1008 !important; }
+    .stApp.light-mode .persona-note [style*="color:#9CA3AF"],
+    .stApp.light-mode .persona-note [style*="color:#6B7280"],
+    .stApp.light-mode .persona-note [style*="color:#9ca3af"] { color: #5a4030 !important; }
+
+    /* ── Text Inputs / Text Areas / Select boxes ── */
+    .stApp.light-mode [data-baseweb="input"],
+    .stApp.light-mode [data-baseweb="input"] input,
+    .stApp.light-mode [data-baseweb="textarea"],
+    .stApp.light-mode [data-baseweb="textarea"] textarea,
+    .stApp.light-mode [data-testid="stTextInput"] input,
+    .stApp.light-mode [data-testid="stTextArea"] textarea,
+    .stApp.light-mode [data-baseweb="select"] [data-baseweb="popover"],
+    .stApp.light-mode [data-baseweb="select"] > div:first-child {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border-color: #e0cdb8 !important;
+    }
+    .stApp.light-mode [data-baseweb="input"]:focus-within,
+    .stApp.light-mode [data-baseweb="textarea"]:focus-within,
+    .stApp.light-mode [data-testid="stTextInput"] input:focus,
+    .stApp.light-mode [data-testid="stTextArea"] textarea:focus {
+        border-color: #FF8C00 !important;
+        box-shadow: 0 0 0 2px rgba(255,140,0,0.15) !important;
+    }
+    /* Placeholder text */
+    .stApp.light-mode [data-baseweb="input"] input::placeholder,
+    .stApp.light-mode [data-baseweb="textarea"] textarea::placeholder,
+    .stApp.light-mode [data-testid="stTextInput"] input::placeholder,
+    .stApp.light-mode [data-testid="stTextArea"] textarea::placeholder {
+        color: #a08878 !important;
     }
 
     /* ── Buttons ── */

@@ -231,7 +231,7 @@ PERSONALITIES = {
     "brutal_recruiter": {
         "icon": "😤",
         "name": "Brutal Recruiter",
-        "tagline": "I've trashed 50,000+ resumes. Is yours next?",
+        "tagline": "Your resume has 6 seconds. Is it worth a second look?",
         "description": "The unfiltered truth recruiters think but never say out loud.",
         "badge": "Most Direct",
         "accent_from": "#FF4B4B",
@@ -267,7 +267,7 @@ PERSONALITIES = {
     "top_hiring_manager": {
         "icon": "👔",
         "name": "Top Hiring Manager",
-        "tagline": "I make $500K hiring calls. Earn your callback.",
+        "tagline": "Would you make the shortlist? Most people don't.",
         "description": "C-suite lens on whether you'd even get a callback — no corporate fluff.",
         "badge": "Most Authoritative",
         "accent_from": "#F59E0B",
@@ -645,6 +645,36 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
         window.parent.document.body.appendChild(a); a.click();
         window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
     }}
+    (function applyATSCardTheme() {{
+        var theme = 'dark';
+        try {{ theme = window.parent.localStorage.getItem('resume_roaster_theme') || 'dark'; }} catch(e) {{}}
+        var styleId = 'ats-light-mode-style';
+        var existing = document.getElementById(styleId);
+        if (theme === 'light') {{
+            if (!existing) {{
+                var s = document.createElement('style');
+                s.id = styleId;
+                s.textContent =
+                    '.li-card {{ background: #fdf9f4 !important; border-color: #d0e4ee !important; box-shadow: 0 2px 20px rgba(0,201,255,0.05) !important; }}' +
+                    '.li-brand {{ color: #5a4030 !important; }}' +
+                    '.li-sub {{ color: #5a4030 !important; }}' +
+                    '.li-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}';
+                document.head.appendChild(s);
+                /* Fix inline-styled metric boxes and their muted labels */
+                document.querySelectorAll('.li-metrics > div').forEach(function(el) {{
+                    el.style.setProperty('background', '#f0ebe4', 'important');
+                }});
+                document.querySelectorAll('.li-metrics div').forEach(function(el) {{
+                    if (el.style.color === 'rgb(107, 114, 128)' || el.style.color === '#6B7280') {{
+                        el.style.setProperty('color', '#5a4030', 'important');
+                    }}
+                }});
+            }}
+        }} else {{
+            if (existing) existing.remove();
+        }}
+        setTimeout(applyATSCardTheme, 500);
+    }})();
     </script>
     """, height=590)
 
@@ -1038,6 +1068,31 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         window.parent.document.body.appendChild(a); a.click();
         window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
     }}
+    (function applyCardTheme() {{
+        var theme = 'dark';
+        try {{ theme = window.parent.localStorage.getItem('resume_roaster_theme') || 'dark'; }} catch(e) {{}}
+        var styleId = 'br-light-mode-style';
+        var existing = document.getElementById(styleId);
+        if (theme === 'light') {{
+            if (!existing) {{
+                var s = document.createElement('style');
+                s.id = styleId;
+                s.textContent =
+                    '.br-card {{ background: #fdf9f4 !important; box-shadow: 0 2px 20px rgba(255,75,75,0.06) !important; }}' +
+                    '.br-brand {{ color: #5a4030 !important; }}' +
+                    '.br-verdict-sub {{ color: #5a4030 !important; }}' +
+                    '.br-verdict-text {{ color: #1a1008 !important; }}' +
+                    '.br-quote {{ background: rgba(168,85,247,0.08) !important; color: #3d2b1a !important; }}' +
+                    '.br-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}' +
+                    '.br-hashtags {{ color: #5a4030 !important; }}' +
+                    '.br-score-denom {{ color: #5a4030 !important; }}';
+                document.head.appendChild(s);
+            }}
+        }} else {{
+            if (existing) existing.remove();
+        }}
+        setTimeout(applyCardTheme, 500);
+    }})();
     </script>
     """, height=760)
 
@@ -1232,6 +1287,34 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         window.parent.document.body.appendChild(a); a.click();
         window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
     }}
+    (function applyCCCardTheme() {{
+        var theme = 'dark';
+        try {{ theme = window.parent.localStorage.getItem('resume_roaster_theme') || 'dark'; }} catch(e) {{}}
+        var styleId = 'cc-light-mode-style';
+        var existing = document.getElementById(styleId);
+        if (theme === 'light') {{
+            if (!existing) {{
+                var s = document.createElement('style');
+                s.id = styleId;
+                s.textContent =
+                    '.cc-card {{ background: #fdf9f4 !important; border-color: #cce8d4 !important; box-shadow: 0 2px 20px rgba(34,197,94,0.05) !important; }}' +
+                    '.cc-brand {{ color: #5a4030 !important; }}' +
+                    '.cc-closer-box {{ background: rgba(34,197,94,0.07) !important; color: #1a3a1a !important; border-left-color: #22C55E !important; }}' +
+                    '.cc-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}' +
+                    '.cc-sub {{ color: #5a4030 !important; }}';
+                document.head.appendChild(s);
+                /* Fix ring track (dark green stroke #1a3a22) */
+                var ringTrack = document.querySelector('.cc-card svg circle:first-child');
+                if (ringTrack) ringTrack.setAttribute('stroke', '#ddd5cc');
+            }}
+        }} else {{
+            if (existing) existing.remove();
+            /* Restore ring track */
+            var ringTrack = document.querySelector('.cc-card svg circle:first-child');
+            if (ringTrack) ringTrack.setAttribute('stroke', '#1a3a22');
+        }}
+        setTimeout(applyCCCardTheme, 500);
+    }})();
     </script>
     """, height=520)
 
@@ -1424,6 +1507,32 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         window.parent.document.body.appendChild(a); a.click();
         window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
     }}
+    (function applyITCardTheme() {{
+        var theme = 'dark';
+        try {{ theme = window.parent.localStorage.getItem('resume_roaster_theme') || 'dark'; }} catch(e) {{}}
+        var styleId = 'it-light-mode-style';
+        var existing = document.getElementById(styleId);
+        if (theme === 'light') {{
+            if (!existing) {{
+                var s = document.createElement('style');
+                s.id = styleId;
+                s.textContent =
+                    '.it-card {{ background: #fdf9f4 !important; border-color: #d8cce8 !important; box-shadow: 0 2px 20px rgba(168,85,247,0.05) !important; }}' +
+                    '.it-brand {{ color: #5a4030 !important; }}' +
+                    '.it-roast-box {{ background: rgba(168,85,247,0.06) !important; color: #2a1a3a !important; border-left-color: #A855F7 !important; }}' +
+                    '.it-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}' +
+                    '.it-sub {{ color: #5a4030 !important; }}';
+                document.head.appendChild(s);
+                var ringTrack = document.querySelector('.it-card svg circle:first-child');
+                if (ringTrack) ringTrack.setAttribute('stroke', '#ddd5cc');
+            }}
+        }} else {{
+            if (existing) existing.remove();
+            var ringTrack = document.querySelector('.it-card svg circle:first-child');
+            if (ringTrack) ringTrack.setAttribute('stroke', '#2a1a3a');
+        }}
+        setTimeout(applyITCardTheme, 500);
+    }})();
     </script>
     """, height=520)
 
@@ -1459,9 +1568,9 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         v_color = "#EF4444"; v_icon = "❌ PASS"
 
     low_i = clean_interview.lower()
-    if "yes" in low_i:
+    if _re.search(r'\byes\b', low_i):
         i_color = "#22C55E"; i_text = "Yes — Would Interview"
-    elif "maybe" in low_i or "possibly" in low_i:
+    elif _re.search(r'\b(maybe|possibly|consider|potentially)\b', low_i):
         i_color = "#F59E0B"; i_text = "Maybe"
     else:
         i_color = "#EF4444"; i_text = "No"
@@ -1628,6 +1737,42 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         window.parent.document.body.appendChild(a); a.click();
         window.parent.document.body.removeChild(a); URL.revokeObjectURL(url);
     }}
+    (function applyHMCardTheme() {{
+        var theme = 'dark';
+        try {{ theme = window.parent.localStorage.getItem('resume_roaster_theme') || 'dark'; }} catch(e) {{}}
+        var styleId = 'hm-light-mode-style';
+        var existing = document.getElementById(styleId);
+        if (theme === 'light') {{
+            if (!existing) {{
+                var s = document.createElement('style');
+                s.id = styleId;
+                s.textContent =
+                    '.hm-card {{ background: #fdf9f4 !important; border-color: #e8d5a0 !important; box-shadow: 0 2px 20px rgba(245,158,11,0.05) !important; }}' +
+                    '.hm-brand {{ color: #5a4030 !important; }}' +
+                    '.hm-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}';
+                document.head.appendChild(s);
+                /* Fix interview decision box (background:#1f1800, text:#FEF3C7) */
+                document.querySelectorAll('.hm-card [style*="background:#1f1800"]').forEach(function(el) {{
+                    el.style.setProperty('background', 'rgba(245,158,11,0.07)', 'important');
+                }});
+                document.querySelectorAll('.hm-card [style*="color:#FEF3C7"]').forEach(function(el) {{
+                    el.style.setProperty('color', '#1a1008', 'important');
+                }});
+                /* Fix ring track */
+                var ringTrack = document.querySelector('.hm-card svg circle:first-child');
+                if (ringTrack) ringTrack.setAttribute('stroke', '#ddd5cc');
+                /* Fix footer subtitle */
+                document.querySelectorAll('.hm-card [style*="color:#374151"]').forEach(function(el) {{
+                    el.style.setProperty('color', '#5a4030', 'important');
+                }});
+            }}
+        }} else {{
+            if (existing) existing.remove();
+            var ringTrack = document.querySelector('.hm-card svg circle:first-child');
+            if (ringTrack) ringTrack.setAttribute('stroke', '#2a1f00');
+        }}
+        setTimeout(applyHMCardTheme, 500);
+    }})();
     </script>
     """, height=530)
 
@@ -1758,7 +1903,7 @@ def _render_hero_score_card(
 ):
     """Render the hero score card identically across all personas."""
     st.markdown(
-        f'<div style="'
+        f'<div class="hero-score-card" style="'
         f'background:{bg_gradient};'
         f'border:1.5px solid {sc_color}44;'
         f'border-radius:20px;'
@@ -1775,7 +1920,7 @@ def _render_hero_score_card(
         # score ring
         f'<div style="position:relative;width:150px;height:150px;margin:0 auto 14px auto;">'
         f'<svg width="150" height="150" viewBox="0 0 150 150">'
-        f'<circle cx="75" cy="75" r="54" fill="none" stroke="{ring_bg}" stroke-width="12"/>'
+        f'<circle class="ring-track" cx="75" cy="75" r="54" fill="none" stroke="{ring_bg}" stroke-width="12"/>'
         f'<circle cx="75" cy="75" r="54" fill="none" stroke="{sc_color}" stroke-width="12"'
         f' stroke-dasharray="{dash} {circumference}" stroke-linecap="round"'
         f' transform="rotate(-90 75 75)"'
@@ -1889,10 +2034,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             else:
                 color = "#EF4444"; strength = "WEAK"; grade = "D"
             st.markdown(f"""
-            <div style="display:flex;align-items:center;margin-bottom:10px;gap:10px;background:#0d1117;border-radius:10px;padding:9px 12px;border-left:3px solid {color};">
+            <div class="result-item-box" style="display:flex;align-items:center;margin-bottom:10px;gap:10px;background:#0d1117;border-radius:10px;padding:9px 12px;border-left:3px solid {color};">
                 <div style="width:140px;font-size:0.88rem;color:#cfcfcf;font-weight:500;">{label}</div>
                 <div style="width:34px;font-weight:900;font-size:1rem;color:{color};">{score}</div>
-                <div style="flex:1;height:10px;background:#1a1a2e;border-radius:8px;overflow:hidden;">
+                <div class="ats-bar-track" style="flex:1;height:10px;background:#1a1a2e;border-radius:8px;overflow:hidden;">
                     <div class="animated-bar shimmer" style="
                         --target-width:{score}%;
                         --bar-color:{color};
@@ -1960,7 +2105,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     issue   = b.get("Issue") or "<i>—</i>"
                     improved = b.get("Improved Version") or "<i>—</i>"
                     st.markdown(
-                        '<div style="'
+                        '<div class="ats-wb-card" style="'
                         'background:#13100d;'
                         'border:1px solid #2e2418;'
                         'border-radius:16px;'
@@ -1969,31 +2114,31 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                         'box-shadow:0 4px 18px rgba(0,0,0,0.25);">'
 
                         # ── ORIGINAL row ──────────────────────────────────────
-                        '<div style="padding:14px 18px 12px 18px;border-bottom:1px solid #2e2418;">'
-                        '<span style="display:inline-block;background:#374151;color:#F9FAFB;'
+                        '<div class="ats-wb-row-orig" style="padding:14px 18px 12px 18px;border-bottom:1px solid #2e2418;">'
+                        '<span class="ats-wb-badge-orig" style="display:inline-block;background:#374151;color:#F9FAFB;'
                         'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
                         'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
                         'text-transform:uppercase;">📄 Original</span>'
-                        f'<div style="color:#CBD5E1;font-size:0.92rem;line-height:1.6;">{orig}</div>'
+                        f'<div class="ats-wb-text" style="color:#CBD5E1;font-size:0.92rem;line-height:1.6;">{orig}</div>'
                         '</div>'
 
                         # ── ISSUE row ─────────────────────────────────────────
-                        '<div style="padding:12px 18px 12px 18px;border-bottom:1px solid #2e2418;'
+                        '<div class="ats-wb-row-issue" style="padding:12px 18px 12px 18px;border-bottom:1px solid #2e2418;'
                         'background:rgba(239,68,68,0.07);">'
                         '<span style="display:inline-block;background:#EF4444;color:#fff;'
                         'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
                         'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
                         'text-transform:uppercase;">⚠ Issue</span>'
-                        f'<div style="color:#FECACA;font-size:0.92rem;line-height:1.6;">{issue}</div>'
+                        f'<div class="ats-wb-text" style="color:#FECACA;font-size:0.92rem;line-height:1.6;">{issue}</div>'
                         '</div>'
 
                         # ── IMPROVED row ──────────────────────────────────────
-                        '<div style="padding:12px 18px 16px 18px;background:rgba(34,197,94,0.07);">'
+                        '<div class="ats-wb-row-imp" style="padding:12px 18px 16px 18px;background:rgba(34,197,94,0.07);">'
                         '<span style="display:inline-block;background:#22C55E;color:#fff;'
                         'font-size:0.62rem;font-weight:800;letter-spacing:2.5px;'
                         'padding:3px 10px;border-radius:20px;margin-bottom:8px;'
                         'text-transform:uppercase;">✓ Improved</span>'
-                        f'<div style="color:#BBF7D0;font-size:0.92rem;line-height:1.6;">{improved}</div>'
+                        f'<div class="ats-wb-text" style="color:#BBF7D0;font-size:0.92rem;line-height:1.6;">{improved}</div>'
                         '</div>'
 
                         '</div>',
@@ -2019,7 +2164,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     elif line.startswith(('-', '•', '*')):
                         keyword = re.sub(r'^[-•*]\s*', '', line).strip()
                         if keyword:
-                            all_pills_html += f'<span style="background:{pill_bg};color:{pill_color};border:1px solid {pill_border};border-radius:20px;padding:4px 13px;font-size:0.82rem;font-weight:600;white-space:nowrap;">{keyword}</span>'
+                            all_pills_html += f'<span class="ats-kw-pill" style="background:{pill_bg};color:{pill_color};border:1px solid {pill_border};border-radius:20px;padding:4px 13px;font-size:0.82rem;font-weight:600;white-space:nowrap;">{keyword}</span>'
                     else:
                         if all_pills_html:
                             st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;'>{all_pills_html}</div>", unsafe_allow_html=True)
@@ -2197,8 +2342,6 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         if gut_text:
             st.markdown(f"""
             <div class="persona-note" style="
-                background:linear-gradient(135deg,#1f0707 0%,#2a0d0d 100%);
-                border:1px solid #FF4B4B33;
                 border-radius:14px;
                 padding:20px 22px 18px 22px;
                 margin:0 0 18px 0;
@@ -2207,7 +2350,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#FF4B4B18;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
                 <div class="persona-note-label" style="font-size:0.68rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">⚡ Gut Reaction</div>
-                <div class="persona-note-text" style="font-size:1.05rem;color:#F3E7D1;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
+                <div class="persona-note-text" style="font-size:1.05rem;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2230,10 +2373,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             """, unsafe_allow_html=True)
             for b in bullets:
                 st.markdown(f"""
-                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
+                <div class="result-item-box" style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
                             padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
                     <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
-                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
+                    <span class="rib-text" style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
                 </div>
                 """, unsafe_allow_html=True)
             st.markdown("<div style='height:1px;background:#2a1a1a;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
@@ -2397,8 +2540,6 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         if opening_text:
             st.markdown(f"""
             <div class="persona-note" style="
-                background:linear-gradient(135deg,#071a0a 0%,#0f2a14 100%);
-                border:1px solid #22C55E33;
                 border-radius:14px;
                 padding:20px 22px 18px 22px;
                 margin:0 0 18px 0;
@@ -2406,24 +2547,25 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#22C55E14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
                 <div class="persona-note-label" style="font-size:0.68rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">💬 First Impression</div>
-                <div class="persona-note-text" style="font-size:1.05rem;color:#D1FAE5;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
+                <div class="persona-note-text" style="font-size:1.05rem;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
-        def render_cc_section(title, icon, color, bg, start_idx, end_idx):
-            if start_idx is None:
-                return
-            section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
-
-            # Parse into items: each item is a (bullet_text, [example_lines]) tuple
+        def render_cc_section(title, icon, color, bg, start_idx, end_idx, section_lines, _clean_cc):
+            # section_lines must be defined in the calling scope and passed as an argument if needed
+            # For this patch, we will assume section_lines is available in the outer scope as before
             items = []
-            current_bullet = None
+            current_bullet = ""
             current_examples = []
             in_example = False
-
-            for raw in section_lines:
+            # section_lines should be defined in the outer scope; if not, add as argument
+            if end_idx is not None:
+                lines = section_lines[start_idx:end_idx]
+            else:
+                lines = section_lines[start_idx:]
+            for raw in lines:
                 line = raw.strip()
-                if not line or re.fullmatch(r'[-_*\s]{2,}', line):
+                if not line or re.fullmatch(r'[-_\*\s]{2,}', line):
                     continue
                 cleaned = _clean_cc(line)
                 if not cleaned:
@@ -2479,19 +2621,19 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     </div>"""
 
                 st.markdown(f"""
-                <div style="background:{bg};border-radius:8px;padding:10px 14px;margin-bottom:10px;border-left:3px solid {color};">
+                <div class="result-item-box" style="background:{bg};border-radius:8px;padding:10px 14px;margin-bottom:10px;border-left:3px solid {color};">
                     <div style="display:flex;align-items:flex-start;gap:10px;">
                         <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
-                        <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{bullet}</span>
+                        <span class="rib-text" style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{bullet}</span>
                     </div>
                     {example_html}
                 </div>
                 """, unsafe_allow_html=True)
             st.markdown("<div style='height:1px;background:#0d2a14;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
 
-        render_cc_section("Your Strengths",  "🌟", "#22C55E", "#071a0a", strengths_idx, growth_idx)
-        render_cc_section("Growth Areas",    "🎯", "#3B82F6", "#071522", growth_idx,    action_idx)
-        render_cc_section("Action Plan",     "🚀", "#F59E0B", "#1a1507", action_idx,    None)
+        render_cc_section("Your Strengths",  "🌟", "#22C55E", "#071a0a", strengths_idx, growth_idx, lines, _clean_cc)
+        render_cc_section("Growth Areas",    "🎯", "#3B82F6", "#071522", growth_idx,    action_idx, lines, _clean_cc)
+        render_cc_section("Action Plan",     "🚀", "#F59E0B", "#1a1507", action_idx,    None,      lines, _clean_cc)
 
         # ── Motivational Closer ───────────────────────────────────────────────
         if closer_text:
@@ -2638,9 +2780,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 return
             section_lines = lines[start_idx + 1: end_idx] if end_idx else lines[start_idx + 1:]
             bullets = [_clean_it(re.sub(r'^[😂🤡🧠💀]\s*', '', l.strip()))
-                       for l in section_lines
-                       if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
-            bullets = [b for b in bullets if b and len(b) > 4]
+                       for l in section_lines if l.strip() and not re.fullmatch(r'[-_*\s]{2,}', l.strip())]
+            bullets = [b for b in bullets if b]
             if not bullets:
                 return
             st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
@@ -2653,10 +2794,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             """, unsafe_allow_html=True)
             for b in bullets:
                 st.markdown(f"""
-                <div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
+                <div class="result-item-box" style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;
                             padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">
                     <span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>
-                    <span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
+                    <span class="rib-text" style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>
                 </div>
                 """, unsafe_allow_html=True)
             st.markdown("<div style='height:1px;background:#1a0a2e;margin:10px 0 6px 0;'></div>", unsafe_allow_html=True)
@@ -2750,20 +2891,20 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         impression_text = _clean_hm(" ".join(l.strip() for l in impression_lines if l.strip()))
         impression_text = re.sub(r'(?i)^instant\s+impression\s*:\s*', '', impression_text).strip()
 
-        # Verdict text
+        # Verdict text (skip header line with +1)
         hm_verdict_text = ""
         if verdict_idx is not None:
             end = interview_idx if interview_idx else len(lines)
-            for l in lines[verdict_idx: end]:
+            for l in lines[verdict_idx + 1: end]:
                 c = _clean_hm(l)
                 if c and len(c) > 3:
                     hm_verdict_text = c
                     break
 
-        # Interview decision
+        # Interview decision (skip header line with +1)
         hm_interview_text = ""
         if interview_idx is not None:
-            for l in lines[interview_idx:]:
+            for l in lines[interview_idx + 1:]:
                 c = _clean_hm(l)
                 if c and len(c) > 2:
                     hm_interview_text = c
@@ -2788,9 +2929,9 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # Interview decision color
         low_i = hm_interview_text.lower()
-        if "→ yes" in low_i or low_i.endswith("yes"):
+        if re.search(r'\byes\b', low_i):
             i_color = "#22C55E"
-        elif "maybe" in low_i or "possibly" in low_i:
+        elif re.search(r'\b(maybe|possibly|consider|potentially)\b', low_i):
             i_color = "#F59E0B"
         else:
             i_color = "#EF4444"
@@ -2810,12 +2951,12 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         # ── Instant Impression ───────────────────────────────────────────────
         if impression_text:
             st.markdown(
-                '<div style="background:linear-gradient(135deg,#0f0c00 0%,#1f1800 100%);'
+                '<div class="hm-instant-impression" style="background:linear-gradient(135deg,#0f0c00 0%,#1f1800 100%);'
                 'border:1px solid rgba(245,158,11,0.2);border-radius:14px;'
                 'padding:20px 22px 18px 22px;margin:0 0 18px 0;position:relative;overflow:hidden;">'
                 '<div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:rgba(245,158,11,0.08);font-family:Georgia,serif;line-height:1;user-select:none;">"</div>'
                 '<div style="font-size:0.68rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:10px;">⚡ INSTANT IMPRESSION</div>'
-                f'<div style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>'
+                f'<div class="hm-impression-text" style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>'
                 '</div>',
                 unsafe_allow_html=True,
             )
@@ -2840,10 +2981,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             )
             for b in bullets:
                 st.markdown(
-                    f'<div style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;'
+                    f'<div class="result-item-box" style="display:flex;align-items:flex-start;gap:10px;background:{bg};border-radius:8px;'
                     f'padding:10px 14px;margin-bottom:8px;border-left:3px solid {color};">'
                     f'<span style="color:{color};font-size:1rem;flex-shrink:0;margin-top:1px;">›</span>'
-                    f'<span style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>'
+                    f'<span class="rib-text" style="color:#E5E7EB;font-size:0.92rem;line-height:1.55;">{b}</span>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
