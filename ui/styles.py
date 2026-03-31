@@ -824,6 +824,16 @@ def get_css() -> str:
         opacity: 1 !important;
     }
 
+    /* ── Consistent result section label ── */
+    .result-label {
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px !important;
+        text-transform: none !important;
+        margin-bottom: 8px !important;
+        display: block;
+    }
+
     /* ── Final Verdict light mode: extra lines ── */
     .stApp.light-mode .fv-extra-line { color: #3d2a1a !important; }
 
@@ -950,6 +960,58 @@ def get_css() -> str:
         background: #ffffff !important;
         border: 1px solid #edddc8 !important;
         box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
+    }
+    /* Score breakdown rows — dark background → light */
+    .stApp.light-mode .ats-breakdown-row {
+        background: #f5f0ea !important;
+        background-color: #f5f0ea !important;
+    }
+    /* Bar track — dark navy → warm light gray */
+    .stApp.light-mode .ats-bar-track {
+        background: #ddd5cc !important;
+    }
+    /* Label text — light gray → near-black */
+    .stApp.light-mode .ats-breakdown-label {
+        color: #1a1008 !important;
+    }
+
+    /* ── ATS Scanner — Weak Bullets card ── */
+    .stApp.light-mode .ats-wb-card {
+        background: #f5f0ea !important;
+        border-color: #e0d0c0 !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07) !important;
+    }
+    .stApp.light-mode .ats-wb-row-orig {
+        border-bottom-color: #e0d0c0 !important;
+    }
+    .stApp.light-mode .ats-wb-row-issue {
+        background: rgba(239,68,68,0.06) !important;
+        border-bottom-color: #e0d0c0 !important;
+    }
+    .stApp.light-mode .ats-wb-row-imp {
+        background: rgba(34,197,94,0.06) !important;
+    }
+    .stApp.light-mode .ats-wb-text {
+        color: #1a1008 !important;
+    }
+    .stApp.light-mode .ats-wb-badge-orig {
+        background: #d0c8c0 !important;
+        color: #1a1008 !important;
+    }
+
+    /* ── ATS Scanner — Keyword pills ── */
+    .stApp.light-mode .ats-kw-pill {
+        background: #f0ebe4 !important;
+    }
+    /* ── ATS Scanner — Keyword category headers & fallback text ── */
+    .stApp.light-mode .ats-kw-cat,
+    .stApp.light-mode .ats-kw-text {
+        color: #4a3828 !important;
+    }
+
+    /* ── ATS Scanner — section divider line ── */
+    .stApp.light-mode [style*="background:#222"] {
+        background: #e0d5cc !important;
     }
 
     /* ── Roast Result — light background in light mode ── */

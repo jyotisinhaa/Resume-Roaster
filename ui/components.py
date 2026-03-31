@@ -472,11 +472,13 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
             continue
         s = item.get("score", 0)
         c = score_color(s)
-        short = label.replace(" Coverage", "").replace(" Metrics", "").replace(" Verbs", " V.").replace("Formatting", "Format")
+        chip_bg = "#0d2a1a" if s >= 80 else ("#2a2a0d" if s >= 60 else "#2a0d0d")
+        short = label.replace(" Coverage", "").replace(" Metrics", "").replace(" Verbs", " Verbs").replace("Formatting", "Format")
         metrics_html += f"""
-        <div style="background:#0d1b2a;border-radius:10px;padding:10px 12px;border-top:2px solid {c};flex:1;min-width:80px;text-align:center;">
+        <div style="background:{chip_bg};border-radius:10px;padding:10px 12px;border-top:2px solid {c};flex:1;min-width:80px;text-align:center;">
             <div style="font-size:1.4rem;font-weight:900;color:{c};line-height:1;">{s}</div>
-            <div style="font-size:0.65rem;color:#6B7280;margin-top:3px;white-space:nowrap;">{short}</div>
+            <div style="font-size:0.6rem;color:{c};opacity:0.65;margin-top:1px;font-weight:600;">/100</div>
+            <div class="chip-label" style="font-size:0.62rem;color:#ffffff;margin-top:3px;white-space:nowrap;">{short}</div>
         </div>"""
 
     circumference = round(2 * 3.14159 * 40, 1)
@@ -706,16 +708,11 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
                     '.li-brand {{ color: #5a4030 !important; }}' +
                     '.li-sub {{ color: #5a4030 !important; }}' +
                     '.li-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}';
+                s.textContent +=
+                    '.li-metrics > div {{ background: #f0ebe4 !important; }}' +
+                    '.li-metrics div[style*="color:#6B7280"], .li-metrics div[style*="color: #6B7280"] {{ color: #5a4030 !important; }}' +
+                    '.li-metrics .chip-label {{ color: #111111 !important; }}';
                 document.head.appendChild(s);
-                /* Fix inline-styled metric boxes and their muted labels */
-                document.querySelectorAll('.li-metrics > div').forEach(function(el) {{
-                    el.style.setProperty('background', '#f0ebe4', 'important');
-                }});
-                document.querySelectorAll('.li-metrics div').forEach(function(el) {{
-                    if (el.style.color === 'rgb(107, 114, 128)' || el.style.color === '#6B7280') {{
-                        el.style.setProperty('color', '#5a4030', 'important');
-                    }}
-                }});
             }}
         }} else {{
             if (existing) existing.remove();
@@ -762,8 +759,8 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
 
     clean_verdict = _li_clean(verdict_text)
     clean_roast   = _li_clean(linkedin_roast)
-    roast_display = (clean_roast[:160] + "…") if len(clean_roast) > 160 else clean_roast
-    verdict_display = (clean_verdict[:120] + "…") if len(clean_verdict) > 120 else clean_verdict
+    roast_display = (clean_roast[:500] + "…") if len(clean_roast) > 500 else clean_roast
+    verdict_display = (clean_verdict[:500] + "…") if len(clean_verdict) > 500 else clean_verdict
 
     # RGB components for rgba()
     _scr = int(sc_color[1:3], 16)
@@ -947,7 +944,6 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         margin-bottom: 18px;
         font-size: 0.85rem;
         color: #E9D5FF;
-        font-style: italic;
         line-height: 1.55;
     }}
 
@@ -1171,7 +1167,7 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         return text.strip()
 
     clean_closer = _cc_clean(closer_text)
-    closer_display = (clean_closer[:120] + "…") if len(clean_closer) > 120 else clean_closer
+    closer_display = (clean_closer[:500] + "…") if len(clean_closer) > 500 else clean_closer
 
     li_text = (
         f"Just got my resume reviewed by an AI Career Coach on Resume Ripper AI 🧑‍🏫\n\n"
@@ -1216,7 +1212,7 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     .cc-closer-box {{
         background:#0a2a12;border-left:3px solid #22C55E;border-radius:8px;
         padding:10px 14px;margin-bottom:16px;
-        font-size:0.82rem;color:#BBF7D0;font-style:italic;line-height:1.5;
+        font-size:0.82rem;color:#BBF7D0;line-height:1.5;
     }}
     .cc-footer {{
         border-top:1px solid #1a3a22;padding-top:12px;
@@ -1397,7 +1393,7 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         return text.strip()
 
     clean_roast = _it_clean(closing_roast)
-    roast_display = (clean_roast[:120] + "…") if len(clean_roast) > 120 else clean_roast
+    roast_display = (clean_roast[:500] + "…") if len(clean_roast) > 500 else clean_roast
 
     li_text = (
         f"Just got my resume roasted by the Internet Troll on Resume Ripper AI 🧌\n\n"
@@ -1442,7 +1438,7 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
     .it-roast-box {{
         background:#1a0a2e;border-left:3px solid #A855F7;border-radius:8px;
         padding:10px 14px;margin-bottom:16px;
-        font-size:0.82rem;color:#E9D5FF;font-style:italic;line-height:1.5;
+        font-size:0.82rem;color:#E9D5FF;line-height:1.5;
     }}
     .it-footer {{
         border-top:1px solid #2a1a3a;padding-top:12px;
@@ -1636,8 +1632,16 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         i_color = "#22C55E"; i_text = "Yes — Would Interview"
     elif _re.search(r'\b(maybe|possibly|consider|potentially)\b', low_i):
         i_color = "#F59E0B"; i_text = "Maybe"
-    else:
+    elif _re.search(r'\bno\b', low_i):
         i_color = "#EF4444"; i_text = "No"
+    else:
+        # AI text is ambiguous — fall back to score
+        if score_val >= 7:
+            i_color = "#22C55E"; i_text = "Yes — Would Interview"
+        elif score_val >= 5:
+            i_color = "#F59E0B"; i_text = "Maybe"
+        else:
+            i_color = "#EF4444"; i_text = "No"
 
     li_text = (
         f"Just had my resume assessed by a Top Hiring Manager on Resume Ripper AI 🏆\n\n"
@@ -1711,6 +1715,10 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
                         <span style="background:{v_color}22;color:{v_color};border:1px solid {v_color}55;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:800;">{v_icon}</span>
                     </div>
                 </div>
+            </div>
+            <div style="background:#1f1800;border-left:3px solid {v_color};border-radius:8px;padding:10px 14px;margin-bottom:10px;">
+                <div style="font-size:0.68rem;color:{v_color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">⚖️ VERDICT</div>
+                <div style="font-size:0.85rem;color:#FEF3C7;font-weight:700;line-height:1.4;">{clean_verdict[:500] + ("…" if len(clean_verdict) > 500 else "")}</div>
             </div>
             <div style="background:#1f1800;border-left:3px solid {i_color};border-radius:8px;padding:10px 14px;margin-bottom:16px;">
                 <div style="font-size:0.68rem;color:{i_color};letter-spacing:1.5px;font-weight:700;margin-bottom:4px;">👀 INTERVIEW DECISION</div>
@@ -1819,22 +1827,13 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
                 s.textContent =
                     '.hm-card {{ background: #fdf9f4 !important; border-color: #e8d5a0 !important; box-shadow: 0 2px 20px rgba(245,158,11,0.05) !important; }}' +
                     '.hm-brand {{ color: #5a4030 !important; }}' +
-                    '.hm-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}';
+                    '.hm-footer {{ border-top-color: rgba(0,0,0,0.1) !important; }}' +
+                    '.hm-card [style*="background:#1f1800"] {{ background: rgba(245,158,11,0.07) !important; }}' +
+                    '.hm-card [style*="color:#FEF3C7"] {{ color: #1a1008 !important; }}' +
+                    '.hm-card [style*="color:#374151"] {{ color: #5a4030 !important; }}';
                 document.head.appendChild(s);
-                /* Fix interview decision box (background:#1f1800, text:#FEF3C7) */
-                document.querySelectorAll('.hm-card [style*="background:#1f1800"]').forEach(function(el) {{
-                    el.style.setProperty('background', 'rgba(245,158,11,0.07)', 'important');
-                }});
-                document.querySelectorAll('.hm-card [style*="color:#FEF3C7"]').forEach(function(el) {{
-                    el.style.setProperty('color', '#1a1008', 'important');
-                }});
-                /* Fix ring track */
                 var ringTrack = document.querySelector('.hm-card svg circle:first-child');
                 if (ringTrack) ringTrack.setAttribute('stroke', '#ddd5cc');
-                /* Fix footer subtitle */
-                document.querySelectorAll('.hm-card [style*="color:#374151"]').forEach(function(el) {{
-                    el.style.setProperty('color', '#5a4030', 'important');
-                }});
             }}
         }} else {{
             if (existing) existing.remove();
@@ -1844,7 +1843,7 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         setTimeout(applyHMCardTheme, 500);
     }})();
     </script>
-    """, height=530)
+    """, height=700)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -2104,8 +2103,8 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             else:
                 color = "#EF4444"; strength = "WEAK"; grade = "D"
             st.markdown(f"""
-            <div class="result-item-box" style="display:flex;align-items:center;margin-bottom:10px;gap:10px;background:#0d1117;border-radius:10px;padding:9px 12px;border-left:3px solid {color};">
-                <div style="width:140px;font-size:0.88rem;color:#cfcfcf;font-weight:500;">{label}</div>
+            <div class="result-item-box ats-breakdown-row" style="display:flex;align-items:center;margin-bottom:10px;gap:10px;background:#0d1117;border-radius:10px;padding:9px 12px;border-left:3px solid {color};">
+                <div class="ats-breakdown-label" style="width:140px;font-size:0.88rem;color:#cfcfcf;font-weight:500;">{label}</div>
                 <div style="width:34px;font-weight:900;font-size:1rem;color:{color};">{score}</div>
                 <div class="ats-bar-track" style="flex:1;height:10px;background:#1a1a2e;border-radius:8px;overflow:hidden;">
                     <div class="animated-bar shimmer" style="
@@ -2230,7 +2229,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                             st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;'>{all_pills_html}</div>", unsafe_allow_html=True)
                             all_pills_html = ""
                         cat = line.rstrip(':')
-                        st.markdown(f"<div style='font-size:0.7rem;color:#6B7280;letter-spacing:2px;margin:10px 0 6px 0;font-weight:700;'>{cat.upper()}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='ats-kw-cat' style='font-size:0.7rem;color:#6B7280;letter-spacing:2px;margin:10px 0 6px 0;font-weight:700;'>{cat.upper()}</div>", unsafe_allow_html=True)
                     elif line.startswith(('-', '•', '*')):
                         keyword = re.sub(r'^[-•*]\s*', '', line).strip()
                         if keyword:
@@ -2239,7 +2238,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                         if all_pills_html:
                             st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;'>{all_pills_html}</div>", unsafe_allow_html=True)
                             all_pills_html = ""
-                        st.markdown(f"<div style='font-size:0.85rem;color:#9CA3AF;margin:4px 0;'>{line}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='ats-kw-text' style='font-size:0.85rem;color:#9CA3AF;margin:4px 0;'>{line}</div>", unsafe_allow_html=True)
                 if all_pills_html:
                     st.markdown(f"<div style='display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px;'>{all_pills_html}</div>", unsafe_allow_html=True)
             else:
@@ -2286,9 +2285,17 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 if not stripped:
                     continue
                 lower = stripped.lower()
-                if lower in VALID_VERDICTS and verdict is None:
-                    verdict = stripped.upper()
-                    continue
+                # Strip markdown (* _ # `) then check if line is/starts with a valid verdict
+                cleaned = re.sub(r'[*_#`]', '', stripped).strip().lower()
+                if verdict is None:
+                    matched = next(
+                        (v for v in VALID_VERDICTS
+                         if cleaned == v or cleaned.startswith(v + ':') or cleaned.startswith(v + ' ')),
+                        None
+                    )
+                    if matched:
+                        verdict = matched.upper()
+                        continue
                 if any(signal in lower for signal in PROMPT_LEAK_SIGNALS) and len(stripped) < 80:
                     continue
                 clean_content.append(stripped)
@@ -2334,9 +2341,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         lines = roast_result.split('\n')
 
         def find_section_br(header):
+            header_upper = header.upper()
             for i, l in enumerate(lines):
                 stripped = re.sub(r'[^\w\s]', '', l).strip().upper()
-                if header.upper() in stripped:
+                if stripped.startswith(header_upper):
                     return i
             return None
 
@@ -2381,7 +2389,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 if i > (rewrite_idx or 0):
                     verdict_idx = i
             if linkedin_idx is None and ("linkedin" in low or "screenshot" in low or "zinger" in low):
-                if i > (verdict_idx or rewrite_idx or 0):
+                if verdict_idx is not None and i > verdict_idx:
                     linkedin_idx = i
 
         # Score color
@@ -2420,7 +2428,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#FF4B4B18;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div class="persona-note-label" style="font-size:0.68rem;color:#FF4B4B;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">⚡ Gut Reaction</div>
+                <div class="persona-note-label result-label" style="color:#FF4B4B;">⚡ Gut Reaction</div>
                 <div class="persona-note-text" style="font-size:1.05rem;line-height:1.75;font-style:italic;position:relative;z-index:1;">{gut_text}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -2515,10 +2523,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             roast_lines = [l.strip() for l in lines[linkedin_idx:] if l.strip()]
             br_roast_text = _clean(" ".join(roast_lines))
             st.markdown(f"""
+            <div class="result-label" style="color:#A855F7;margin:12px 0 8px 0;">🔥 LINKEDIN ROAST</div>
             <div class="persona-note" style="background:linear-gradient(90deg,#2a0d2a,#1a0505);border:1.5px solid #A855F755;
-                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div class="persona-note-label" style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:8px;">🔥 LINKEDIN ROAST</div>
-                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{br_roast_text}</div>
+                        border-radius:12px;padding:16px 20px;margin:0 0 18px 0;">
+                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;line-height:1.6;">{br_roast_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2533,8 +2541,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
         lines = roast_result.split('\n')
 
         def find_section_cc(header):
+            header_upper = header.upper()
             for i, l in enumerate(lines):
-                if header.upper() in l.upper():
+                stripped = re.sub(r'[^\w\s]', '', l).strip().upper()
+                if stripped.startswith(header_upper):
                     return i
             return None
 
@@ -2617,7 +2627,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 position:relative;overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#22C55E14;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div class="persona-note-label" style="font-size:0.68rem;color:#22C55E;letter-spacing:3px;font-weight:800;margin-bottom:10px;text-transform:uppercase;">💬 First Impression</div>
+                <div class="persona-note-label result-label" style="color:#22C55E;">💬 First Impression</div>
                 <div class="persona-note-text" style="font-size:1.05rem;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -2631,9 +2641,9 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
             in_example = False
             # section_lines should be defined in the outer scope; if not, add as argument
             if end_idx is not None:
-                lines = section_lines[start_idx:end_idx]
+                lines = section_lines[start_idx + 1:end_idx]
             else:
-                lines = section_lines[start_idx:]
+                lines = section_lines[start_idx + 1:]
             for raw in lines:
                 line = raw.strip()
                 if not line or re.fullmatch(r'[-_\*\s]{2,}', line):
@@ -2708,11 +2718,11 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # ── Motivational Closer ───────────────────────────────────────────────
         if closer_text:
+            st.markdown('<div class="result-label" style="color:#22C55E;margin:12px 0 8px 0;">✨ COACH\'S NOTE</div>', unsafe_allow_html=True)
             st.markdown(f"""
             <div class="persona-note" style="background:linear-gradient(90deg,#22C55E22,#071a0a);border:1.5px solid #22C55E44;
-                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div class="persona-note-label" style="font-size:0.72rem;color:#22C55E;letter-spacing:2px;font-weight:800;margin-bottom:6px;">✨ COACH'S NOTE</div>
-                <div class="persona-note-text" style="font-size:1rem;color:#D1FAE5;font-style:italic;line-height:1.6;">{closer_text}</div>
+                        border-radius:12px;padding:16px 20px;margin:0 0 18px 0;">
+                <div class="persona-note-text" style="font-size:1rem;color:#D1FAE5;line-height:1.6;">{closer_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -2841,7 +2851,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 position:relative;overflow:hidden;
             ">
                 <div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:#A855F714;font-family:Georgia,serif;line-height:1;user-select:none;">"</div>
-                <div class="persona-note-label" style="font-size:0.68rem;color:#A855F7;letter-spacing:3px;font-weight:800;margin-bottom:10px;">💀 OPENING ROAST</div>
+                <div class="persona-note-label result-label" style="color:#A855F7;">💀 OPENING ROAST</div>
                 <div class="persona-note-text" style="font-size:1.05rem;color:#E9D5FF;line-height:1.75;font-style:italic;position:relative;z-index:1;">{opening_text}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -2879,11 +2889,11 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # ── Closing Viral Roast ──────────────────────────────────────────────
         if closing_text:
+            st.markdown('<div class="result-label" style="color:#A855F7;margin:12px 0 8px 0;">🔥 CLOSING ROAST</div>', unsafe_allow_html=True)
             st.markdown(f"""
             <div class="persona-note" style="background:linear-gradient(90deg,#A855F722,#0d0514);border:1.5px solid #A855F755;
-                        border-radius:12px;padding:16px 20px;margin:12px 0 18px 0;">
-                <div class="persona-note-label" style="font-size:0.72rem;color:#A855F7;letter-spacing:2px;font-weight:800;margin-bottom:6px;">🔥 CLOSING ROAST</div>
-                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;font-style:italic;line-height:1.6;">{closing_text}</div>
+                        border-radius:12px;padding:16px 20px;margin:0 0 18px 0;">
+                <div class="persona-note-text" style="font-size:1rem;color:#E9D5FF;line-height:1.6;">{closing_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -3026,7 +3036,7 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                 'border:1px solid rgba(245,158,11,0.2);border-radius:14px;'
                 'padding:20px 22px 18px 22px;margin:0 0 18px 0;position:relative;overflow:hidden;">'
                 '<div style="position:absolute;top:-10px;left:14px;font-size:5rem;color:rgba(245,158,11,0.08);font-family:Georgia,serif;line-height:1;user-select:none;">"</div>'
-                '<div style="font-size:0.68rem;color:#F59E0B;letter-spacing:3px;font-weight:800;margin-bottom:10px;">⚡ INSTANT IMPRESSION</div>'
+                '<div class="persona-note-label result-label" style="color:#F59E0B;">⚡ INSTANT IMPRESSION</div>'
                 f'<div class="hm-impression-text" style="font-size:1.05rem;color:#FEF3C7;line-height:1.75;font-style:italic;position:relative;z-index:1;">{impression_text}</div>'
                 '</div>',
                 unsafe_allow_html=True,
@@ -3067,10 +3077,10 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
 
         # ── Hiring Signal ────────────────────────────────────────────────────
         if hm_signal_text:
+            st.markdown('<div class="result-label" style="color:#F59E0B;margin:12px 0 8px 0;">💼 HIRING SIGNAL</div>', unsafe_allow_html=True)
             st.markdown(
                 '<div class="persona-note" style="background:linear-gradient(90deg,rgba(245,158,11,0.09),#1a1200);'
-                'border:1.5px solid rgba(245,158,11,0.4);border-radius:14px;padding:18px 20px;margin:14px 0;">'
-                '<div class="persona-note-label" style="font-size:0.72rem;color:#F59E0B;letter-spacing:2px;font-weight:800;margin-bottom:8px;">💼 HIRING SIGNAL</div>'
+                'border:1.5px solid rgba(245,158,11,0.4);border-radius:14px;padding:18px 20px;margin:0 0 14px 0;">'
                 f'<div class="persona-note-text" style="font-size:0.95rem;color:#FEF3C7;line-height:1.7;">{hm_signal_text}</div>'
                 '</div>',
                 unsafe_allow_html=True,
@@ -3091,7 +3101,6 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     f'<div class="persona-note hm-decision-card" style="flex:1;min-width:180px;'
                     f'background:linear-gradient(135deg,rgba({vr},{vg},{vb},0.09),#0f0c00);'
                     f'border:2px solid rgba({vr},{vg},{vb},0.4);border-radius:14px;padding:16px 18px;">'
-                    f'<div class="persona-note-label" style="font-size:0.65rem;color:{v_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">⚖️ VERDICT</div>'
                     f'<div style="font-size:1.2rem;font-weight:900;color:{v_color};margin-bottom:6px;">{v_icon}</div>'
                     f'<div class="persona-note-subtext" style="font-size:0.82rem;color:#9CA3AF;line-height:1.4;">{hm_verdict_text}</div>'
                     f'</div>'
@@ -3102,12 +3111,14 @@ def render_roast_results(roast_result: str, score_breakdown: dict, sel: dict, el
                     f'<div class="persona-note hm-decision-card" style="flex:1;min-width:180px;'
                     f'background:linear-gradient(135deg,rgba({ir},{ig},{ib},0.09),#0f0c00);'
                     f'border:2px solid rgba({ir},{ig},{ib},0.4);border-radius:14px;padding:16px 18px;">'
-                    f'<div class="persona-note-label" style="font-size:0.65rem;color:{i_color};letter-spacing:2px;font-weight:800;margin-bottom:8px;">👀 WOULD I INTERVIEW?</div>'
+                    f'<div class="persona-note-label result-label" style="color:{i_color};">👀 WOULD I INTERVIEW?</div>'
                     f'<div class="persona-note-text" style="font-size:1rem;font-weight:800;color:{i_color};line-height:1.4;">{hm_interview_text}</div>'
                     f'</div>'
                 )
+            if hm_verdict_text:
+                st.markdown(f'<div class="result-label" style="color:{v_color};margin:12px 0 8px 0;">⚖️ VERDICT</div>', unsafe_allow_html=True)
             st.markdown(
-                f'<div style="display:flex;gap:14px;margin:14px 0 20px 0;flex-wrap:wrap;">'
+                f'<div style="display:flex;gap:14px;margin:0 0 20px 0;flex-wrap:wrap;">'
                 f'{verdict_card}'
                 f'{interview_card}'
                 f'</div>',
