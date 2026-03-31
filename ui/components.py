@@ -258,8 +258,8 @@ PERSONALITIES = {
     "internet_troll": {
         "icon": "🧌",
         "name": "Internet Troll",
-        "tagline": "Sir, this is a resume — not a cry for help.",
-        "description": "The most savage feedback you'll actually learn from. Roast-proof your resume.",
+        "tagline": "This resume is on life support and barely holding on.",
+        "description": "Unhinged, sarcastic, and brutally honest — like a late-night internet comment, but every insult comes with a fix.",
         "badge": "Most Entertaining",
         "accent_from": "#A855F7",
         "accent_to": "#7C3AED",
@@ -267,8 +267,8 @@ PERSONALITIES = {
     "top_hiring_manager": {
         "icon": "👔",
         "name": "Top Hiring Manager",
-        "tagline": "Would you make the shortlist? Most people don't.",
-        "description": "C-suite lens on whether you'd even get a callback — no corporate fluff.",
+        "tagline": "Every resume makes an impression. Yours just hasn't made the right one.",
+        "description": "Seen thousands of resumes. Hired very few. Find out which side of that line you're on.",
         "badge": "Most Authoritative",
         "accent_from": "#F59E0B",
         "accent_to": "#D97706",
@@ -281,17 +281,42 @@ def _card_html(key: str, p: dict, is_selected: bool) -> str:
     sel_cls = " selected" if is_selected else ""
     af, at = p["accent_from"], p["accent_to"]
     badge = p.get("badge", "")
+    desc  = p.get("description", "")
     return (
         f'<div class="persona-card{sel_cls}" data-persona="{key}" '
         f'style="--accent-grad:linear-gradient(135deg,{af},{at});'
-        f'--accent-color:{af};--accent-glow:{af}55;--accent-glow-inner:{af}14;">'
+        f'--accent-color:{af};--accent-glow:{af}55;--accent-glow-inner:{af}18;">'
+
+        # shimmer sweep on hover
+        f'<div class="pc-shimmer"></div>'
+
+        # selected checkmark
         f'<div class="persona-check">✓</div>'
-        f'<div class="pc-badge" style="color:{af};background:{af}22;border:1px solid {af}55;">{badge}</div>'
-        f'<div class="pc-icon-ring" style="background:linear-gradient(135deg,{af}22,{at}11);border:2px solid {af}44;">'
-        f'<span class="persona-icon">{p["icon"]}</span>'
+
+        # icon section
+        f'<div class="pc-icon-wrap">'
+        f'  <div class="pc-icon-outer" style="background:conic-gradient(from 180deg,{af}66,{at}22,{af}66);padding:2px;border-radius:50%;">'
+        f'    <div class="pc-icon-ring" style="background:linear-gradient(160deg,#1e1812,#141009);">'
+        f'      <span class="persona-icon">{p["icon"]}</span>'
+        f'    </div>'
+        f'  </div>'
         f'</div>'
+
+        # thin accent divider
+        f'<div class="pc-divider" style="background:linear-gradient(90deg,transparent,{af}55,transparent);"></div>'
+
+        # name
         f'<div class="persona-name">{p["name"]}</div>'
+
+        # badge chip below name
+        f'<div class="pc-badge" style="color:{af};background:{af}1a;border:1px solid {af}44;">{badge}</div>'
+
+        # tagline
         f'<div class="persona-tagline">{p["tagline"]}</div>'
+
+        # description — fades in when selected
+        f'<div class="pc-desc">{desc}</div>'
+
         f'</div>'
     )
 
@@ -301,7 +326,12 @@ def render_personality_selector() -> tuple[str, dict]:
     Render the personality card grid + hidden radio + JS sync.
     Returns (selected_key, selected_personality_dict).
     """
-    st.markdown('<div class="section-label">Choose Your Roaster</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-label">Choose Your Roaster</div>'
+        '<div style="font-size:0.95rem;color:#9a9290;margin-top:-1.4rem;margin-bottom:1.6rem;font-weight:400;">'
+        'Pick the AI persona that will review your resume. Each one has a different lens.</div>',
+        unsafe_allow_html=True
+    )
 
     if "selected_personality" not in st.session_state:
         st.session_state["selected_personality"] = "brutal_recruiter"
@@ -398,17 +428,17 @@ def render_personality_selector() -> tuple[str, dict]:
     af, at = sel["accent_from"], sel["accent_to"]
     _ar = int(af[1:3], 16); _ag = int(af[3:5], 16); _ab = int(af[5:7], 16)
     st.markdown(
-        f'<div class="persona-selected-banner" style="border-color:{af}66;box-shadow:0 0 32px rgba({_ar},{_ag},{_ab},0.18);">'
+        f'<div class="persona-selected-banner" style="--psb-accent:{af};border-color:{af}44;box-shadow:0 8px 40px rgba({_ar},{_ag},{_ab},0.18),inset 0 1px 0 rgba(255,255,255,0.04);">'
         f'  <div class="psb-left">'
-        f'    <div class="psb-icon" style="background:linear-gradient(135deg,{af}2a,{at}18);border:2px solid {af}55;box-shadow:0 4px 20px rgba({_ar},{_ag},{_ab},0.25);">{sel["icon"]}</div>'
+        f'    <div class="psb-icon" style="background:linear-gradient(145deg,{af}33,{at}1a);border:2px solid {af}55;box-shadow:0 6px 24px rgba({_ar},{_ag},{_ab},0.3);">{sel["icon"]}</div>'
         f'    <div class="psb-info">'
-        f'      <div class="psb-label">✦ Selected Roaster</div>'
+        f'      <div class="psb-label">Selected Roaster</div>'
         f'      <div class="psb-name" style="color:{af};">{sel["name"]}</div>'
         f'      <div class="psb-tag">{sel["tagline"]}</div>'
-        f'      <div class="psb-desc">{sel.get("description","")}</div>'
+        f'      <div class="psb-desc" style="border-left-color:{af}88;">{sel.get("description","")}</div>'
         f'    </div>'
         f'  </div>'
-        f'  <div class="psb-pill" style="background:linear-gradient(135deg,{af},{at});box-shadow:0 4px 14px rgba({_ar},{_ag},{_ab},0.4);">{sel.get("badge","")}</div>'
+        f'  <div class="psb-pill" style="background:linear-gradient(135deg,{af},{at});box-shadow:0 4px 18px rgba({_ar},{_ag},{_ab},0.45);">{sel.get("badge","")}</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -598,13 +628,15 @@ def _render_linkedin_card(score_breakdown: list, overall_score: int, ov_label: s
         <div class="ats-btn-col">
             <button onclick="atsCopyText()" style="
                 width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                background:linear-gradient(90deg,#FBBF24,#F59E0B);color:#1a1000;font-size:0.92rem;font-weight:800;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+                box-shadow:0 4px 14px rgba(251,191,36,0.35);letter-spacing:0.3px;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
             <button onclick="atsDownload()" style="
-                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FBBF24;cursor:pointer;
+                background:linear-gradient(90deg,#1c1710,#251f12);color:#FBBF24;font-size:0.92rem;font-weight:700;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 2px 10px rgba(251,191,36,0.15);
             " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
         <div id="ats-copy-fb" style="
@@ -1018,13 +1050,15 @@ def _render_br_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
             <button onclick="brCopyText()" style="
                 width:100%;padding:12px 0;border-radius:12px;border:none;cursor:pointer;
-                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+                background:linear-gradient(90deg,#FBBF24,#F59E0B);color:#1a1000;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 4px 14px rgba(251,191,36,0.35);
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
             <button onclick="brDownload()" style="
-                width:100%;padding:12px 0;border-radius:12px;border:1.5px solid #FF8C00;cursor:pointer;
-                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
+                width:100%;padding:12px 0;border-radius:12px;border:1.5px solid #FBBF24;cursor:pointer;
+                background:linear-gradient(90deg,#1c1710,#251f12);color:#FBBF24;font-size:0.92rem;font-weight:800;letter-spacing:0.5px;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 2px 10px rgba(251,191,36,0.15);
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
         <div id="br-copy-fb" style="
@@ -1247,13 +1281,15 @@ def _render_cc_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
             <button onclick="ccCopyText()" style="
                 width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                background:linear-gradient(90deg,#FBBF24,#F59E0B);color:#1a1000;font-size:0.92rem;font-weight:800;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 4px 14px rgba(251,191,36,0.35);letter-spacing:0.3px;
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
             <button onclick="ccDownload()" style="
-                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FBBF24;cursor:pointer;
+                background:linear-gradient(90deg,#1c1710,#251f12);color:#FBBF24;font-size:0.92rem;font-weight:700;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 2px 10px rgba(251,191,36,0.15);
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
         <div id="cc-copy-fb" style="
@@ -1471,13 +1507,15 @@ def _render_it_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
             <button onclick="itCopyText()" style="
                 width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                background:linear-gradient(90deg,#FBBF24,#F59E0B);color:#1a1000;font-size:0.92rem;font-weight:800;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 4px 14px rgba(251,191,36,0.35);letter-spacing:0.3px;
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
             <button onclick="itDownload()" style="
-                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FBBF24;cursor:pointer;
+                background:linear-gradient(90deg,#1c1710,#251f12);color:#FBBF24;font-size:0.92rem;font-weight:700;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 2px 10px rgba(251,191,36,0.15);
             " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
         <div id="it-copy-fb" style="
@@ -1705,13 +1743,15 @@ def _render_hm_linkedin_card(score_val: int, sc_label: str, sc_grade: str, sc_co
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;">
             <button onclick="hmCopyText()" style="
                 width:100%;padding:12px 0;border-radius:10px;border:none;cursor:pointer;
-                background:#FF8C00;color:#fff;font-size:0.92rem;font-weight:700;
+                background:linear-gradient(90deg,#FBBF24,#F59E0B);color:#1a1000;font-size:0.92rem;font-weight:800;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
-            " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📋 Copy Text</button>
+                box-shadow:0 4px 14px rgba(251,191,36,0.35);letter-spacing:0.3px;
+            " onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">📋 Copy Text</button>
             <button onclick="hmDownload()" style="
-                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FF8C00;cursor:pointer;
-                background:#1e1e1e;color:#FF8C00;font-size:0.92rem;font-weight:700;
+                width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #FBBF24;cursor:pointer;
+                background:linear-gradient(90deg,#1c1710,#251f12);color:#FBBF24;font-size:0.92rem;font-weight:700;
                 font-family:'Inter','Segoe UI',Arial,sans-serif;transition:opacity 0.15s;
+                box-shadow:0 2px 10px rgba(251,191,36,0.15);
             " onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📥 Download</button>
         </div>
         <div id="hm-copy-fb" style="
