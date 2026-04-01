@@ -145,6 +145,30 @@ if st.session_state.get("file_valid", False):
             st.error("🔑 OpenAI API key not found. Please set OPENAI_API_KEY in your .env file.")
             st.stop()
 
+        # Validate it's actually a resume
+        with st.spinner("🔍 Checking document..."):
+            try:
+                from openai import OpenAI as _OpenAI
+                _client = _OpenAI(api_key=api_key)
+                _check = _client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a document classifier. Reply with only 'yes' or 'no'."},
+                        {"role": "user", "content": f"Is the following document a resume or CV? Reply only 'yes' or 'no'.\n\n{resume_text[:3000]}"},
+                    ],
+                    max_tokens=5,
+                    temperature=0,
+                )
+                is_resume = _check.choices[0].message.content.strip().lower().startswith("yes")
+            except Exception as e:
+                logger.warning(f"⚠️ Resume validation check failed: {e}")
+                is_resume = True  # fail open
+
+        if not is_resume:
+            logger.warning("⚠️ Uploaded document does not appear to be a resume")
+            st.error("❌ This doesn't look like a resume. Please upload your resume or CV in PDF, DOCX, or TXT format.")
+            st.stop()
+
         # Roast it with the selected personality!
         logger.info(f"🔥 Sending to OpenAI (personality: {sel['name']})...")
         logger.info(f"📨 TEXT BEING SENT TO AI ({len(resume_text[:12000]):,} chars):\n{'─'*60}\n{resume_text[:12000]}\n{'─'*60}")
