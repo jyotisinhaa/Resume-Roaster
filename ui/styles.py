@@ -1189,5 +1189,79 @@ def get_css() -> str:
     /* ── Final Verdict ── */
     .final-verdict-card { }
     .fv-extra-line { color: #cccccc; }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE BREAKPOINTS
+       ══════════════════════════════════════════ */
+
+    /* ── Tablet / iPad (601px – 1024px) ── */
+    @media (max-width: 1024px) {
+        .block-container { max-width: 100% !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+
+        /* Hero */
+        .hero { padding: 0 0.5rem !important; }
+
+        /* Section labels */
+        .section-label { font-size: 1.7rem !important; margin-top: 2.5rem !important; margin-bottom: 1.4rem !important; }
+
+        /* Persona grid — 3 cols on tablet */
+        .pc-grid { grid-template-columns: repeat(3, 1fr) !important; }
+        .persona-card { min-height: 220px !important; padding: 1.2rem 0.8rem !important; }
+        .persona-icon { font-size: 2rem !important; }
+        .persona-name { font-size: 0.88rem !important; }
+        .persona-tagline { font-size: 0.72rem !important; }
+        .pc-desc { font-size: 0.7rem !important; }
+
+        /* How it works — 2 cols on tablet */
+        .steps-row { gap: 1.2rem !important; }
+        .step-card { min-width: 200px !important; flex: 1 1 42% !important; padding: 1.8rem 1.4rem !important; }
+
+        /* File info */
+        .file-info-name { font-size: 0.82rem !important; }
+    }
+
+    /* ── Mobile (max 600px) ── */
+    @media (max-width: 600px) {
+        .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+
+        /* Hero */
+        .hero { padding: 0 0.25rem !important; }
+        .hero-main-text { text-align: center !important; }
+        .hero-ai-badge { font-size: 0.78rem !important; padding: 0.35em 0.8em !important; letter-spacing: 0.5px !important; }
+        .roast-counter-badge { padding: 0.45em 1rem !important; }
+
+        /* Section labels */
+        .section-label { font-size: 1.35rem !important; margin-top: 2rem !important; margin-bottom: 1rem !important; letter-spacing: 1.5px !important; }
+
+        /* How it works — single column on mobile */
+        .steps-row { flex-direction: column !important; align-items: stretch !important; gap: 0.9rem !important; }
+        .step-card { min-width: unset !important; max-width: 100% !important; flex: 1 1 100% !important; padding: 1.4rem 1.1rem !important; }
+        .step-title { font-size: 1.1rem !important; }
+        .step-desc { font-size: 0.95rem !important; }
+
+        /* Persona grid — 2 cols on mobile */
+        .pc-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.6rem !important; }
+        .persona-card { min-height: 190px !important; padding: 1rem 0.6rem !important; border-radius: 14px !important; }
+        .persona-icon { font-size: 1.7rem !important; }
+        .persona-name { font-size: 0.8rem !important; }
+        .persona-tagline { font-size: 0.65rem !important; display: -webkit-box !important; -webkit-line-clamp: 3 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+        .pc-desc { display: none !important; }
+        .pc-badge { font-size: 0.6rem !important; padding: 0.15em 0.5em !important; }
+        .persona-check { font-size: 0.75rem !important; padding: 0.15em 0.4em !important; }
+
+        /* Upload zone */
+        [data-testid="stFileUploaderDropzone"] { padding: 0.8rem !important; }
+        .supported-formats-line { font-size: 0.72rem !important; white-space: normal !important; word-break: break-word !important; }
+        .file-info-card { padding: 0.8rem 1rem !important; gap: 0.6rem !important; }
+        .file-info-name { font-size: 0.78rem !important; word-break: break-all !important; }
+        .file-info-icon { font-size: 1.4rem !important; }
+
+        /* Roast button */
+        [data-testid="stButton"] > button { font-size: 1rem !important; padding: 0.7rem 1rem !important; }
+
+        /* Results — tighten padding */
+        .result-item-box { padding: 1rem !important; }
+        .score-label { font-size: 0.88rem !important; }
+    }
 </style>
 """

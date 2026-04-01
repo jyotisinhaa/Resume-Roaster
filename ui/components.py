@@ -35,7 +35,7 @@ def render_upload_zone_js():
                 const info = document.createElement('div');
                 info.className = 'supported-formats-line';
                 info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> · Max 10 MB';
-                info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;order:-1;';
+                info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;order:-1;white-space:normal;word-break:break-word;padding:0 0.5rem;';
                 const btn = dz.querySelector('button');
                 if (btn && btn.parentElement) {
                     btn.parentElement.insertBefore(info, btn);
@@ -101,13 +101,13 @@ def render_hero():
     st.markdown("""
     <div class="hero" style="margin-top:2.5rem;">
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:2.2rem;width:100%;">
-            <span style="font-size:6.5rem;font-weight:900;letter-spacing:1.5px;text-align:center;line-height:1.02;" class="hero-main-text">Resume<span style="color:#FF8C00;">Ripper</span></span>
-            <span class="hero-ai-badge" style="display:inline-block;background:#2a1f18;padding:0.5em 1.2em;border-radius:2em;font-weight:700;color:#FF8C00;font-size:1.15rem;letter-spacing:1px;margin-top:0.7em;">🔥 AI-Powered Resume Feedback</span>
+            <span style="font-size:clamp(3rem,12vw,6.5rem);font-weight:900;letter-spacing:1.5px;text-align:center;line-height:1.02;" class="hero-main-text">Resume<span style="color:#FF8C00;">Ripper</span></span>
+            <span class="hero-ai-badge" style="display:inline-block;background:#2a1f18;padding:0.5em 1.2em;border-radius:2em;font-weight:700;color:#FF8C00;font-size:clamp(0.85rem,3vw,1.15rem);letter-spacing:1px;margin-top:0.7em;">🔥 AI-Powered Resume Feedback</span>
         </div>
-        <div class="hero-main-text" style="font-size:2.8rem;font-weight:900;line-height:1.08;margin-bottom:0.5rem;">
+        <div class="hero-main-text" style="font-size:clamp(1.6rem,6vw,2.8rem);font-weight:900;line-height:1.08;margin-bottom:0.5rem;">
             Get your resume<br><span style="color:#FF8C00;">brutally roasted</span><br>by 5 AI experts
         </div>
-        <div class="hero-desc" style="font-size:1.15rem;font-weight:400;max-width:700px;margin-bottom:2.2rem;text-align:center;margin-left:auto;margin-right:auto;">
+        <div class="hero-desc" style="font-size:clamp(0.95rem,3vw,1.15rem);font-weight:400;max-width:700px;margin-bottom:2.2rem;text-align:center;margin-left:auto;margin-right:auto;">
             Upload your resume and let our AI panel of an ATS Scanner, Brutal Recruiter, Career Coach, Internet Troll, and Top Hiring Manager tear it apart — so real interviewers don't have to.
         </div>
     </div>
@@ -121,20 +121,20 @@ def render_how_it_works():
     """Render the 3-step how-it-works cards."""
     st.markdown("""
     <div class="section-label" style="margin-top:2rem;">How It Works</div>
-    <div class="steps-row" style="display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem;margin:2.8rem 0;">
-        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+    <div class="steps-row" style="display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;margin:2.8rem 0;">
+        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:200px;max-width:340px;flex:1 1 200px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
             <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">01</div>
             <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:pulse 1.5s infinite alternate;">📄</div>
             <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">Upload Your Resume</div>
             <div class="step-desc" style="font-size:1.08rem;color:#6d4c1b;text-align:center;margin-bottom:0.2em;font-weight:400;line-height:1.6;">Drag and drop or browse for your PDF, DOCX, or TXT file. We accept the good, the bad, and the catastrophically over-formatted.</div>
         </div>
-        <div class="step-card" style="background:linear-gradient(135deg,#fbead1 0%,#fff7e6 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+        <div class="step-card" style="background:linear-gradient(135deg,#fbead1 0%,#fff7e6 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:200px;max-width:340px;flex:1 1 200px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
             <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">02</div>
             <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:spin 2.5s linear infinite;">🤖</div>
             <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">AI Panel Review</div>
             <div class="step-desc" style="font-size:1.08rem;color:#6d4c1b;text-align:center;margin-bottom:0.2em;font-weight:400;line-height:1.6;">Your resume is reviewed from every angle—ATS Scanner, Brutal Recruiter, Career Coach, Internet Troll, and Top Hiring Manager.</div>
         </div>
-        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:270px;max-width:340px;flex:1 1 270px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
+        <div class="step-card" style="background:linear-gradient(135deg,#fff7e6 0%,#ffe0b2 100%);border-radius:22px;box-shadow:0 6px 32px #ff8c0033,0 2px 0 #FF8C00 inset;padding:2.3rem 2.3rem 1.7rem 2.3rem;min-width:200px;max-width:340px;flex:1 1 200px;display:flex;flex-direction:column;align-items:center;transition:transform 0.18s,box-shadow 0.18s;border:2px solid #FF8C00;position:relative;overflow:hidden;">
             <div class="step-num" style="font-size:1.2rem;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF8C00,#FF6B35);border-radius:50%;width:2.5em;height:2.5em;display:flex;align-items:center;justify-content:center;margin-bottom:0.8em;box-shadow:0 2px 8px #FF8C0033;">03</div>
             <div class="step-icon" style="font-size:2.7rem;margin-bottom:0.6em;color:#FF8C00;animation:pop 1.2s infinite alternate;">💡</div>
             <div class="step-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.5em;color:#FF8C00;text-align:center;letter-spacing:1.5px;">Get Actionable Feedback</div>
