@@ -19,63 +19,49 @@ def render_upload_zone_js():
         const uploader = main.querySelector('[data-testid="stFileUploader"]');
         if (!uploader) return;
 
-        // Detect if a file has been uploaded
-        const hasFile = !!main.querySelector('[data-testid="stFileUploaderFile"]');
-
+        // --- Dropzone cleanup (runs always; CSS :has() hides it after upload) ---
         const dz = uploader.querySelector('[data-testid="stFileUploaderDropzone"]');
         if (dz) {
-            if (hasFile) {
-                dz.style.display = 'none';
-            } else {
-                dz.style.display = '';
-                // Hide SVG, drag-drop text, size limit text — keep button
-                const inner = dz.querySelector(':scope > div');
-                if (inner) {
-                    Array.from(inner.children).forEach(el => {
-                        if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
-                        if (el.classList && el.classList.contains('supported-formats-line')) return;
-                        el.style.visibility = 'hidden';
-                        el.style.height = '0';
-                        el.style.overflow = 'hidden';
-                        el.style.margin = '0';
-                        el.style.padding = '0';
-                    });
-                }
-                dz.querySelectorAll('small').forEach(s => {
-                    s.style.visibility = 'hidden';
-                    s.style.height = '0';
-                    s.style.overflow = 'hidden';
+            const inner = dz.querySelector(':scope > div');
+            if (inner) {
+                Array.from(inner.children).forEach(el => {
+                    if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
+                    if (el.classList && el.classList.contains('supported-formats-line')) return;
+                    el.style.visibility = 'hidden';
+                    el.style.height = '0';
+                    el.style.overflow = 'hidden';
+                    el.style.margin = '0';
+                    el.style.padding = '0';
                 });
-                // Inject supported formats text above the button
-                if (!dz.querySelector('.supported-formats-line')) {
-                    const info = document.createElement('div');
-                    info.className = 'supported-formats-line';
-                    info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> \u00B7 Max 10 MB';
-                    info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;white-space:normal;word-break:break-word;padding:0 0.5rem;';
-                    const btn = dz.querySelector('button');
-                    if (btn && btn.parentElement) {
-                        btn.parentElement.insertBefore(info, btn);
-                    } else {
-                        dz.prepend(info);
-                    }
+            }
+            dz.querySelectorAll('small').forEach(s => {
+                s.style.visibility = 'hidden';
+                s.style.height = '0';
+                s.style.overflow = 'hidden';
+            });
+            // Inject supported formats text above the button (once)
+            if (!dz.querySelector('.supported-formats-line')) {
+                const info = document.createElement('div');
+                info.className = 'supported-formats-line';
+                info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> \u00B7 Max 10 MB';
+                info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;white-space:normal;word-break:break-word;padding:0 0.5rem;';
+                const btn = dz.querySelector('button');
+                if (btn && btn.parentElement) {
+                    btn.parentElement.insertBefore(info, btn);
+                } else {
+                    dz.prepend(info);
                 }
             }
         }
 
-        // Hide Streamlit's default file list; we use our custom card instead
-        const fileList = uploader.querySelector('[data-testid="stFileUploaderFileList"]');
-        if (fileList) fileList.style.display = 'none';
-
-        // When file present, move .file-info-card inside the uploader box
-        if (hasFile) {
-            const card = main.querySelector('.file-info-card');
-            if (card && !uploader.contains(card)) {
-                card.style.margin = '0.5rem 0 0 0';
-                uploader.appendChild(card);
-            }
+        // --- Move .file-info-card inside the uploader box (CSS :has() then hides dropzone) ---
+        const card = main.querySelector('.file-info-card');
+        if (card && !uploader.contains(card)) {
+            card.style.margin = '0.5rem 0 0 0';
+            uploader.appendChild(card);
         }
 
-        // Hide all small helper texts inside uploader
+        // Hide small helper texts
         uploader.querySelectorAll('small').forEach(s => {
             s.style.visibility = 'hidden';
             s.style.height = '0';

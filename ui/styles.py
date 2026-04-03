@@ -207,6 +207,17 @@ def get_css() -> str:
         background: transparent !important;
     }
 
+    /* Hide Streamlit's native file list — we show our custom card instead */
+    [data-testid="stFileUploaderFileList"] {
+        display: none !important;
+    }
+
+    /* Hide dropzone once a file is inside the uploader (our card gets moved in by JS).
+       Using :has() so this survives React re-renders without needing JS. */
+    [data-testid="stFileUploader"]:has(.file-info-card) [data-testid="stFileUploaderDropzone"] {
+        display: none !important;
+    }
+
     /* Dropzone styling */
     [data-testid="stFileUploaderDropzone"] {
         background: transparent !important;
