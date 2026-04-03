@@ -47,49 +47,6 @@ def get_css() -> str:
         width: 100%;
         box-sizing: border-box;
     }
-        /* Upload Zone Customization */
-        [data-testid="stFileUploader"] {
-            background: #1a1207 !important;
-            border: 3px solid #FF8C00 !important;
-            border-radius: 22px !important;
-            box-shadow: 0 6px 32px #ff8c0033, 0 2px 0 #FF8C00 inset !important;
-            padding: 2.2rem 2.2rem 1.7rem 2.2rem !important;
-            margin-bottom: 2.2rem !important;
-            margin-top: 1.2rem !important;
-            font-size: 1.25rem !important;
-            font-weight: 800 !important;
-            color: #FF8C00 !important;
-            text-align: center !important;
-            transition: box-shadow 0.18s, border 0.18s;
-        }
-        [data-testid="stFileUploader"]:hover {
-            box-shadow: 0 12px 40px #FF8C0033, 0 2px 0 #FF8C00 inset !important;
-            border-color: #FF8C00 !important;
-        }
-        [data-testid="stFileUploader"] .supported-formats-line {
-            font-size: 1.08rem !important;
-            color: #FF8C00 !important;
-            margin-bottom: 1.1rem !important;
-            font-weight: 700 !important;
-        }
-        [data-testid="stFileUploader"] button, [data-testid="stFileUploader"] .css-1cpxqw2 {
-            font-size: 1.15rem !important;
-            font-weight: 900 !important;
-            padding: 0.7em 2.2em !important;
-            border-radius: 1.5em !important;
-            background: linear-gradient(90deg,#FF8C00,#FF6B35) !important;
-            color: #fff !important;
-            border: none !important;
-            box-shadow: 0 2px 8px #FF8C0033 !important;
-            margin-top: 0.7em !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1.2px !important;
-            transition: background 0.18s;
-        }
-        [data-testid="stFileUploader"] button:hover, [data-testid="stFileUploader"] .css-1cpxqw2:hover {
-            background: linear-gradient(90deg,#FF6B35,#FF8C00) !important;
-            color: #fff !important;
-        }
     .section-label::after {
         content: '';
         flex: 1;
@@ -203,15 +160,24 @@ def get_css() -> str:
     }
 
     /* ── Upload Zone ── */
+    /* Neutralize any outer container border Streamlit may inject (e.g. stVerticalBlockBorderWrapper) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
     [data-testid="stFileUploader"] {
         background: #110c08 !important;
-        border: 2px dashed #FF8C0044 !important;
+        border: 2px dashed #FF8C0055 !important;
         border-radius: 20px !important;
         padding: 2.5rem 2rem 3.5rem !important;
         transition: border-color 0.3s, box-shadow 0.3s !important;
         text-align: center !important;
         width: 100% !important;
         margin-left: 0 !important;
+        /* Override any default Streamlit blue/cyan borders */
+        outline: none !important;
     }
     [data-testid="stFileUploader"]:hover {
         border-color: #FF8C0077 !important;
@@ -301,6 +267,7 @@ def get_css() -> str:
         letter-spacing: 0.5px !important;
         box-shadow: 0 4px 18px rgba(255,107,53,0.25) !important;
         transition: transform 0.2s, box-shadow 0.2s !important;
+        text-transform: uppercase !important;
     }
     [data-testid="stFileUploaderDropzone"] button:hover,
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover {

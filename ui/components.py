@@ -8,43 +8,75 @@ import streamlit.components.v1 as components
 #  UPLOAD ZONE JS
 # ═══════════════════════════════════════════════════════════════════════════════
 def render_upload_zone_js():
-    """Inject JS to clean up the Streamlit file uploader and add supported formats text."""
+    """Inject JS to clean up the Streamlit file uploader dropzone."""
     import streamlit.components.v1 as components
     components.html("""
     <script>
     function cleanUploader() {
-        const main = window.parent.document;
-        main.querySelectorAll('[data-testid="stFileUploaderDropzone"]').forEach(dz => {
-            const inner = dz.querySelector(':scope > div');
-            if (!inner) return;
-            Array.from(inner.children).forEach(el => {
-                if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
-                if (el.classList && el.classList.contains('supported-formats-line')) return;
-                el.style.visibility = 'hidden';
-                el.style.height = '0';
-                el.style.overflow = 'hidden';
-                el.style.margin = '0';
-                el.style.padding = '0';
-            });
-            dz.querySelectorAll('small').forEach(s => {
-                s.style.visibility = 'hidden';
-                s.style.height = '0';
-                s.style.overflow = 'hidden';
-            });
-            if (!dz.querySelector('.supported-formats-line')) {
-                const info = document.createElement('div');
-                info.className = 'supported-formats-line';
-                info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> · Max 10 MB';
-                info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;order:-1;white-space:normal;word-break:break-word;padding:0 0.5rem;';
-                const btn = dz.querySelector('button');
-                if (btn && btn.parentElement) {
-                    btn.parentElement.insertBefore(info, btn);
-                } else {
-                    dz.prepend(info);
+        let main;
+        try { main = window.parent.document; } catch(e) { return; }
+
+        const uploader = main.querySelector('[data-testid="stFileUploader"]');
+        if (!uploader) return;
+
+        // Detect if a file has been uploaded
+        const hasFile = !!main.querySelector('[data-testid="stFileUploaderFile"]');
+
+        const dz = uploader.querySelector('[data-testid="stFileUploaderDropzone"]');
+        if (dz) {
+            if (hasFile) {
+                dz.style.display = 'none';
+            } else {
+                dz.style.display = '';
+                // Hide SVG, drag-drop text, size limit text — keep button
+                const inner = dz.querySelector(':scope > div');
+                if (inner) {
+                    Array.from(inner.children).forEach(el => {
+                        if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
+                        if (el.classList && el.classList.contains('supported-formats-line')) return;
+                        el.style.visibility = 'hidden';
+                        el.style.height = '0';
+                        el.style.overflow = 'hidden';
+                        el.style.margin = '0';
+                        el.style.padding = '0';
+                    });
+                }
+                dz.querySelectorAll('small').forEach(s => {
+                    s.style.visibility = 'hidden';
+                    s.style.height = '0';
+                    s.style.overflow = 'hidden';
+                });
+                // Inject supported formats text above the button
+                if (!dz.querySelector('.supported-formats-line')) {
+                    const info = document.createElement('div');
+                    info.className = 'supported-formats-line';
+                    info.innerHTML = '📎 Supported formats: <b style="color:#FF8C00;">PDF</b>, <b style="color:#FF8C00;">DOCX</b>, <b style="color:#FF8C00;">TXT</b> \u00B7 Max 10 MB';
+                    info.style.cssText = 'text-align:center;color:#8a7e74;font-size:0.8rem;margin-bottom:0.8rem;white-space:normal;word-break:break-word;padding:0 0.5rem;';
+                    const btn = dz.querySelector('button');
+                    if (btn && btn.parentElement) {
+                        btn.parentElement.insertBefore(info, btn);
+                    } else {
+                        dz.prepend(info);
+                    }
                 }
             }
-        });
-        main.querySelectorAll('[data-testid="stFileUploader"] small').forEach(s => {
+        }
+
+        // Hide Streamlit's default file list; we use our custom card instead
+        const fileList = uploader.querySelector('[data-testid="stFileUploaderFileList"]');
+        if (fileList) fileList.style.display = 'none';
+
+        // When file present, move .file-info-card inside the uploader box
+        if (hasFile) {
+            const card = main.querySelector('.file-info-card');
+            if (card && !uploader.contains(card)) {
+                card.style.margin = '0.5rem 0 0 0';
+                uploader.appendChild(card);
+            }
+        }
+
+        // Hide all small helper texts inside uploader
+        uploader.querySelectorAll('small').forEach(s => {
             s.style.visibility = 'hidden';
             s.style.height = '0';
             s.style.overflow = 'hidden';
